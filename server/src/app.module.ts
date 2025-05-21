@@ -7,6 +7,7 @@ import { ReseñaModule } from './reseña/reseña.module';
 import { PromocionModule } from './promocion/promocion.module';
 import { UserModule } from './user/user.module';
 import { MenuModule } from './menu/menu.module';
+import { PhotosModule } from './photos/photos.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { MenuModule } from './menu/menu.module';
     PromocionModule,
     UserModule,
     MenuModule,
+    PhotosModule,
   ],
 })
 export class AppModule {}

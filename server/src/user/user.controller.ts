@@ -1,26 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/createUserDto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/LoginUserDto';
+import {JwtAuthGuard} from './jwt-auth.guard'
 
 @Controller('user')
-export class UserController {
+export default class UserController {
   constructor(private readonly userService: UserService) {}
-
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    return this.userService.createUser(createUserDto);
+  }
+  
+  @Post('login')
+  login(@Body() loginUserDto: LoginUserDto) {
+    const { email, password } = loginUserDto;
+    return this.userService.loginUser(email, password);
   }
 
+  
   @Get()
   findAll() {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
+ 
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
@@ -30,5 +36,11 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  @UseGuards(JwtAuthGuard) 
+  @Get('profile')
+  getProfile() {
+    return 'Acceso permitido. Esta es la información del perfil.';
   }
 }

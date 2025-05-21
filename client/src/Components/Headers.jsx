@@ -3,7 +3,6 @@ import logo from '../assets/img/logo.png';
 import {
   AppBar,
   Toolbar,
-  Typography,
   Box,
   IconButton,
   Drawer,
@@ -13,29 +12,40 @@ import {
   useMediaQuery
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useTheme } from '@mui/material/styles';
-import { Link as ScrollLink } from 'react-scroll';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
 
-  const sections = ['inicio', 'nosotros', 'restaurates', 'contacto'];
+  const sections = [
+    { name: 'Inicio', path: '/' },
+    { name: 'Login', path: '/login' },
+    { name: 'Registro', path: '/register' },
+    { name: 'Servicio', path: '/servicios' },
+    { name: 'Restaurantes', path: '/restaurantes' },
+  ];
 
   return (
     <>
       <AppBar position="fixed" color="default" elevation={1}>
         <Toolbar sx={{ backgroundColor: '#8B5E3C' }}>
-          <ScrollLink
-            to="inicio"
-            smooth={true}
-            duration={600}
-            offset={-70}
-            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+          <Box
+            component={Link}
+            to="/"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              textDecoration: 'none',
+            }}
           >
-            <Box component="img" src={logo} alt="Logo" sx={{ height: 70, mr: 2 }} />
-          </ScrollLink>
+            <Box component="img" src={logo} alt="Logo" sx={{ height: 30, mr: 2 }} />
+          </Box>
 
           {isMobile ? (
             <>
@@ -44,33 +54,24 @@ const Header = () => {
                 color="inherit"
                 onClick={() => setOpenDrawer(true)}
               >
-                <MenuIcon sx={{ color: 'white' ,flexGrow: 1}} />
+                <MenuIcon sx={{ color: 'white', flexGrow: 1 }} />
               </IconButton>
               <Drawer
                 anchor="right"
                 open={openDrawer}
                 onClose={() => setOpenDrawer(false)}
               >
-                <List sx={{ width: 200 }}>
+                <List sx={{ width: 50 }}>
                   {sections.map((section) => (
                     <ListItem
                       button
-                      key={section}
-                      onClick={() => setOpenDrawer(false)}
+                      key={section.path}
+                      onClick={() => {
+                        navigate(section.path);
+                        setOpenDrawer(false);
+                      }}
                     >
-                      <ScrollLink
-                        to={section}
-                        smooth={true}
-                        duration={600}
-                        offset={-70}
-                        style={{
-                          textDecoration: 'none',
-                          color: '#333',
-                          width: '100%',
-                        }}
-                      >
-                        <ListItemText primary={section.toUpperCase()} />
-                      </ScrollLink>
+                      <ListItemText primary={section.name} />
                     </ListItem>
                   ))}
                 </List>
@@ -79,37 +80,41 @@ const Header = () => {
           ) : (
             <>
               {sections.map((section) => (
-                <ScrollLink
-                  key={section}
-                  to={section}
-                  smooth={true}
-                  duration={600}
-                  offset={-70}
-                  style={{
-                    marginLeft: 24,
-                    marginRight: 24,
-                    color: 'white',
-                    textShadow: `
-                      -1px -1px 0 #000,
-                      1px -1px 0 #000,
-                      -1px  1px 0 #000,
-                      1px  1px 2px rgba(0,0,0,0.7)
-                    `,
-                    textDecoration: 'none',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    fontSize: '1rem',
-                    transition: 'background 0.3s',
-                    padding: '6px 12px',
-                    borderRadius: '4px',
-                  }}
-                  activeStyle={{ backgroundColor: '#555' }}
-                >
-                  {section.toUpperCase()}
-                </ScrollLink>
-              ))}
+        <Link
+          key={section.path}
+          to={section.path}
+          style={{
+            marginLeft: 10,
+            marginRight: 10,
+            color: 'white',
+            textShadow: `
+              -1px -1px 0 #000,
+              1px -1px 0 #000,
+              -1px  1px 0 #000,
+              1px  1px 2px rgba(0,0,0,1)
+            `,
+            textDecoration: 'none',
+            cursor: 'pointer',
+            fontSize: '0.9rem', // Achicado
+            fontWeight: 500, // Más moderno
+            textTransform: 'capitalize', // Solo primera letra en mayúscula
+            transition: 'background 0.3s',
+            padding: '4px 10px',
+            borderRadius: '4px',
+          }}
+        >
+          {section.name}
+        </Link>
+        ))}
             </>
           )}
+
+          <IconButton
+            onClick={() => navigate('/login')}
+            sx={{ color: '#F5E6D3', ml: 'auto' }}
+          >
+            <AccountCircleIcon fontSize="large" />
+          </IconButton>
         </Toolbar>
       </AppBar>
     </>

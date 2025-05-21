@@ -1,4 +1,5 @@
 import { Menu } from "src/menu/entities/menu.entity";
+import { Photo } from "src/photos/entities/photo.entity";
 import { Promocion } from "src/promocion/entities/promocion.entity";
 import { Reseña } from "src/reseña/entities/reseña.entity";
 import { Reserva } from "src/reverva/entities/reverva.entity";
@@ -26,6 +27,10 @@ export class Restaurante {
   @OneToOne(() => User, user => user.restaurante)
   @JoinColumn()
   usuario: User;
+
+  @OneToMany(() => Photo, (photo) => photo.restaurante, { cascade: true })
+  photos: Photo[];
+
 
   @OneToMany(() => Menu, menu => menu.restaurante)
   menu: Menu[];

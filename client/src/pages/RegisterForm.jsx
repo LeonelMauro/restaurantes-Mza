@@ -1,0 +1,64 @@
+import React, { useState } from "react";
+import { TextField, Button, Box, Typography, Paper } from "@mui/material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const RegisterForm = () => {
+  const navigate = useNavigate();
+  const [data, setData] = useState({ name: "", email: "", password: "" });
+
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Cambia la URL por la de tu backend
+      const res = await axios.post("http://localhost:3000/auth/register", data);
+      alert("Registro exitoso!");
+      navigate("/login");
+    } catch (error) {
+      alert("Error al registrarse");
+      console.error(error);
+    }
+  };
+
+  return (
+    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+      <Paper elevation={3} sx={{ padding: 4, width: 300 }}>
+        <Typography variant="h5" mb={2}>Registro</Typography>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            name="name"
+            label="Nombre"
+            fullWidth
+            margin="normal"
+            value={data.name}
+            onChange={handleChange}
+          />
+          <TextField
+            name="email"
+            label="Email"
+            fullWidth
+            margin="normal"
+            value={data.email}
+            onChange={handleChange}
+          />
+          <TextField
+            name="password"
+            label="Contraseña"
+            type="password"
+            fullWidth
+            margin="normal"
+            value={data.password}
+            onChange={handleChange}
+          />
+          <Button type="submit" variant="contained" fullWidth>Registrarse</Button>
+        </form>
+      </Paper>
+    </Box>
+  );
+};
+
+export default RegisterForm;
