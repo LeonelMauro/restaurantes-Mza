@@ -9,6 +9,8 @@ import Servicios from './pages/Servicios';
 import { Toolbar } from '@mui/material';
 import ListaRestaurantes from './pages/ListaRestaurantes';
 import AddRestaurantForm from './pages/AddRestaurantForm';
+import VistaMontaña from './pages/VistaMontaña';
+import RestauranteDetalle from './pages/RestauranteDetalle';
 
 function App() {
   return (
@@ -22,6 +24,9 @@ function App() {
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/restaurantes" element={<ListaRestaurantes />} />
         <Route path="/addrestaurantes" element={<AddRestaurantForm />} />
+        <Route path="/VistaMontaña" element={<VistaMontaña />} />
+        <Route path="/restaurante/:id" element={<RestauranteDetalle />} />
+
       </Routes>
       <Footer/>
     </BrowserRouter>

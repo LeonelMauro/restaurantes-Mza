@@ -1,4 +1,16 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateReseñaDto } from './create-reseña.dto';
+// update-reseña.dto.ts
+import { IsOptional, IsString, IsNumber, IsNotEmpty } from 'class-validator';
 
-export class UpdateReseñaDto extends PartialType(CreateReseñaDto) {}
+export class UpdateReseñaDto {
+  @IsNotEmpty()
+  @IsNumber()
+  userId: number; // usuario que intenta editar
+
+  @IsOptional()
+  @IsNumber()
+  puntuacion?: number;
+
+  @IsOptional()
+  @IsString()
+  comentario?: string;
+}

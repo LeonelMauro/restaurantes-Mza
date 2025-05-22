@@ -23,12 +23,15 @@ export class Restaurante {
 
   @Column()
   horario: string;
+  
+  @Column()
+  contacto: string;
 
-  @OneToOne(() => User, user => user.restaurante)
+  @OneToOne(() => User, user => user.restaurante,{onDelete: 'CASCADE',})
   @JoinColumn()
   usuario: User;
 
-  @OneToMany(() => Photo, (photo) => photo.restaurante, { cascade: true })
+  @OneToMany(() => Photo, (photo) => photo.restaurante, { cascade: true ,onDelete: 'CASCADE',})
   photos: Photo[];
 
 

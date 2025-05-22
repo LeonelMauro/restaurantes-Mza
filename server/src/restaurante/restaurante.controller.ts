@@ -6,6 +6,8 @@ import {
   Req,
   UploadedFiles,
   UseInterceptors,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { RestauranteService } from './restaurante.service';
 import { CreateRestauranteDto } from './dto/create-restaurante.dto';
@@ -14,6 +16,7 @@ import { Request } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { Restaurante } from './entities/restaurante.entity';
 
 @Controller('restaurante')
 export class RestauranteController {
@@ -43,4 +46,13 @@ export class RestauranteController {
 
     return this.restauranteService.create(dto, userId, imagePaths);
   }
+  @Get()
+  async findAll() {
+    return this.restauranteService.findAll();
+  }
+  @Get(':id')
+async findOne(@Param('id') id: number): Promise<Restaurante> {
+  return this.restauranteService.findOne(id);
+}
+
 }

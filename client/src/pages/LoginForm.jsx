@@ -12,20 +12,38 @@ const LoginForm = () => {
   };
 
  const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await axios.post("http://localhost:3000/user/login", data);
+  e.preventDefault(); // ¡No te olvides de prevenir el submit por defecto!
 
-    // Guardar token en localStorage
-    localStorage.setItem("token", res.data.access_token);
-
-    alert("Inicio de sesión exitoso!");
-    navigate("/addrestaurantes"); // O redirigí a donde registrás restaurante
-  } catch (error) {
-    alert("Error al iniciar sesión");
-    console.error(error);
+  if (!data.email || !data.password) {
+    alert("Por favor completa todos los campos.");
+    return;
   }
+
+  axios
+    .post("http://localhost:3000/user/login", {
+      email: data.email,
+      password: data.password,
+    })
+    .then((res) => {
+      const { user, access_token } = res.data;
+      localStorage.setItem("token", access_token);
+      localStorage.setItem("tipo", user.tipo);
+      localStorage.setItem("userId", user.id);
+      //addrestaurantes
+      ///restaurante/${user.id}
+      // Redirigir según el tipo
+      if (user.tipo === "restaurante") {
+        navigate(`/restaurante/${user.id}`); // 🔁 Usa la ruta correcta según tu router
+      } else if (user.tipo === "turista") {
+        navigate("/VistaMontaña");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      alert("Error al iniciar sesión");
+    });
 };
+
 
 
   return (

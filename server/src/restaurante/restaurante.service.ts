@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurante } from './entities/restaurante.entity';
 import { Repository } from 'typeorm';
@@ -48,4 +48,23 @@ export class RestauranteService {
 
     return savedRestaurante;
   }
+  
+async findAll(): Promise<Restaurante[]> {
+  return this.restauranteRepository.find({
+    relations: ['usuario', 'photos'],
+  });
+}
+async findOne(id: number): Promise<Restaurante> {
+  const restaurante = await this.restauranteRepository.findOne({
+    where: { id }, // el "+" convierte string a número
+    relations: ['usuario', 'photos'],
+  });
+
+  if (!restaurante) {
+    throw new NotFoundException(`Restaurante con id ${id} no encontrado`);
+  }
+
+  return restaurante;
+}
+
 }

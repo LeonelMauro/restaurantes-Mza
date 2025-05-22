@@ -26,6 +26,9 @@ export class User {
   @OneToMany(() => Reseña, resena => resena.usuario)
   resenas: Reseña[];
 
-  @OneToOne(() => Restaurante, restaurante => restaurante.usuario)
+  @OneToOne(() => Restaurante, restaurante => restaurante.usuario ,{
+  cascade: true,
+  onDelete: 'CASCADE',
+ })
   restaurante: Restaurante;
 }

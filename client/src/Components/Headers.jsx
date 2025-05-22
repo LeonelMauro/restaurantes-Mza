@@ -27,7 +27,7 @@ const Header = () => {
     { name: 'Login', path: '/login' },
     { name: 'Registro', path: '/register' },
     { name: 'Servicio', path: '/servicios' },
-    { name: 'Restaurantes', path: '/restaurantes' },
+    { name: 'Restaurantes', path: '/VistaMontaña' },
   ];
 
   return (

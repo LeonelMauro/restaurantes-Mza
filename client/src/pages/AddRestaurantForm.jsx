@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 import {
   Box,
@@ -17,11 +20,23 @@ const AddRestaurantForm = () => {
     descripcion: '',
     horario: '',
     imagen: '',
+    contacto: '',
   });
+
+  const [imagenes, setImagenes] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+   const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setImagenes((prev) => [...prev, ...files]);
+  };
+
+  const handleRemoveImage = (index) => {
+    setImagenes((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -35,9 +50,10 @@ const AddRestaurantForm = () => {
     data.append('direccion', formData.direccion);
     data.append('descripcion', formData.descripcion);
     data.append('horario', formData.horario);
-    if (formData.imagen) {
-      data.append('images', formData.imagen); // debe coincidir con el @UploadedFiles('images')
-    }
+    data.append('contacto', formData.contacto);
+    imagenes.forEach((img) => {
+      data.append('images', img);
+    });
 
     const res = await axios.post('http://localhost:3000/restaurante/create', data, {
       headers: {
@@ -107,25 +123,52 @@ const AddRestaurantForm = () => {
           </Grid>
 
           <Grid item xs={12}>
-            <Button
-              variant="outlined"
-              component="label"
+            <TextField
+              label="Contacto"
+              name="contacto"
               fullWidth
-            >
-              Subir Imagen
+              value={formData.contacto}
+              onChange={handleChange}
+              placeholder="Ej: +54 9 261 1234567"
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button variant="outlined" component="label" fullWidth>
+              Subir Imágenes
               <input
                 type="file"
                 hidden
                 accept="image/*"
-                name="imagen"
-                onChange={(e) => setFormData(prev => ({ ...prev, imagen: e.target.files[0] }))}
+                multiple
+                onChange={handleImageChange}
               />
             </Button>
-            {formData.imagen && (
-              <Typography variant="body2" mt={1}>
-                Imagen seleccionada: {formData.imagen.name}
-              </Typography>
-            )}
+
+            <Box mt={2} display="flex" flexWrap="wrap" gap={2}>
+              {imagenes.map((img, index) => (
+                <Box key={index} position="relative">
+                  <img
+                    src={URL.createObjectURL(img)}
+                    alt={`preview-${index}`}
+                    style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 8 }}
+                  />
+                  <IconButton
+                    size="small"
+                    onClick={() => handleRemoveImage(index)}
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                      backgroundColor: 'rgba(0,0,0,0.5)',
+                      color: '#fff',
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              ))}
+            </Box>
           </Grid>
 
           <Grid item xs={12}>
