@@ -32,7 +32,7 @@ export class ReservaController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('usuario')
+  @Get('mis-reservas')
   async obtenerReservasDelUsuario(@Req() req: Request) {
     const userId = req['user'].sub;
     return this.reservaService.findReservasByUsuario(userId);
