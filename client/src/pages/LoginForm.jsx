@@ -20,29 +20,43 @@ const LoginForm = () => {
   }
 
   axios
-    .post("http://localhost:3000/user/login", {
-      email: data.email,
-      password: data.password,
-    })
-    .then((res) => {
-      const { user, access_token } = res.data;
-      localStorage.setItem("token", access_token);
-      localStorage.setItem("tipo", user.tipo);
-      localStorage.setItem("userId", user.id);
-      //addrestaurantes
-      ///restaurante/${user.id}
-      // Redirigir según el tipo
-      if (user.tipo === "restaurante") {
-        navigate(`/restaurante/${user.id}`); // 🔁 Usa la ruta correcta según tu router
-      } else if (user.tipo === "turista") {
-        navigate("/VistaMontaña");
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      alert("Error al iniciar sesión");
-    });
-};
+  .post("http://localhost:3000/user/login", {
+    email: data.email,
+    password: data.password,
+  })
+  .then((res) => {
+    const { user, access_token } = res.data;
+    localStorage.setItem("token", access_token);
+    localStorage.setItem("tipo", user.tipo);
+    localStorage.setItem("userId", user.id);
+    localStorage.setItem("nombre", user.nombre);
+
+    // Recuperar datos desde localStorage
+    const tipo = localStorage.getItem("tipo");
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    const nombre = localStorage.getItem("nombre");
+
+    console.log("Usuario logueado:", { tipo, userId, token,nombre });
+
+    if (tipo && userId) {
+      console.log(`El usuario logueado es de tipo "${tipo}" con ID ${userId}`);
+    } else {
+      console.log("No hay usuario logueado.");
+    }
+
+    // Redirigir según el tipo
+    if (user.tipo === "restaurante") {
+      navigate(`/AddRestaurantForm`);
+    } else if (user.tipo === "turista") {
+      navigate("/VistaMontaña");
+    }
+  })
+  .catch((err) => {
+    console.error(err);
+    alert("Error al iniciar sesión");
+  });
+ };
 
 
 
@@ -68,7 +82,7 @@ const LoginForm = () => {
             value={data.password}
             onChange={handleChange}
           />
-          <Button type="submit" variant="contained" fullWidth>Ingresar</Button>
+          <Button type="submit" sx={{ backgroundColor: '#3D3C3B', color: '#fff' }} fullWidth>Iniciar</Button>
         </form>
       </Paper>
     </Box>

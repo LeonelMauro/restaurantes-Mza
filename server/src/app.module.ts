@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RestauranteModule } from './restaurante/restaurante.module';
-import { RevervaModule } from './reverva/reverva.module';
 import { ReseñaModule } from './reseña/reseña.module';
 import { PromocionModule } from './promocion/promocion.module';
 import { UserModule } from './user/user.module';
 import { MenuModule } from './menu/menu.module';
 import { PhotosModule } from './photos/photos.module';
+import { ReservaModule } from './reverva/reserva.module';
 
 @Module({
   imports: [
@@ -29,7 +29,7 @@ import { PhotosModule } from './photos/photos.module';
       inject: [ConfigService],
     }),
     RestauranteModule,
-    RevervaModule,
+    ReservaModule,
     ReseñaModule,
     PromocionModule,
     UserModule,

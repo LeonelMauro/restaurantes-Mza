@@ -1,30 +1,53 @@
 import React from 'react';
-import { Box, Typography, Link, IconButton } from '@mui/material';
+import { Box, Typography, IconButton, Link } from '@mui/material';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 
 const Footer = () => {
   return (
-    <Box sx={{ backgroundColor: '#8B5E3C', color: 'white', p: 3, mt: 5 }}>
-      <Typography variant="body1" align="center">
-        © {new Date().getFullYear()} Servicios Técnicos Industriales - Todos los derechos reservados.
+    <Box sx={{ backgroundColor: '#8B5E3C', color: 'white', p: 4, mt: 10 }}>
+      <Typography variant="h6">
+        Comer Entre Montañas
       </Typography>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
-        <IconButton href="mailto:contacto@empresa.com" sx={{ color: 'white' }}>
-          <EmailIcon />
-        </IconButton>
-        <IconButton href="tel:+5492610000000" sx={{ color: 'white' }}>
-          <PhoneIcon />
-        </IconButton>
-        <IconButton href="https://facebook.com" target="_blank" sx={{ color: 'white' }}>
-          <FacebookIcon />
-        </IconButton>
+      <Typography variant="body2" sx={{ mt: 2 }}>
+        Explorá lo mejor de la gastronomía mendocina con vistas inigualables.
+      </Typography>
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+        <Typography variant="body2">
+          Contacto:{" "}
+          <Link
+            href="mailto:contacto@comerentremontanas.com"
+            color="inherit"
+            underline="hover"
+          >
+            contacto@comerentremontanas.com
+          </Link>{" "}
+          | Tel: +54 9 261 123 4567
+        </Typography>
+
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <IconButton href="mailto:contacto@comerentremontanas.com" sx={{ color: 'white' }}>
+            <EmailIcon />
+          </IconButton>
+          <IconButton href="tel:+5492611234567" sx={{ color: 'white' }}>
+            <PhoneIcon />
+          </IconButton>
+          <IconButton
+            href="https://facebook.com/comerentremontanas"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ color: 'white' }}
+          >
+            <FacebookIcon />
+          </IconButton>
+        </Box>
       </Box>
 
-      <Typography variant="body2" align="center" sx={{ mt: 1 }}>
-        Contacto: contacto@empresa.com | Tel: +54 9 261 000 0000
+      <Typography variant="caption" align="center" display="block" sx={{ mt: 2 }}>
+        © {new Date().getFullYear()} Comer Entre Montañas - Todos los derechos reservados.
       </Typography>
     </Box>
   );

@@ -24,7 +24,7 @@ const Header = () => {
 
   const sections = [
     { name: 'Inicio', path: '/' },
-    { name: 'Login', path: '/login' },
+    { name: 'Iniciar seción', path: '/login' },
     { name: 'Registro', path: '/register' },
     { name: 'Servicio', path: '/servicios' },
     { name: 'Restaurantes', path: '/VistaMontaña' },

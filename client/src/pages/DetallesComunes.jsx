@@ -1,6 +1,4 @@
 import { Link } from 'react-router-dom';
-import Slider from 'react-slick';
-
 
 import {
   Box,
@@ -54,7 +52,7 @@ export default function VistaMontaña() {
           {restaurantes.map((resto, index) => (
             <Grid item xs={12} sm={4} key={index}>
               <Link
-                    to={`/restaurante/${resto.id}`}
+                    to={`/RestauranteDetalle`}
                     style={{ textDecoration: 'none' }}
                 >
               <Card
@@ -81,14 +79,11 @@ export default function VistaMontaña() {
                   />
                 )}
                 <CardContent>
-                  <Typography variant="h3" align='center' sx={{fontFamily: 'Kaushan Script', fontWeight: 'bold', color: '#000' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#000' }}>
                     {resto.nombre}
                   </Typography>
                   <Typography variant="body2" sx={{ color: '#333' }}>
                     {resto.descripcion}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#333' }}>
-                    {resto.direccion}
                   </Typography>
                 </CardContent>
               </Card>
@@ -115,7 +110,7 @@ export default function VistaMontaña() {
           {lugares.map((lugar, index) => (
             <Grid item xs={12} sm={4} key={index}>
              <Link
-                to={`/BeneficiosDep`} // Asegurate que el objeto tenga el id
+                to={`/restaurantes/${lugar.nombre}`} // Asegurate que el objeto tenga el id
                 style={{ textDecoration: 'none' }}
             >
               <Card

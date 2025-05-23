@@ -8,7 +8,6 @@ import {
   CardMedia,
   Paper
 } from '@mui/material';
-import { Link as ScrollLink } from 'react-scroll';
 import { Link } from 'react-router-dom';
 import BackgroundCarousel from '../Components/BackgroundCarousel';
 import descubrir from '../assets/img/nosotros/descubrir1.jpg';
@@ -94,27 +93,11 @@ const Home = () => {
             COMER ENTRE MONTAÑAS
           </Typography>
 
-          <ScrollLink to="servicios" smooth={true} duration={500} offset={-64}>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                mt: 3,
-                backgroundColor: '#8B5E3C',
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: '#6a452c',
-                },
-              }}
-            >
-              Ver servicios
-            </Button>
-          </ScrollLink>
         </Box>
       </Box>
 
       {/* Cómo funciona */}
-      <Box sx={{ py: 8, px: 4, textAlign: 'center', backgroundColor: '#f5f5f5' }}>
+      <Box sx={{ py: 8, px: 4, textAlign: 'center', backgroundColor: '#F5E6D3' }}>
         <Typography variant="h2" sx={{ fontFamily: 'Kaushan Script', mb: 6, fontWeight: 'bold', color: 'black' }}>
           ¿Cómo funciona?
         </Typography>
@@ -132,7 +115,7 @@ const Home = () => {
       </Box>
 
       {/* Comidas destacadas */}
-      <Box id="nosotros" sx={{ py: 10, px: 4, textAlign: 'center', backgroundColor: '#EFECE7' }}>
+      <Box id="nosotros" sx={{ py: 10, px: 4, textAlign: 'center', backgroundColor: '#D2B48C' }}>
         <Typography
           variant="h2"
           gutterBottom
@@ -170,7 +153,7 @@ const Home = () => {
       </Box>
 
       {/* Testimonios */}
-      <Box sx={{ py: 8, px: 4, backgroundColor: '#F5E6D3', textAlign: 'center' }}>
+      <Box sx={{ py: 8, px: 4, backgroundColor: '#B29C7D', textAlign: 'center' }}>
         <Typography variant="h2" sx={{ fontFamily: 'Kaushan Script', mb: 6, fontWeight: 'bold', color: 'black' }}>
           Lo que dicen nuestros visitantes
         </Typography>
@@ -199,7 +182,7 @@ const Home = () => {
         <Button
           variant="outlined"
           component={Link}
-          to="/agregar-restaurante"
+          to="/beneficios"
           sx={{
             color: '#8B5E3C',
             borderColor: '#8B5E3C',

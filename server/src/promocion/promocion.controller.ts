@@ -1,34 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+} from '@nestjs/common';
 import { PromocionService } from './promocion.service';
 import { CreatePromocionDto } from './dto/create-promocion.dto';
-import { UpdatePromocionDto } from './dto/update-promocion.dto';
 
-@Controller('promocion')
+@Controller('promociones')
 export class PromocionController {
   constructor(private readonly promocionService: PromocionService) {}
 
   @Post()
-  create(@Body() createPromocionDto: CreatePromocionDto) {
-    return this.promocionService.create(createPromocionDto);
+  crear(@Body() dto: CreatePromocionDto) {
+    return this.promocionService.crear(dto);
   }
 
   @Get()
-  findAll() {
-    return this.promocionService.findAll();
+  obtenerTodas() {
+    return this.promocionService.obtenerTodas();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.promocionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePromocionDto: UpdatePromocionDto) {
-    return this.promocionService.update(+id, updatePromocionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.promocionService.remove(+id);
+  @Get('restaurante/:id')
+  obtenerPorRestaurante(@Param('id') id: string) {
+    return this.promocionService.obtenerPorRestaurante(Number(id));
   }
 }

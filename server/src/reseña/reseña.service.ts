@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { CreateReseñaDto } from './dto/create-reseña.dto';
 import { UpdateReseñaDto } from './dto/update-reseña.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +6,7 @@ import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Reseña } from './entities/reseña.entity';
 import { Repository } from 'typeorm';
+import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
 
 @Injectable()
 export class ReseñaService {
@@ -19,6 +20,8 @@ export class ReseñaService {
     @InjectRepository(Reseña)
     private reseñaRepository: Repository<Reseña>,
   ){}
+
+  @UseGuards(JwtAuthGuard)
   async create(CreateReseñaDto: CreateReseñaDto) {
     const restaurante= await this.restauranteRepository.findOne({
       where: {id: CreateReseñaDto.restauranteId,},

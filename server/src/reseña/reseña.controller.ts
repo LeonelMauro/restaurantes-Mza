@@ -1,13 +1,15 @@
-import { Controller, Post, Body, Get, Param, Delete, Patch } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete, Patch, UseGuards } from '@nestjs/common';
 import { ReseñaService } from './reseña.service';
 import { CreateReseñaDto } from './dto/create-reseña.dto';
 import { UpdateReseñaDto } from './dto/update-reseña.dto';
+import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
 
 @Controller('resenas')
 export class ReseñaController {
   constructor(private readonly reseñaService: ReseñaService) {}
 
   // Crear una reseña
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createReseñaDto: CreateReseñaDto) {
     return this.reseñaService.create(createReseñaDto);

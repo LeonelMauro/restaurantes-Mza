@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState({ name: "", email: "", password: "" });
+  const [data, setData] = useState({ nombre: "", email: "", password: "", tipo: "turista" });
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -14,8 +14,7 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Cambia la URL por la de tu backend
-      const res = await axios.post("http://localhost:3000/auth/register", data);
+      const res = await axios.post("http://localhost:3000/user", data);
       alert("Registro exitoso!");
       navigate("/login");
     } catch (error) {
@@ -30,11 +29,11 @@ const RegisterForm = () => {
         <Typography variant="h5" mb={2}>Registro</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
-            name="name"
+            name="nombre"
             label="Nombre"
             fullWidth
             margin="normal"
-            value={data.name}
+            value={data.nombre}
             onChange={handleChange}
           />
           <TextField
@@ -54,7 +53,7 @@ const RegisterForm = () => {
             value={data.password}
             onChange={handleChange}
           />
-          <Button type="submit" variant="contained" fullWidth>Registrarse</Button>
+          <Button type="submit" sx={{ backgroundColor: '#3D3C3B', color: '#fff' }} fullWidth>Registrarse</Button>
         </form>
       </Paper>
     </Box>

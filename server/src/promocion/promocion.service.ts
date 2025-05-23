@@ -1,26 +1,46 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Promocion } from './entities/promocion.entity';
+import { Repository } from 'typeorm';
 import { CreatePromocionDto } from './dto/create-promocion.dto';
-import { UpdatePromocionDto } from './dto/update-promocion.dto';
+import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
 
 @Injectable()
 export class PromocionService {
-  create(createPromocionDto: CreatePromocionDto) {
-    return 'This action adds a new promocion';
+  constructor(
+    @InjectRepository(Promocion)
+    private readonly promocionRepository: Repository<Promocion>,
+
+    @InjectRepository(Restaurante)
+    private readonly restauranteRepository: Repository<Restaurante>,
+  ) {}
+
+  async crear(dto: CreatePromocionDto): Promise<Promocion> {
+    const restaurante = await this.restauranteRepository.findOne({
+      where: { id: dto.restauranteId },
+    });
+
+    if (!restaurante) throw new Error('Restaurante no encontrado');
+
+    const promocion = this.promocionRepository.create({
+      ...dto,
+      restaurante,
+    });
+
+    return this.promocionRepository.save(promocion);
   }
 
-  findAll() {
-    return `This action returns all promocion`;
+  async obtenerTodas(): Promise<Promocion[]> {
+    return this.promocionRepository.find({
+      relations: ['restaurante'],
+      order: { fechaInicio: 'DESC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} promocion`;
-  }
-
-  update(id: number, updatePromocionDto: UpdatePromocionDto) {
-    return `This action updates a #${id} promocion`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} promocion`;
+  async obtenerPorRestaurante(restauranteId: number): Promise<Promocion[]> {
+    return this.promocionRepository.find({
+      where: { restaurante: { id: restauranteId } },
+      relations: ['restaurante'],
+    });
   }
 }

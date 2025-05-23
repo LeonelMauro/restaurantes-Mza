@@ -36,8 +36,8 @@ export class MenuService {
 }
 
 
-  findAll() {
-    return `This action returns all menu`;
+  async findAll() {
+    return this.menuRepository.find();
   }
 
   findOne(id: number) {

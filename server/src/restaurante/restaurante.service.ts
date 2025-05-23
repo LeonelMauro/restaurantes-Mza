@@ -56,8 +56,17 @@ async findAll(): Promise<Restaurante[]> {
 }
 async findOne(id: number): Promise<Restaurante> {
   const restaurante = await this.restauranteRepository.findOne({
-    where: { id }, // el "+" convierte string a número
-    relations: ['usuario', 'photos'],
+    where: { id },
+    relations: [
+      'usuario',
+      'photos',
+      'resenas',
+      'resenas.usuario',
+      'menu',
+      'reservas',
+      'reservas.usuario',
+      'promociones',
+    ],
   });
 
   if (!restaurante) {
@@ -66,5 +75,6 @@ async findOne(id: number): Promise<Restaurante> {
 
   return restaurante;
 }
+
 
 }

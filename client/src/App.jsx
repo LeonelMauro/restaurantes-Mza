@@ -11,6 +11,9 @@ import ListaRestaurantes from './pages/ListaRestaurantes';
 import AddRestaurantForm from './pages/AddRestaurantForm';
 import VistaMontaña from './pages/VistaMontaña';
 import RestauranteDetalle from './pages/RestauranteDetalle';
+import DetalleComunes from './pages/DetallesComunes';
+import BeneficiosRegistro from './pages/BeneficiosRegistro';
+import BeneficiosDep from './pages/Departamento';
 
 function App() {
   return (
@@ -26,6 +29,11 @@ function App() {
         <Route path="/addrestaurantes" element={<AddRestaurantForm />} />
         <Route path="/VistaMontaña" element={<VistaMontaña />} />
         <Route path="/restaurante/:id" element={<RestauranteDetalle />} />
+        <Route path="/DetalleComunes" element={<DetalleComunes />} />
+        <Route path="/beneficios" element={<BeneficiosRegistro />} />
+        <Route path="/BeneficiosDep" element={<BeneficiosDep />} />
+        
+
 
       </Routes>
       <Footer/>
