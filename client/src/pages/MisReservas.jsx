@@ -92,7 +92,10 @@ const MisReservas = () => {
                   Personas: {reserva.cantidadPersonas}
                 </Typography>
                 <Typography variant="body2">
-                  Hora: {reserva.fecha}
+                  Hora: {new Date(reserva.fecha).toLocaleTimeString('es-AR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </Typography>
               </CardContent>
             </Card>

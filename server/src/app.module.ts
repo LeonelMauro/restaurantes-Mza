@@ -7,13 +7,17 @@ import { PromocionModule } from './promocion/promocion.module';
 import { UserModule } from './user/user.module';
 import { MenuModule } from './menu/menu.module';
 import { PhotosModule } from './photos/photos.module';
-import { ReservaModule } from './reverva/reserva.module';
-
+import { ReservaModule } from './reserva/reserva.module';
+import { PerfilModule } from './perfil/perfil.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BebidasModule } from './bebidas/bebidas.module';
+import { EventosModule } from './eventos/eventos.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
@@ -35,6 +39,9 @@ import { ReservaModule } from './reverva/reserva.module';
     UserModule,
     MenuModule,
     PhotosModule,
+    PerfilModule,
+    BebidasModule,
+    EventosModule,
   ],
 })
 export class AppModule {}

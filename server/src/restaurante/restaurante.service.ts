@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateRestauranteDto } from './dto/create-restaurante.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Photo } from 'src/photos/entities/photo.entity';
+import { UpdateRestauranteDto } from './dto/update-restaurante.dto';
 
 @Injectable()
 export class RestauranteService {
@@ -66,6 +67,7 @@ async findOne(id: number): Promise<Restaurante> {
       'reservas',
       'reservas.usuario',
       'promociones',
+      'bebidas'
     ],
   });
 
@@ -74,6 +76,46 @@ async findOne(id: number): Promise<Restaurante> {
   }
 
   return restaurante;
+}
+async update(id: number, updateRestauranteDto: UpdateRestauranteDto): Promise<Restaurante> {
+  const restaurante = await this.restauranteRepository.findOne({
+    where: { id },
+    relations: [
+      'usuario',
+      'photos',
+      'resenas',
+      'resenas.usuario',
+      'menu',
+      'reservas',
+      'reservas.usuario',
+      'promociones',
+      
+    ],
+  });
+
+  if (!restaurante) {
+    throw new NotFoundException(`Restaurante con ID ${id} no encontrado`);
+  }
+
+  if (!updateRestauranteDto || Object.keys(updateRestauranteDto).length === 0) {
+    throw new Error('No se proporcionaron valores para actualizar');
+  }
+
+  // Actualiza los campos
+  restaurante.nombre = updateRestauranteDto.nombre;
+  restaurante.descripcion = updateRestauranteDto.descripcion;
+  restaurante.direccion = updateRestauranteDto.direccion;
+  restaurante.horario = updateRestauranteDto.horario;
+
+  return await this.restauranteRepository.save(restaurante);
+}
+async findByUserId(userId: number): Promise<Restaurante | null> {
+  return this.restauranteRepository.findOne({
+    where: {
+      usuario: { id: userId },
+    },
+    relations: ['usuario'],
+  });
 }
 
 

@@ -8,6 +8,7 @@ import {
   UseInterceptors,
   Get,
   Param,
+  Put,
 } from '@nestjs/common';
 import { RestauranteService } from './restaurante.service';
 import { CreateRestauranteDto } from './dto/create-restaurante.dto';
@@ -17,6 +18,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { Restaurante } from './entities/restaurante.entity';
+import { UpdateRestauranteDto } from './dto/update-restaurante.dto';
 
 @Controller('restaurante')
 export class RestauranteController {
@@ -54,5 +56,22 @@ export class RestauranteController {
 async findOne(@Param('id') id: number): Promise<Restaurante> {
   return this.restauranteService.findOne(id);
 }
+  @Put(':id')
+  async update (
+    @Param('id') id: number,
+    @Body() updateRestauranteDto: UpdateRestauranteDto,
+    @UploadedFiles() photos: Express.Multer.File[],
+  ) {
+
+    return this.restauranteService.update(id, updateRestauranteDto);
+  };
+  @Get('/by-user/:userId')
+  async findByUserId(@Param('userId') userId: number): Promise<Restaurante | null> {
+    const restaurante = await this.restauranteService.findByUserId(userId);
+    if (!restaurante) return null;
+    return restaurante;
+  }
+
+
 
 }

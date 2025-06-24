@@ -25,6 +25,10 @@ export default function RestauranteDetalle() {
   //menu
   const [menu, setMenu] = useState([]);
   const [mostrarMenu, setMostrarMenu] = useState(false);
+
+  //bebidas
+  const [bebidas, setBebidas] = useState([]);
+  const [mostrarBebidas, setMostrarBebidas] = useState(false);
   //reserva
   const [cantidadPersonas, setCantidadPersonas] = useState(1);
 
@@ -43,6 +47,7 @@ export default function RestauranteDetalle() {
       setRestaurante(data);
       if (data.resenas) setResenas(data.resenas);
       if (data.menu) setMenu(data.menu);
+      if (data.bebidas) setBebidas(data.bebidas);
       setLoading(false);
     })
     .catch((err) => {
@@ -243,9 +248,18 @@ export default function RestauranteDetalle() {
           >
             {mostrarMenu ? "Ocultar menú" : "Ver menú"}
           </Button>
+          <Button
+            variant="outlined"
+            color="#3D3C3B"
+            onClick={() => setMostrarBebidas(!mostrarBebidas)}
+            sx={{ backgroundColor: '#3D3C3B', color: '#fff' }}
+          >
+            {mostrarBebidas ? "Ocultar menú" : "Ver Bebidas"}
+          </Button>
+          
           {mostrarMenu && (
               <Box sx={{ mt: 3 }}>
-                <Typography variant="h5" gutterBottom>
+                <Typography variant="h3" align='center' sx={{fontFamily: 'Kaushan Script'}} gutterBottom >
                   Menú del restaurante
                 </Typography>
                 {menu.length === 0 ? (
@@ -260,8 +274,29 @@ export default function RestauranteDetalle() {
                   ))
                 )}
               </Box>
+
+            )}
+            {mostrarBebidas && (
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="h3" align="center" sx={{ fontFamily: 'Kaushan Script', mb: 3 }} gutterBottom>
+                  Bebidas del restaurante
+                </Typography>
+                {bebidas.length === 0 ? (
+                  <Typography variant="body1">Este restaurante aún no cargó su bebidas.</Typography>
+                ) : (
+                  bebidas.map((item) => (
+                    <Box key={item.id} sx={{ p: 2, borderBottom: '1px solid #ccc' }}>
+                      <Typography variant="subtitle1">{item.nombre}</Typography>
+                      <Typography variant="body2">{item.descripcion}</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>${item.precio}</Typography>
+                    </Box>
+                  ))
+                )}
+              </Box>
+              
             )}
         </Box>
+        
       )}
 
       {/* Formulario de Reseña */}

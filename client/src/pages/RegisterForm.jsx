@@ -24,7 +24,19 @@ const RegisterForm = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+    <Box display="flex" justifyContent="center" flexDirection='column' alignItems="center" height="100vh">
+      <Typography
+                variant="h2"
+                align="center"
+                sx={{
+                  fontFamily: 'Kaushan Script',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  mb: 4,
+                }}
+              >
+                Comenza yá.!! 
+              </Typography>
       <Paper elevation={3} sx={{ padding: 4, width: 300 }}>
         <Typography variant="h5" mb={2}>Registro</Typography>
         <form onSubmit={handleSubmit}>

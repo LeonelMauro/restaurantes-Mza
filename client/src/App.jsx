@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Header from './Components/Headers';
 import LoginForm from './pages/LoginForm';
 import RegisterForm from './pages/RegisterForm';
-import Home from './Pages/Home';
+import Home from './pages/Home';
 import Footer from './Components/Footer';
 import Servicios from './pages/Servicios';
 import { Toolbar } from '@mui/material';
@@ -14,6 +14,9 @@ import RestauranteDetalle from './pages/RestauranteDetalle';
 import BeneficiosRegistro from './pages/BeneficiosRegistro';
 import BeneficiosDep from './pages/Departamento';
 import MisReservas from './pages/MisReservas';
+import MiRestaurante from './pages/MiRestaurante';
+import FormularioMenu from './pages/FormularioMenu';
+import BebidasManager from './pages/Bebidas';
 
 function App() {
   return (
@@ -32,6 +35,9 @@ function App() {
         <Route path="/beneficios" element={<BeneficiosRegistro />} />
         <Route path="/BeneficiosDep" element={<BeneficiosDep />} />
         <Route path="/mis-reservas" element={<MisReservas />} />
+        <Route path="/mi-restaurante/:id" element={<MiRestaurante />} />
+        <Route path="/menu/create" element={<FormularioMenu />} />
+        <Route path="/bebidas" element={<BebidasManager />} />
 
       </Routes>
       <Footer/>

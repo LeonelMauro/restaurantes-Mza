@@ -72,69 +72,66 @@ const AddRestaurantForm = () => {
 
   return (
     <Paper elevation={3} sx={{ p: 4, maxWidth: 600, mx: 'auto', mt: 8 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography  variant="h2" align="center" gutterBottom>
         Agregar Restaurante
       </Typography>
       <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
         <Grid container spacing={2}>
-          <Grid item xs={12}>
             <TextField
-              label="Nombre"
+              label="Nombre de Resto"
               name="nombre"
+              color="#3D3C3B"
               fullWidth
               value={formData.nombre}
               onChange={handleChange}
               required
             />
-          </Grid>
+            
 
-          <Grid item xs={12}>
             <TextField
               label="Dirección"
               name="direccion"
+              color="#3D3C3B"
               fullWidth
               value={formData.direccion}
               onChange={handleChange}
               required
             />
-          </Grid>
+        
 
-          <Grid item xs={12}>
             <TextField
-              label="Tipo de comida"
+              label="Descripción"
               name="descripcion"
+              color="#3D3C3B"
               fullWidth
               value={formData.descripcion}
               onChange={handleChange}
               placeholder="Ej: Parrilla, Italiana, Vegana"
               required
             />
-          </Grid>
 
-          <Grid item xs={12}>
             <TextField
               label="Horario de atención"
               name="horario"
+              color="#3D3C3B"
               fullWidth
               value={formData.horario}
               onChange={handleChange}
               placeholder="Ej: Lunes a Domingo, 12:00 a 00:00"
             />
-          </Grid>
 
-          <Grid item xs={12}>
             <TextField
               label="Contacto"
               name="contacto"
+              color="#3D3C3B"
               fullWidth
               value={formData.contacto}
               onChange={handleChange}
               placeholder="Ej: +54 9 261 1234567"
             />
-          </Grid>
 
           <Grid item xs={12}>
-            <Button variant="outlined" component="label" fullWidth>
+            <Button variant="outlined" fullWidth component="label" sx={{ color: '#3D3C3B', borderColor: '#3D3C3B' }}>
               Subir Imágenes
               <input
                 type="file"
@@ -144,6 +141,7 @@ const AddRestaurantForm = () => {
                 onChange={handleImageChange}
               />
             </Button>
+
 
             <Box mt={2} display="flex" flexWrap="wrap" gap={2}>
               {imagenes.map((img, index) => (
@@ -170,17 +168,23 @@ const AddRestaurantForm = () => {
               ))}
             </Box>
           </Grid>
-
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-            >
-              Guardar Restaurante
-            </Button>
+           <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  backgroundColor: '#3D3C3B',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: '#2b2b2a',
+                  },
+                }}
+              >
+                Guardar Restaurante
+              </Button>
           </Grid>
+
         </Grid>
       </Box>
     </Paper>

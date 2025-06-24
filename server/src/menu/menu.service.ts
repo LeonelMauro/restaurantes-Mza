@@ -3,7 +3,7 @@ import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
-import { Repository } from 'typeorm';
+import { Repository, Unique } from 'typeorm';
 import { Menu } from './entities/menu.entity';
 
 @Injectable()
@@ -44,11 +44,41 @@ export class MenuService {
     return `This action returns a #${id} menu`;
   }
 
-  update(id: number, updateMenuDto: UpdateMenuDto) {
-    return `This action updates a #${id} menu`;
+  async updateMenu(id: number, updateMenuDto: UpdateMenuDto) {
+    const menu =await this.menuRepository.findOne({
+      where:{id},
+      relations: ['restaurante'],
+    })
+    
+    if (!menu){
+      throw new Error('Cominda no encontrada')
+    }
+    //Solo se actualiza el dato a modificar
+
+    if (updateMenuDto.nombre !== undefined){
+      menu.nombre = updateMenuDto.nombre
+    }
+    if (updateMenuDto.descripcion !== undefined){
+      menu.descripcion= updateMenuDto.descripcion
+    }
+    if (updateMenuDto.precio !== undefined){
+      menu.precio= updateMenuDto.precio
+    }
+
+    return this.menuRepository.save(menu);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} menu`;
+  async remove(id: number) {
+    const menu = await this.menuRepository.findOne({
+      where: {id}
+    })
+
+
+    if (!menu){
+      throw new Error ('Comida no encontrada')
+    }
+    
+    await this.menuRepository.remove(menu) ;
+    return {message :'Comida eliminada correctamente' }
   }
 }

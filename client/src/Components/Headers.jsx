@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from '../assets/img/logo.png';
 import {
   AppBar,
@@ -11,38 +11,107 @@ import {
   ListItemText,
   useMediaQuery,
   Button,
+  CircularProgress,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useTheme } from '@mui/material/styles';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Header = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [restauranteExistente, setRestauranteExistente] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
 
-  const isLoggedIn = localStorage.getItem('token'); // Cambiá 'token' por lo que uses para verificar login
+  const isLoggedIn = localStorage.getItem('token');
+  const tipoUsuario = localStorage.getItem('tipo');
+  const userId = localStorage.getItem('userId');
+
+  useEffect(() => {
+    const fetchRestaurante = async () => {
+      if (isLoggedIn && tipoUsuario === 'restaurante' && userId) {
+        try {
+          const token = localStorage.getItem('token');
+          const res = await axios.get(`http://localhost:3000/restaurante/by-user/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setRestauranteExistente(res.data);
+        } catch (err) {
+          console.error('Error al obtener restaurante:', err);
+          setRestauranteExistente(null);
+        }
+      }
+      setLoading(false);
+    };
+
+    fetchRestaurante();
+  }, [isLoggedIn, tipoUsuario, userId]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); // o 'user', según lo que uses
+    localStorage.clear();
     navigate('/');
-    window.location.reload(); // para refrescar el header
+    window.location.reload();
   };
 
-  const sections = [
+  const sectionsBase = [
     { name: 'Inicio', path: '/' },
-    ...(isLoggedIn ? [{ name: 'Mis reservas', path: '/mis-reservas' }] : []),
-    ...(isLoggedIn
-      ? []
-      : [
-          { name: 'Iniciar sesión', path: '/login' },
-          { name: 'Registro', path: '/register' },
-        ]),
     { name: 'Servicio', path: '/servicios' },
     { name: 'Restaurantes', path: '/VistaMontaña' },
   ];
+
+  const sectionsRestauranteSinRegistro = [
+    { name: 'Registrar restaurante', path: '/addrestaurantes' },
+  ];
+
+  const sectionsRestauranteConRegistro = [
+    { name: 'Mi Restaurante', path: `/mi-restaurante/${restauranteExistente?.id}` },
+    { name: 'Menú', path: '/menu/create' },
+    { name: 'Bebidas', path: '/bebidas' },
+    { name: 'Promociones', path: '/promociones' },
+    { name: 'Eventos', path: '/eventos' },
+  ];
+
+  const sectionsTurista = [
+    { name: 'Mis Reservas', path: '/mis-reservas' },
+  ];
+
+  const sectionsNoLogin = [
+    { name: 'Iniciar sesión', path: '/login' },
+    { name: 'Registro', path: '/register' },
+  ];
+
+  let sections = [...sectionsBase];
+
+  if (!loading) {
+    if (isLoggedIn && tipoUsuario === 'restaurante') {
+      if (restauranteExistente) {
+        sections = [...sections, ...sectionsRestauranteConRegistro];
+      } else {
+        sections = [...sections, ...sectionsRestauranteSinRegistro];
+      }
+    } else if (isLoggedIn && tipoUsuario === 'turista') {
+      sections = [...sections, ...sectionsTurista];
+    } else if (!isLoggedIn) {
+      sections = [...sections, ...sectionsNoLogin];
+    }
+  }
+
+  if (loading) {
+    return (
+      <AppBar position="fixed" color="default" elevation={1}>
+        <Toolbar sx={{ backgroundColor: '#8B5E3C' }}>
+          <CircularProgress size={24} sx={{ color: '#F5E6D3', mx: 'auto' }} />
+        </Toolbar>
+      </AppBar>
+    );
+  }
 
   return (
     <>
@@ -68,7 +137,7 @@ const Header = () => {
                 color="inherit"
                 onClick={() => setOpenDrawer(true)}
               >
-                <MenuIcon sx={{ color: 'white', flexGrow: 1 }} />
+                <MenuIcon sx={{ color: 'white' }} />
               </IconButton>
               <Drawer
                 anchor="right"
@@ -113,11 +182,8 @@ const Header = () => {
                       1px  1px 2px rgba(0,0,0,1)
                     `,
                     textDecoration: 'none',
-                    cursor: 'pointer',
                     fontSize: '0.9rem',
                     fontWeight: 500,
-                    textTransform: 'capitalize',
-                    transition: 'background 0.3s',
                     padding: '4px 10px',
                     borderRadius: '4px',
                   }}

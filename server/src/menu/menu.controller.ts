@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
+import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
 
 @Controller('menu')
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 
-  @Post()
+  @UseGuards(JwtAuthGuard) 
+  @Post('create')
   create(@Body() createMenuDto: CreateMenuDto) {
     return this.menuService.create(createMenuDto);
   }
@@ -24,7 +26,7 @@ export class MenuController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMenuDto: UpdateMenuDto) {
-    return this.menuService.update(+id, updateMenuDto);
+    return this.menuService.updateMenu(+id, updateMenuDto);
   }
 
   @Delete(':id')

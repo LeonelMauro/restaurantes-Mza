@@ -2,9 +2,11 @@ import { Menu } from "src/menu/entities/menu.entity";
 import { Photo } from "src/photos/entities/photo.entity";
 import { Promocion } from "src/promocion/entities/promocion.entity";
 import { Reseña } from "src/reseña/entities/reseña.entity";
-import { Reserva } from "src/reverva/entities/reverva.entity";
+import { Reserva } from "src/reserva/entities/reverva.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Bebida } from "src/bebidas/entities/bebida.entity";
+import { Evento } from "src/eventos/entities/evento.entity";
 
 
 @Entity()
@@ -46,4 +48,11 @@ export class Restaurante {
 
   @OneToMany(() => Reserva, reserva => reserva.restaurante)
   reservas: Reserva[];
+
+  @OneToMany(() => Bebida, bebida => bebida.restaurante)
+  bebidas: Bebida[];
+
+  @OneToMany(() => Evento, evento => evento.restaurante)
+  eventos: Evento[];
+
 }

@@ -47,10 +47,23 @@ const LoginForm = () => {
 
     // Redirigir según el tipo
     if (user.tipo === "restaurante") {
-      navigate(`/AddRestaurantForm`);
-    } else if (user.tipo === "turista") {
-      navigate("/VistaMontaña");
-    }
+        axios
+          .get(`http://localhost:3000/restaurante/by-user/${user.id}`)
+          .then((res) => {
+            if (res.data) {
+              // Ya tiene datos del restaurante cargados
+              navigate(`/mi-restaurante/${res.data.id}`);
+            } else {
+              // No tiene restaurante asociado, lo mandamos al formulario
+              navigate("/addrestaurantes");
+            }
+          })
+          .catch((err) => {
+            console.error("Error al verificar restaurante:", err);
+            alert("Hubo un problema al verificar tus datos.");
+          });
+      }
+
   })
   .catch((err) => {
     console.error(err);
@@ -61,7 +74,21 @@ const LoginForm = () => {
 
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+    <Box display="flex" flexDirection='column' justifyContent="center" alignItems="center" height="100vh">
+      <Box>
+      <Typography
+          variant="h2"
+          align="center"
+          sx={{
+            fontFamily: 'Kaushan Script',
+            fontWeight: 'bold',
+            color: 'black',
+            mb: 4,
+          }}
+        >
+          Bienvenidos
+        </Typography>
+      </Box>
       <Paper elevation={3} sx={{ padding: 4, width: 300 }}>
         <Typography variant="h5" mb={2}>Iniciar sesión</Typography>
         <form onSubmit={handleSubmit}>
@@ -69,6 +96,7 @@ const LoginForm = () => {
             name="email"
             label="Email"
             fullWidth
+            color='#3D3C3B'
             margin="normal"
             value={data.email}
             onChange={handleChange}
@@ -77,6 +105,7 @@ const LoginForm = () => {
             name="password"
             label="Contraseña"
             type="password"
+            color='#3D3C3B'
             fullWidth
             margin="normal"
             value={data.password}
