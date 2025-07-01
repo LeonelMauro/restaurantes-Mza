@@ -6,6 +6,7 @@ import { CreateRestauranteDto } from './dto/create-restaurante.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Photo } from 'src/photos/entities/photo.entity';
 import { UpdateRestauranteDto } from './dto/update-restaurante.dto';
+import { Departamento } from 'src/departamento/entities/departamento.entity';
 
 @Injectable()
 export class RestauranteService {
@@ -18,6 +19,9 @@ export class RestauranteService {
 
     @InjectRepository(Photo)
     private photoRepository: Repository<Photo>,
+
+    @InjectRepository(Departamento)
+    private departamentoRepository: Repository<Departamento>
   ) {}
 
   async create(dto: CreateRestauranteDto, userId: number, imagePaths: string[]) {
@@ -67,7 +71,8 @@ async findOne(id: number): Promise<Restaurante> {
       'reservas',
       'reservas.usuario',
       'promociones',
-      'bebidas'
+      'bebidas',
+      'departamento'
     ],
   });
 
@@ -100,6 +105,18 @@ async update(id: number, updateRestauranteDto: UpdateRestauranteDto): Promise<Re
   if (!updateRestauranteDto || Object.keys(updateRestauranteDto).length === 0) {
     throw new Error('No se proporcionaron valores para actualizar');
   }
+  if (updateRestauranteDto.departamento !== undefined) {
+  const departamento = await this.departamentoRepository.findOne({
+    where: { id: updateRestauranteDto.departamento },
+  });
+
+  if (!departamento) {
+    throw new NotFoundException(`Departamento con ID ${updateRestauranteDto.departamento} no encontrado`);
+  }
+
+  restaurante.departamento = departamento;
+}
+
 
   // Actualiza los campos
   restaurante.nombre = updateRestauranteDto.nombre;

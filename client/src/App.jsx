@@ -17,6 +17,8 @@ import MisReservas from './pages/MisReservas';
 import MiRestaurante from './pages/MiRestaurante';
 import FormularioMenu from './pages/FormularioMenu';
 import BebidasManager from './pages/Bebidas';
+import FormularioDepartamento from './pages/FormularioDepartamento';
+import DepartamentoDialog from './pages/fetchDepartamentos';
 
 function App() {
   return (
@@ -38,6 +40,9 @@ function App() {
         <Route path="/mi-restaurante/:id" element={<MiRestaurante />} />
         <Route path="/menu/create" element={<FormularioMenu />} />
         <Route path="/bebidas" element={<BebidasManager />} />
+        <Route path="/form" element={<FormularioDepartamento />} />
+        <Route path="/form1" element={<DepartamentoDialog />} />
+
 
       </Routes>
       <Footer/>

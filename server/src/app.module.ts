@@ -12,6 +12,7 @@ import { PerfilModule } from './perfil/perfil.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BebidasModule } from './bebidas/bebidas.module';
 import { EventosModule } from './eventos/eventos.module';
+import { DepartamentoModule } from './departamento/departamento.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -42,6 +43,7 @@ import { EventosModule } from './eventos/eventos.module';
     PerfilModule,
     BebidasModule,
     EventosModule,
+    DepartamentoModule,
   ],
 })
 export class AppModule {}

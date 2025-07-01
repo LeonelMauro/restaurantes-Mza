@@ -11,6 +11,8 @@ export class Photo {
 
   @ManyToOne(() => Restaurante, restaurante => restaurante.photos, {
   onDelete: 'CASCADE',
+  nullable: true, // ✅
 })
   restaurante: Restaurante;
+ 
 }

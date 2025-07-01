@@ -71,7 +71,5 @@ async findOne(@Param('id') id: number): Promise<Restaurante> {
     if (!restaurante) return null;
     return restaurante;
   }
-
-
-
+  
 }

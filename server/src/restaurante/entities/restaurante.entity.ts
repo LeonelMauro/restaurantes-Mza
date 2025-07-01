@@ -4,9 +4,10 @@ import { Promocion } from "src/promocion/entities/promocion.entity";
 import { Reseña } from "src/reseña/entities/reseña.entity";
 import { Reserva } from "src/reserva/entities/reverva.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Bebida } from "src/bebidas/entities/bebida.entity";
 import { Evento } from "src/eventos/entities/evento.entity";
+import { Departamento } from "src/departamento/entities/departamento.entity";
 
 
 @Entity()
@@ -54,5 +55,9 @@ export class Restaurante {
 
   @OneToMany(() => Evento, evento => evento.restaurante)
   eventos: Evento[];
+
+  @ManyToOne(() => Departamento, departamento => departamento.restaurantes, { eager: true })
+  departamento: Departamento;
+
 
 }
