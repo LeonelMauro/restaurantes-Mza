@@ -13,6 +13,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { BebidasModule } from './bebidas/bebidas.module';
 import { EventosModule } from './eventos/eventos.module';
 import { DepartamentoModule } from './departamento/departamento.module';
+import { CategoryMenuModule } from './category-menu/category-menu.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -44,6 +45,7 @@ import { DepartamentoModule } from './departamento/departamento.module';
     BebidasModule,
     EventosModule,
     DepartamentoModule,
+    CategoryMenuModule,
   ],
 })
 export class AppModule {}

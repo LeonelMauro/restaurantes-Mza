@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
-import { Photo } from 'src/photos/entities/photo.entity';
 
 @Entity()
 export class Departamento {

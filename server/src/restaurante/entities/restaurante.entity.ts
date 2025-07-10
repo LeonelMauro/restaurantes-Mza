@@ -8,6 +8,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGene
 import { Bebida } from "src/bebidas/entities/bebida.entity";
 import { Evento } from "src/eventos/entities/evento.entity";
 import { Departamento } from "src/departamento/entities/departamento.entity";
+import { CategoryMenu } from "src/category-menu/entities/category-menu.entity";
 
 
 @Entity()
@@ -58,6 +59,8 @@ export class Restaurante {
 
   @ManyToOne(() => Departamento, departamento => departamento.restaurantes, { eager: true })
   departamento: Departamento;
-
+  @
+  OneToMany(() => CategoryMenu, categoria => categoria.restaurante)
+  categoriasMenu: CategoryMenu[];
 
 }

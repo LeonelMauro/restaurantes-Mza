@@ -4,10 +4,11 @@ import { MenuController } from './menu.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Menu } from './entities/menu.entity';
 import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
+import { CategoryMenu } from 'src/category-menu/entities/category-menu.entity';
 
 @Module({
    imports: [
-    TypeOrmModule.forFeature([Menu, Restaurante]) // <-- Esto es lo clave
+    TypeOrmModule.forFeature([Menu, Restaurante,CategoryMenu]) // <-- Esto es lo clave
   ],
   controllers: [MenuController],
   providers: [MenuService],

@@ -5,17 +5,49 @@ import {
   Button,
   Typography,
   Paper,
+  MenuItem, Select, InputLabel, FormControl
 } from '@mui/material';
 import axios from 'axios';
 
 const FormularioMenu = () => {
   const [form, setForm] = useState({
+    categoria: '',
     nombre: '',
     descripcion: '',
     precio: '',
   });
   const [restauranteId, setRestauranteId] = useState(null);
   const [mensaje, setMensaje] = useState('');
+
+  const [formCat, setFormCat]= useState({
+    nombre:'',
+  })
+  const [categories, setCategories] = useState([]);
+  const [categoryId, setCategoryId] = useState('');
+  useEffect(() => {
+  const fetchCategories = async () => {
+    const token = localStorage.getItem('token');
+    if (!token || !restauranteId) return;
+
+    try {
+      const response = await axios.get(`http://localhost:3000/category-menu/by-restaurante/${restauranteId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error al obtener categorías:', error);
+    }
+  };
+
+  if (restauranteId) {
+    fetchCategories();
+  }
+}, [restauranteId]);
+
+
+
 
   useEffect(() => {
     const fetchRestauranteId = async () => {
@@ -38,26 +70,20 @@ const FormularioMenu = () => {
 
     fetchRestauranteId();
   }, []);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
+  
+  const handleSubmitcategoryMenu= async (e) =>{
     e.preventDefault();
-    const token = localStorage.getItem('token');
-
-    if (!token || !restauranteId) {
-      alert('Falta token o restaurante.');
+    const token= localStorage.getItem('token');
+    if(!token || !restauranteId){
+      alert('Falta token o restaurante');
       return;
     }
-
-    try {
+    try{
       await axios.post(
-        'http://localhost:3000/menu/create',
+        'http://localhost:3000/category-menu',
         {
-          ...form,
-          precio: parseFloat(form.precio),
+          ...formCat,
+          nombre: (formCat.nombre),
           restauranteId,
         },
         {
@@ -67,7 +93,52 @@ const FormularioMenu = () => {
         }
       );
       setMensaje('Menú agregado exitosamente');
+      setFormCat({ nombre: '' });
+    } catch (err) {
+      console.error(err);
+      setMensaje('Error al agregar menú');
+    }
+  };    
+    
+      
+  const handleChangeCat = (e) => {
+  setFormCat({ ...formCat, [e.target.name]: e.target.value });
+};
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+
+    if (!token || !restauranteId) {
+      alert('Falta token o restaurante.');
+      return;
+    }
+    
+
+    try {
+      
+      await axios.post(
+        'http://localhost:3000/menu/create',
+        {
+          ...form,
+          precio: parseFloat(form.precio),
+          restauranteId,
+          categoryMenuId: categoryId, // 🔴 este campo es importante
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setMensaje('Menú agregado exitosamente');
       setForm({ nombre: '', descripcion: '', precio: '' });
+      setCategoryId('');
     } catch (err) {
       console.error(err);
       setMensaje('Error al agregar menú');
@@ -77,9 +148,45 @@ const FormularioMenu = () => {
   return (
     <Box display="flex" justifyContent="center" mt={5}>
       <Paper elevation={3} sx={{ padding: 4, width: 400 }}>
+        
+        <Typography variant="h5" gutterBottom>
+          Agregar Categoria
+        </Typography>
+        <form onSubmit={handleSubmitcategoryMenu}>
+          <TextField
+            label="Nombre de la categoría"
+            name="nombre"
+            fullWidth
+            margin="normal"
+            value={formCat.nombre}
+            onChange={handleChangeCat}
+            required
+          />
+          <Button
+            type="submit"
+            fullWidth
+            sx={{ mt: 2, backgroundColor: '#8B5E3C', color: 'white' }}
+          >
+            Guardar Categoría
+          </Button>
+        </form>
         <Typography variant="h5" gutterBottom>
           Agregar ítem al Menú
         </Typography>
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Categoría</InputLabel>
+          <Select
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+            required
+          >
+            {categories.map((cat) => (
+              <MenuItem key={cat.id} value={cat.id}>
+                {cat.nombre}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <form onSubmit={handleSubmit}>
           <TextField
             label="Nombre del plato"

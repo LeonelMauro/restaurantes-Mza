@@ -1,3 +1,4 @@
+import { CategoryMenu } from "src/category-menu/entities/category-menu.entity";
 import { Restaurante } from "src/restaurante/entities/restaurante.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -17,4 +18,7 @@ export class Menu {
 
   @ManyToOne(() => Restaurante, restaurante => restaurante.menu)
   restaurante: Restaurante;
+  
+  @ManyToOne(()=>CategoryMenu,categoryMenu => categoryMenu.menus,{ eager: true })
+  categoryMenu: CategoryMenu;
 }
