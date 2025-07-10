@@ -46,7 +46,7 @@ return this.departamentoService.create(dto, file?.path);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.departamentoService.findOne(+id);
   }
 

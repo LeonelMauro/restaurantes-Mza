@@ -4,12 +4,16 @@ import { Repository } from 'typeorm';
 import { Departamento } from './entities/departamento.entity';
 import { CreateDepartamentoDto } from './dto/create-departamento.dto';
 import { UpdateDepartamentoDto } from './dto/update-departamento.dto';
+import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
 
 @Injectable()
 export class DepartamentoService {
   constructor(
     @InjectRepository(Departamento)
     private readonly departamentoRepository: Repository<Departamento>,
+
+    @InjectRepository(Restaurante)
+    private readonly restauranteRepository: Repository<Restaurante>,
   ) {}
 
   async create(createDepartamentoDto: CreateDepartamentoDto, imagePath?: string) {
@@ -28,7 +32,12 @@ export class DepartamentoService {
   }
 
   async findOne(id: number) {
-    const departamento = await this.departamentoRepository.findOneBy({ id });
+    const departamento = await this.departamentoRepository.findOne({ 
+      where:{id},
+      relations:['restaurantes',
+        'restaurantes.photos',
+      ]
+     });
     if (!departamento) {
       throw new NotFoundException(`Departamento con ID ${id} no encontrado`);
     }

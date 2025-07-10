@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Slider from 'react-slick';
 import {
   Typography,
   CardMedia,
@@ -9,10 +10,29 @@ import {
   TextField,
   Rating,
   Alert,
+  MenuItem,
    Grid, Card, CardContent
 } from '@mui/material';
+import { Tooltip, IconButton } from '@mui/material';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import LiquorIcon from '@mui/icons-material/Liquor';
+import EventIcon from '@mui/icons-material/Event';
+import dayjs from 'dayjs'; // si no lo tenés instalado: npm install dayjs
+
 
 export default function RestauranteDetalle() {
+  const settings = {
+    autoplay: true,
+    autoplaySpeed: 4000,
+    infinite: true,
+    speed: 1000,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    fade: true,
+    arrows: false,
+  };
+
+
   const { id } = useParams();
   const [restaurante, setRestaurante] = useState(null);
   // debajo de const [restaurante, setRestaurante] = useState(null);
@@ -38,7 +58,43 @@ export default function RestauranteDetalle() {
   const [mensaje, setMensaje] = useState('');
   const [reseñaError, setReseñaError] = useState('');
   const [fechaReserva, setFechaReserva] = useState('');
-  
+  const generarHorarios = () => {
+  const horarios = [];
+  for (let h = 10; h <= 23; h++) {
+    horarios.push(`${String(h).padStart(2, '0')}:00`);
+    horarios.push(`${String(h).padStart(2, '0')}:30`);
+  }
+  horarios.push("00:00"); // agregar medianoche
+  return horarios;
+};
+  const horarios = generarHorarios();
+  const generarHorariosDisponibles = (fechaSeleccionada) => {
+  const horaInicio = 10;
+  const horaFin = 24;
+  const intervalos = [];
+
+  const ahora = dayjs();
+  const fechaEsHoy = dayjs(fechaSeleccionada).isSame(ahora, 'day');
+
+  for (let hora = horaInicio; hora < horaFin; hora++) {
+    for (let min of [0, 30]) {
+      const horaStr = `${hora.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+
+      if (fechaEsHoy) {
+        const fechaHora = dayjs(`${fechaSeleccionada}T${horaStr}`);
+        if (fechaHora.isAfter(ahora)) {
+          intervalos.push(horaStr);
+        }
+      } else {
+        intervalos.push(horaStr);
+      }
+    }
+  }
+
+  return intervalos;
+};
+  const hoy = dayjs().format('YYYY-MM-DD');
+
 
   useEffect(() => {
   fetch(`http://localhost:3000/restaurante/${id}`)
@@ -172,30 +228,68 @@ export default function RestauranteDetalle() {
       <Typography variant="h1" align="center" sx={{ fontFamily: 'Kaushan Script', mb: 3 }}>
         {restaurante.nombre}
       </Typography>
-
       {restaurante.photos && restaurante.photos.length > 0 && (
-        <Box sx={{ display: 'flex', gap: 2, mb: 3, overflowX: 'auto' }}>
+        <Box
+        sx={{
+          position: 'relative',
+          left: '50%',
+          right: '50%',
+          marginLeft: '-50vw',
+          marginRight: '-50vw',
+          width: '100vw',
+          backgroundColor: '#1C1C1C',
+          overflow: 'hidden',
+          mt: 2,
+        }}
+      >
+        <Slider {...settings}>
           {restaurante.photos.map((photo) => (
-            <CardMedia
+            <Box
               key={photo.id}
-              component="img"
-              image={`http://localhost:3000/${photo.url}`}
-              alt={restaurante.nombre}
-              sx={{ height: 200, borderRadius: 3 }}
-            />
+              sx={{
+                width: '100vw',
+                height: 500,
+                backgroundColor: '#1C1C1C',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <CardMedia
+                component="img"
+                image={`http://localhost:3000/${photo.url}`}
+                alt={restaurante.nombre}
+                sx={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain',
+                  borderRadius: 7,
+                }}
+              />
+            </Box>
           ))}
+        </Slider>
         </Box>
-      )}
+
+        )}
+
 
       <Typography
           variant="body1"
           sx={{
             fontStyle: 'italic',
-            color: '#4E4B4B',
-            fontSize: '1.1rem',
-            lineHeight: 1.8,
-            mt: 1,
-            mb: 2,
+            color: '#3E3E3E', // Gris cálido
+            fontSize: '1.15rem',
+            lineHeight: 1.9,
+            mt: 3,
+            mb: 4,
+            px: 3,
+            py: 2,
+            backgroundColor: '#F5E6D3', // Beige claro tipo montaña/tierra
+            borderRadius: 4,
+            boxShadow: '0 2px 8px rgba(15, 3, 13, 0.93)',
+            fontFamily: 'Georgia, serif',
+            textAlign: 'justify',
           }}
         >
           {restaurante.descripcion}
@@ -237,25 +331,70 @@ export default function RestauranteDetalle() {
 
 
       {/* Datos del usuario responsable */}
-      {restaurante.usuario && (
-        <Box sx={{ mt: 3 }}>
-          
-          <Button
-            variant="outlined"
-            color="#3D3C3B"
-            onClick={() => setMostrarMenu(!mostrarMenu)}
-            sx={{ backgroundColor: '#3D3C3B', color: '#fff' }}
-          >
-            {mostrarMenu ? "Ocultar menú" : "Ver menú"}
-          </Button>
-          <Button
-            variant="outlined"
-            color="#3D3C3B"
-            onClick={() => setMostrarBebidas(!mostrarBebidas)}
-            sx={{ backgroundColor: '#3D3C3B', color: '#fff' }}
-          >
-            {mostrarBebidas ? "Ocultar menú" : "Ver Bebidas"}
-          </Button>
+      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+  {/* Botón Menú */}
+  <Tooltip title={mostrarMenu ? "Ocultar menú" : "Ver menú"}>
+    <IconButton
+      onClick={() => setMostrarMenu(!mostrarMenu)}
+      sx={{
+        backgroundColor: '#3D3C3B',
+        color: '#fff',
+        width: 48,
+        height: 48,
+        '&:hover': {
+          backgroundColor: '#3D3C3B',
+        },
+        '&:active': {
+          transform: 'none',
+        },
+      }}
+    >
+      <RestaurantMenuIcon fontSize="medium" />
+    </IconButton>
+  </Tooltip>
+
+  {/* Botón Bebidas */}
+  <Tooltip title={mostrarBebidas ? "Ocultar bebidas" : "Ver bebidas"}>
+    <IconButton
+      onClick={() => setMostrarBebidas(!mostrarBebidas)}
+      sx={{
+        backgroundColor: '#3D3C3B',
+        color: '#fff',
+        width: 48,
+        height: 48,
+        '&:hover': {
+          backgroundColor: '#3D3C3B',
+        },
+        '&:active': {
+          transform: 'none',
+        },
+      }}
+    >
+      <LiquorIcon fontSize="medium" />
+    </IconButton>
+  </Tooltip>
+
+  {/* Botón Eventos */}
+  <Tooltip title="Ver eventos">
+    <IconButton
+      onClick={() => {/* lógica para eventos */}}
+      sx={{
+        backgroundColor: '#3D3C3B',
+        color: '#fff',
+        width: 48,
+        height: 48,
+        '&:hover': {
+          backgroundColor: '#3D3C3B',
+        },
+        '&:active': {
+          transform: 'none',
+        },
+      }}
+    >
+      <EventIcon fontSize="medium" />
+    </IconButton>
+  </Tooltip>
+
           
           {mostrarMenu && (
               <Box sx={{ mt: 3 }}>
@@ -267,7 +406,7 @@ export default function RestauranteDetalle() {
                 ) : (
                   menu.map((item) => (
                     <Box key={item.id} sx={{ p: 2, borderBottom: '1px solid #ccc' }}>
-                      <Typography variant="subtitle1">{item.nombre}</Typography>
+                      <Typography variant="subtitle1"  sx={{ fontWeight: 'bold' }}>{item.nombre}</Typography>
                       <Typography variant="body2">{item.descripcion}</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 'bold' }}>${item.precio}</Typography>
                     </Box>
@@ -297,13 +436,13 @@ export default function RestauranteDetalle() {
             )}
         </Box>
         
-      )}
+      
 
       {/* Formulario de Reseña */}
       <Box component="form" onSubmit={handleEnviarReseña} sx={{ mt: 6 }}>
         <Box sx={{ mt: 6 }}>
           <Typography variant="h5" gutterBottom>
-            Reseñas de otros usuarios
+            Comentarios
           </Typography>
 
           {resenas.length === 0 ? (
@@ -324,8 +463,8 @@ export default function RestauranteDetalle() {
           )}
         </Box>
 
-        <Typography variant="h5" gutterBottom>
-          Dej&aacute; tu reseña
+        <Typography variant="h" gutterBottom>
+          Dejá tu comentario
         </Typography>
 
         <Rating
@@ -343,48 +482,136 @@ export default function RestauranteDetalle() {
           rows={4}
           value={comentario}
           onChange={(e) => setComentario(e.target.value)}
-          sx={{ my: 2 }}
+          sx={{ my: 2 ,'& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#ccc', // color normal
+      },
+      '&:hover fieldset': {
+        borderColor: '#999', // color al pasar el mouse
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#322B23', // color al hacer foco (tu color deseado)
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: '#444', // color del label normal
+      '&.Mui-focused': {
+        color: '#322B23', // color del label al hacer foco
+      },},}}
         />
 
         <Button variant="contained" color="3D3C3B" type="submit" 
         sx={{backgroundColor: '#3D3C3B', color: '#fff'}}>
-          Enviar reseña
+          Enviar
         </Button>
 
         {mensaje && <Alert severity="success" sx={{ mt: 2 }}>{mensaje}</Alert>}
         {reseñaError && <Alert severity="error" sx={{ mt: 2 }}>{reseñaError}</Alert>}
       </Box>
-    <Box sx={{ mt: 6 }}>
+    
+<Box sx={{ mt: 6, p: 3, backgroundColor: '#B29C7D', borderRadius: 3 }}>
   <Typography variant="h5" gutterBottom>
     Hacer una reserva
   </Typography>
-
-  <TextField
-    label="Seleccioná fecha y hora"
-    type="datetime-local"
+<TextField
+    label="Seleccioná una fecha"
+    type="date"
     fullWidth
-    value={fechaReserva}
-    onChange={(e) => setFechaReserva(e.target.value)}
-    InputLabelProps={{
-      shrink: true,
+    value={fechaReserva.split('T')[0] || ''}
+    onChange={(e) => {
+      const fecha = e.target.value;
+      const hora = fechaReserva.split('T')[1] || '10:00';
+      setFechaReserva(`${fecha}T${hora}`);
     }}
-    sx={{ my: 2 }}
+    InputLabelProps={{ shrink: true }}
+    inputProps={{
+      min: hoy, // ⛔ bloquea fechas pasadas
+    }}
+    sx={{ my: 2 ,backgroundColor: '#fff','& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#ccc', // color normal
+      },
+      '&:hover fieldset': {
+        borderColor: '#999', // color al pasar el mouse
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#322B23', // color al hacer foco (tu color deseado)
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: '#444', // color del label normal
+      '&.Mui-focused': {
+        color: '#322B23', // color del label al hacer foco
+      },},}}
   />
 
+
+  {/* Horario */}
   <TextField
-  label="Cantidad de personas"
-  type="number"
+  select
+  label="Horario"
   fullWidth
-  value={cantidadPersonas}
-  onChange={(e) => setCantidadPersonas(e.target.value)}
-  inputProps={{ min: 1, max: 8 }}
-  sx={{ my: 2 }}
+  value={fechaReserva.split('T')[1] || '10:00'}
+  onChange={(e) => {
+    const hora = e.target.value;
+    const fecha = fechaReserva.split('T')[0] || hoy;
+    setFechaReserva(`${fecha}T${hora}`);
+  }}
+  sx={{ my: 2 ,backgroundColor: '#fff','& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#ccc', // color normal
+      },
+      '&:hover fieldset': {
+        borderColor: '#999', // color al pasar el mouse
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#322B23', // color al hacer foco (tu color deseado)
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: '#444', // color del label normal
+      '&.Mui-focused': {
+        color: '#322B23', // color del label al hacer foco
+      },},}}
+>
+  {generarHorariosDisponibles(fechaReserva.split('T')[0] || hoy).map((hora) => (
+    <MenuItem key={hora} value={hora}>
+      {hora}
+    </MenuItem>
+  ))}
+</TextField>
+
+
+  {/* Cantidad de personas */}
+  <TextField
+    label="Cantidad de personas"
+    type="number"
+    fullWidth
+    value={cantidadPersonas}
+    onChange={(e) => setCantidadPersonas(e.target.value)}
+    inputProps={{ min: 1, max: 8 }}
+    sx={{ my: 2 ,backgroundColor: '#fff','& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#ccc', // color normal
+      },
+      '&:hover fieldset': {
+        borderColor: '#999', // color al pasar el mouse
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#322B23', // color al hacer foco (tu color deseado)
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: '#444', // color del label normal
+      '&.Mui-focused': {
+        color: '#322B23', // color del label al hacer foco
+      },},}}
   />
 
-
+  {/* Botón Reservar */}
   <Button
-     variant="contained"
-    sx={{ backgroundColor: '#322B23', color: '#fff' }}
+    variant="contained"
+    sx={{ backgroundColor: '#322B23', color: '#fff', mt: 1 }}
     onClick={handleReserva}
   >
     Reservar

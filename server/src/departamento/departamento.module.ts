@@ -4,10 +4,9 @@ import { DepartamentoController } from './departamento.controller';
 import { Departamento } from './entities/departamento.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
-import { Photo } from 'src/photos/entities/photo.entity';
 
 @Module({
-   imports: [TypeOrmModule.forFeature([Departamento, Restaurante,Photo])],
+   imports: [TypeOrmModule.forFeature([Departamento, Restaurante,])],
   controllers: [DepartamentoController],
   providers: [DepartamentoService],
 })

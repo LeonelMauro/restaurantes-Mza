@@ -2,10 +2,20 @@ import React, { useState } from "react";
 import { TextField, Button, Box, Typography, Paper } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+  event.preventDefault();
+};
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -62,6 +72,10 @@ const LoginForm = () => {
             console.error("Error al verificar restaurante:", err);
             alert("Hubo un problema al verificar tus datos.");
           });
+          } else if (user.tipo === "turista") {
+          navigate("/VistaMontaña"); // 👈 o la ruta que tengas como home para turistas
+        
+
       }
 
   })
@@ -104,12 +118,24 @@ const LoginForm = () => {
           <TextField
             name="password"
             label="Contraseña"
-            type="password"
-            color='#3D3C3B'
+            type={showPassword ? "text" : "password"}
             fullWidth
             margin="normal"
             value={data.password}
             onChange={handleChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <Button type="submit" sx={{ backgroundColor: '#3D3C3B', color: '#fff' }} fullWidth>Iniciar</Button>
         </form>

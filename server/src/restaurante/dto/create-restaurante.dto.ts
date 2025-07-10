@@ -15,5 +15,9 @@ export class CreateRestauranteDto {
 
   @IsString()
   @IsNotEmpty()
+  contacto: string; 
+
+  @IsString()
+  @IsNotEmpty()
   horario: string;
 }

@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 
 import {
@@ -14,18 +16,18 @@ import {
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-import valledeuco from '../assets/img/restaurantes/valledeuco.jfif';
-import lujan from '../assets/img/restaurantes/lujan.jfif';
-import maipu from '../assets/img/restaurantes/maipu.jpg';
 
-const lugares = [
-  { nombre: 'Valle de Uco', imagen: valledeuco },
-  { nombre: 'Luján de Cuyo', imagen: lujan },
-  { nombre: 'Maipú', imagen: maipu },
-];
 
 export default function VistaMontaña() {
   const [restaurantes, setRestaurantes] = useState([]);
+  const [departamentos, setDepartamentos] = useState([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:3000/departamento')
+      .then(res => setDepartamentos(res.data))
+      .catch(err => console.error('Error cargando departamentos:', err));
+  }, []);
+
 
   useEffect(() => {
     axios.get('http://localhost:3000/restaurante') // Cambiá esto si tu API tiene otro puerto o URL
@@ -38,7 +40,7 @@ export default function VistaMontaña() {
       <Container>
         {/* Restaurantes */}
         <Typography
-          variant="h2"
+          variant="h1"
           align="center"
           sx={{
             fontFamily: 'Kaushan Script',
@@ -52,54 +54,66 @@ export default function VistaMontaña() {
 
         <Grid container spacing={4}>
           {restaurantes.map((resto, index) => (
-            <Grid item xs={12} sm={4} key={index}>
-              <Link
-                    to={`/restaurante/${resto.id}`}
-                    style={{ textDecoration: 'none' }}
+            <Grid item xs={12} sm={4} key={index} sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Link to={`/restaurante/${resto.id}`} style={{ textDecoration: 'none' }}>
+                <Card
+                  sx={{
+                    height: '100%', // Para que todas las tarjetas se expandan igual
+                    maxWidth: 320, // Ancho fijo para todas las tarjetas
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    borderRadius: 3,
+                    boxShadow: 3,
+                    backgroundColor: '#d2b48c',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    '&:hover': {
+                      transform: 'scale(1.03)',
+                      boxShadow: 6,
+                    },
+                  }}
                 >
-              <Card
-                sx={{
-                  borderRadius: 3,
-                  boxShadow: 3,
-                  backgroundColor: '#d2b48c',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  '&:hover': {
-                    transform: 'scale(1.03)',
-                    boxShadow: 6,
-                  },
-                }}
-              >
-                {/* Asegurate que la propiedad 'photos' y 'url' existan en el objeto que devuelve tu backend */}
-                {resto.photos && resto.photos[0]?.url && (
-                  <CardMedia
-                    component="img"
-                    height="180"
-                    image={`http://localhost:3000/${resto.photos[0].url}`} // ruta pública a la imagen
-                    alt={resto.nombre}
-                    sx={{ borderRadius: '12px 12px 0 0' }}
-                  />
-                )}
-                <CardContent>
-                  <Typography variant="h3" align='center' sx={{fontFamily: 'Kaushan Script', fontWeight: 'bold', color: '#000' }}>
-                    {resto.nombre}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#333' }}>
-                    {resto.descripcion}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#333' }}>
-                    {resto.direccion}
-                  </Typography>
-                </CardContent>
-              </Card>
+                  {resto.photos && resto.photos[0]?.url && (
+                    <CardMedia
+                      component="img"
+                      image={`http://localhost:3000/${resto.photos[0].url}`}
+                      alt={resto.nombre}
+                      sx={{
+                        height: 180,
+                        objectFit: 'cover',
+                        borderRadius: '12px 12px 0 0',
+                      }}
+                    />
+                  )}
+
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography
+                        variant="h5"
+                        align="center"
+                        sx={{
+                          fontFamily: 'Kaushan Script',
+                          fontWeight: 'bold',
+                          color: '#000',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2, // Máximo 2 líneas
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          minHeight: '64px', // Espacio reservado para evitar tarjetas más bajas
+                        }}
+                      >
+                        {resto.nombre}
+                      </Typography>
+                  </CardContent>
+                </Card>
               </Link>
             </Grid>
           ))}
         </Grid>
-
         {/* Lugares */}
         <Typography
-          variant="h2"
+          variant="h1"
           align="center"
           sx={{
             fontFamily: 'Kaushan Script',
@@ -110,42 +124,34 @@ export default function VistaMontaña() {
         >
           Lugares
         </Typography>
-
-        <Grid container spacing={4}>
-          {lugares.map((lugar, index) => (
-            <Grid item xs={12} sm={4} key={index}>
-             <Link
-                to={`/BeneficiosDep`} // Asegurate que el objeto tenga el id
-                style={{ textDecoration: 'none' }}
-            >
-              <Card
-                sx={{
-                  borderRadius: 3,
-                  boxShadow: 3,
-                  backgroundColor: '#f5e6d3',
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  height="180"
-                  image={lugar.imagen}
-                  alt={lugar.nombre}
-                  sx={{ borderRadius: '12px 12px 0 0' }}
-                />
-                <CardContent>
-                  <Typography
-                    variant="h6"
-                    align="center"
-                    sx={{ fontWeight: 'bold' }}
-                  >
-                    {lugar.nombre}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Link>
-            </Grid>
+        <Slider dots={true} infinite={true} speed={500} slidesToShow={3} slidesToScroll={1}
+          arrows={true}        // 👈 activa las flechas
+          autoplay={true}      // 👈 mueve automáticamente
+          autoplaySpeed={3000} // 👈 cada 3 segundos
+                >
+          {departamentos.map((dep) => (
+            <Box key={dep.id} sx={{ px: 1 }}>
+              <Link to={`/departamento/${dep.id}`} style={{ textDecoration: 'none' }}>
+                <Card sx={{ borderRadius: 3, boxShadow: 3, backgroundColor: '#f5e6d3' }}>
+                  {dep.imagenUrl && (
+                    <CardMedia
+                      component="img"
+                      height="180"
+                      image={`http://localhost:3000/${dep.imagenUrl}`}
+                      alt={dep.nombre}
+                      sx={{ borderRadius: '12px 12px 0 0' }}
+                    />
+                  )}
+                  <CardContent>
+                    <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
+                      {dep.nombre}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Link>
+            </Box>
           ))}
-        </Grid>
+        </Slider> 
       </Container>
     </Box>
   );

@@ -82,50 +82,30 @@ async findOne(id: number): Promise<Restaurante> {
 
   return restaurante;
 }
-async update(id: number, updateRestauranteDto: UpdateRestauranteDto): Promise<Restaurante> {
+async update(
+  id: number,
+  updateRestauranteDto: UpdateRestauranteDto,
+): Promise<Restaurante> {
   const restaurante = await this.restauranteRepository.findOne({
-    where: { id },
-    relations: [
-      'usuario',
-      'photos',
-      'resenas',
-      'resenas.usuario',
-      'menu',
-      'reservas',
-      'reservas.usuario',
-      'promociones',
-      
-    ],
+    where: { id }
+
   });
 
   if (!restaurante) {
     throw new NotFoundException(`Restaurante con ID ${id} no encontrado`);
   }
 
-  if (!updateRestauranteDto || Object.keys(updateRestauranteDto).length === 0) {
-    throw new Error('No se proporcionaron valores para actualizar');
-  }
-  if (updateRestauranteDto.departamento !== undefined) {
-  const departamento = await this.departamentoRepository.findOne({
-    where: { id: updateRestauranteDto.departamento },
-  });
-
-  if (!departamento) {
-    throw new NotFoundException(`Departamento con ID ${updateRestauranteDto.departamento} no encontrado`);
-  }
-
-  restaurante.departamento = departamento;
-}
-
-
-  // Actualiza los campos
-  restaurante.nombre = updateRestauranteDto.nombre;
-  restaurante.descripcion = updateRestauranteDto.descripcion;
-  restaurante.direccion = updateRestauranteDto.direccion;
-  restaurante.horario = updateRestauranteDto.horario;
+  // Actualizar campos básicos
+  restaurante.nombre = updateRestauranteDto.nombre ?? restaurante.nombre;
+  restaurante.descripcion = updateRestauranteDto.descripcion ?? restaurante.descripcion;
+  restaurante.direccion = updateRestauranteDto.direccion ?? restaurante.direccion;
+  restaurante.horario = updateRestauranteDto.horario ?? restaurante.horario;
+  restaurante.contacto = updateRestauranteDto.contacto ?? restaurante.contacto;
 
   return await this.restauranteRepository.save(restaurante);
 }
+
+
 async findByUserId(userId: number): Promise<Restaurante | null> {
   return this.restauranteRepository.findOne({
     where: {

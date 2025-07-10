@@ -13,7 +13,7 @@ export class ReservaCleanupService {
     private reservaRepository: Repository<Reserva>,
   ) {}
 
-  @Cron('0 0 * * *') // todos los días a la medianoche
+  @Cron('*/30 * * * * *') // todos los días a la medianoche
   async eliminarReservasPasadas() {
     const ahora = new Date();
     const result = await this.reservaRepository.delete({

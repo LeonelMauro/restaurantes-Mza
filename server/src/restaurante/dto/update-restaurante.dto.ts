@@ -1,24 +1,27 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {  IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateRestauranteDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  nombre: string;
+  nombre?: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  descripcion: string;
+  descripcion?: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  direccion: string;
+  direccion?: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  horario: string;
+  horario?: string;
 
   @IsOptional()
   @IsNumber()
-  departamento?: number; // 👈 ESTO
+  departamento?: number;
+  
+  @IsOptional()
+  @IsString()
+  contacto?: string
 }
-
