@@ -1,3 +1,4 @@
+import { CategoryBebida } from "src/category-bebidas/entities/category-bebida.entity";
 import { Restaurante } from "src/restaurante/entities/restaurante.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -17,4 +18,7 @@ export class Bebida {
 
   @ManyToOne(() => Restaurante, restaurante => restaurante.bebidas)
   restaurante: Restaurante;
+
+  @ManyToOne(()=> CategoryBebida,categoryBebidas => categoryBebidas.bebidas,{ onDelete: 'CASCADE' })
+  categoryBebidas: CategoryBebida
 }

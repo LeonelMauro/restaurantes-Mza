@@ -16,4 +16,8 @@ export class CreateBebidaDto {
     @IsNumber()
     @IsNotEmpty()
     restauranteId:number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    categoryBebidaId: number;
 }

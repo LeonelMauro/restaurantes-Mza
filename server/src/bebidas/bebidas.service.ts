@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBebidaDto } from './dto/create-bebida.dto';
 import { UpdateBebidaDto } from './dto/update-bebida.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
 import { Repository } from 'typeorm';
 import { Bebida } from './entities/bebida.entity';
+import { CategoryBebida } from 'src/category-bebidas/entities/category-bebida.entity';
 
 @Injectable()
 export class BebidasService {
@@ -13,7 +14,10 @@ export class BebidasService {
     private restauranteRepository: Repository<Restaurante>,
 
     @InjectRepository(Bebida)
-    private bebidaRepository: Repository<Bebida>
+    private bebidaRepository: Repository<Bebida>,
+
+    @InjectRepository(CategoryBebida)
+    private categoryRepositortBebidas: Repository<CategoryBebida>
 
   ){}
    async create(createBebidaDto: CreateBebidaDto) {
@@ -21,20 +25,26 @@ export class BebidasService {
       where:{id : createBebidaDto.restauranteId},
     })
     if (!restaurante){
-      throw new Error('Restaurante no enontrado')
+      throw new NotFoundException('Restaurante no enontrado')
     }
+    const category = await this.categoryRepositortBebidas.findOne({ 
+      where: { id: createBebidaDto.categoryBebidaId } });
+     if (!category){
+      throw new NotFoundException('Categoria no enontrado')};
+
     const bebida = this.bebidaRepository.create({
       nombre: createBebidaDto.nombre,
       descripcion: createBebidaDto.descripcion,
       precio: createBebidaDto.precio,
       restaurante: restaurante,
+      categoryBebidas:category,
     })
     return this.bebidaRepository.save(bebida);
   }
 
   async findAll() {
   return this.bebidaRepository.find({
-    relations: ['restaurante'],
+    relations: ['restaurante','categoryBebidas'],
   });
 }
 
@@ -46,10 +56,10 @@ export class BebidasService {
   async update(id: number, updateBebidaDto: UpdateBebidaDto) {
     const bebida = await this.bebidaRepository.findOne({
       where:{ id }, 
-      relations:['restaurante'],
+      relations:['restaurante', 'categoryBebidas'],
     })
     if (!bebida){
-      throw new Error ('bebeda no encontrada')
+      throw new NotFoundException ('bebeda no encontrada')
     }
     /// Solo actualiza si el campo fue enviado
   if (updateBebidaDto.nombre !== undefined) {
@@ -67,7 +77,15 @@ export class BebidasService {
   return this.bebidaRepository.save(bebida);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} bebida`;
+  async remove(id: number) {
+    const bebida= await this.bebidaRepository.findOne({
+      where:{id},
+      relations:['restaurante']
+    })
+    if (!bebida){
+      throw new NotFoundException(`Bebina no entotrada ${id}`)
+    }
+    await this.bebidaRepository.remove(bebida)
+    return {mesagge:`Bebida eliminada`} ;
   }
 }

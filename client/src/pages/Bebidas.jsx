@@ -17,10 +17,16 @@ import axios from 'axios';
 
 const BebidasDialog = () => {
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ nombre: '', descripcion: '', precio: '' });
+  const [form, setForm] = useState({ nombre: '', descripcion: '', precio: '',categoryBebidaId: '' });
   const [bebidas, setBebidas] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [restauranteId, setRestauranteId] = useState(null);
+  //categorias
+  const [categorias, setCategorias] = useState([]);
+  const [formCat, setFormCat] = useState({ nombre: '' });
+  const [mensaje, setMensaje] = useState('');
+
+
 
   useEffect(() => {
     const fetchRestauranteId = async () => {
@@ -33,12 +39,55 @@ const BebidasDialog = () => {
         });
         setRestauranteId(res.data.id);
         fetchBebidas(res.data.id);
+        fetchCategorias(res.data.id);
       } catch (err) {
         console.error('Error al obtener restaurante:', err);
       }
     };
     fetchRestauranteId();
   }, []);
+
+  //categoria bebidas
+    const fetchCategorias = async (restauranteId) => {
+        try {
+          const res = await axios.get('http://localhost:3000/category-bebidas');
+          console.log('CATEGORÍAS:', res.data); // 👈 esto te mostrará si llegan o no
+          const filtradas = res.data.filter(cat => cat.restaurante.id === restauranteId);
+          setCategorias(filtradas);
+        } catch (err) {
+          console.error('Error al cargar categorías:', err);
+        }
+      };
+    const handleSubmitcategoryBebida= async (e) =>{
+        e.preventDefault();
+        const token= localStorage.getItem('token');
+        if(!token || !restauranteId){
+          alert('Falta token o restaurante');
+          return;
+        }
+        try{
+          await axios.post(
+            'http://localhost:3000/category-bebidas',
+            {
+              ...formCat,
+              nombre: (formCat.nombre),
+              restauranteId,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setMensaje('Menú agregado exitosamente');
+          setFormCat({ nombre: '' });
+        } catch (err) {
+          console.error(err);
+          setMensaje('Error al agregar menú');
+        }
+      };    
+
+
 
   const fetchBebidas = async (restauranteId) => {
     try {
@@ -53,13 +102,13 @@ const BebidasDialog = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    setForm({ nombre: '', descripcion: '', precio: '' });
+    setForm({ nombre: '', descripcion: '', precio: '', categoryBebidaId: '' });
     setEditingId(null);
   };
 
   const handleSubmit = async () => {
     const token = localStorage.getItem('token');
-    const data = { ...form, precio: parseFloat(form.precio), restauranteId };
+    const data = { ...form, precio: parseFloat(form.precio), restauranteId ,categoryBebidaId: parseInt(form.categoryBebidaId)};
     try {
       if (editingId) {
         await axios.patch(`http://localhost:3000/bebidas/${editingId}`, data, {
@@ -90,7 +139,12 @@ const BebidasDialog = () => {
   };
 
   const handleEdit = (bebida) => {
-    setForm({ nombre: bebida.nombre, descripcion: bebida.descripcion, precio: bebida.precio });
+    setForm({
+        nombre: bebida.nombre,
+        descripcion: bebida.descripcion,
+        precio: bebida.precio,
+        categoryBebidaId: bebida.categoryBebidas?.id || ''
+      });
     setEditingId(bebida.id);
     setOpen(true);
   };
@@ -111,6 +165,22 @@ const BebidasDialog = () => {
         <DialogTitle>{editingId ? 'Editar Bebida' : 'Agregar Bebida'}</DialogTitle>
         <DialogContent>
           <DialogContentText>Complete los campos de la bebida</DialogContentText>
+          <TextField
+            select
+            
+            fullWidth
+            margin="dense"
+            value={form.categoryBebidaId || ''}
+            onChange={(e) => setForm({ ...form, categoryBebidaId: e.target.value })}
+            SelectProps={{ native: true }}
+          >
+            <option value="">Seleccione una categoría</option>
+            {categorias.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.nombre}
+              </option>
+            ))}
+          </TextField>
           <TextField
             margin="dense"
             label="Nombre"
@@ -138,6 +208,28 @@ const BebidasDialog = () => {
             value={form.precio}
             onChange={(e) => setForm({ ...form, precio: e.target.value })}
           />
+          <Box sx={{ mt: 2, p: 2, border: '1px dashed #ccc', borderRadius: 2 }}>
+            <Typography variant="subtitle1">Agregar nueva categoría</Typography>
+            <TextField
+              label="Nombre de la categoría"
+              fullWidth
+              margin="dense"
+              value={formCat.nombre}
+              onChange={(e) => setFormCat({ nombre: e.target.value })}
+            />
+            <Button
+              variant="outlined"
+              onClick={handleSubmitcategoryBebida}
+              sx={{ mt: 1 }}
+            >
+              Crear Categoría
+            </Button>
+            {mensaje && (
+              <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
+                {mensaje}
+              </Typography>
+            )}
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>

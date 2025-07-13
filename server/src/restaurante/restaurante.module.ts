@@ -7,9 +7,10 @@ import { User } from 'src/user/entities/user.entity';
 import { Photo } from 'src/photos/entities/photo.entity';
 import { Departamento } from 'src/departamento/entities/departamento.entity';
 import { CategoryMenu } from 'src/category-menu/entities/category-menu.entity';
+import { CategoryBebida } from 'src/category-bebidas/entities/category-bebida.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Restaurante, User, Photo,Departamento,CategoryMenu])],
+  imports: [TypeOrmModule.forFeature([Restaurante, User, Photo,Departamento,CategoryMenu,CategoryBebida])],
   controllers: [RestauranteController],
   providers: [RestauranteService],
 })

@@ -9,6 +9,7 @@ import { Bebida } from "src/bebidas/entities/bebida.entity";
 import { Evento } from "src/eventos/entities/evento.entity";
 import { Departamento } from "src/departamento/entities/departamento.entity";
 import { CategoryMenu } from "src/category-menu/entities/category-menu.entity";
+import { CategoryBebida } from "src/category-bebidas/entities/category-bebida.entity";
 
 
 @Entity()
@@ -62,5 +63,8 @@ export class Restaurante {
   @
   OneToMany(() => CategoryMenu, categoria => categoria.restaurante)
   categoriasMenu: CategoryMenu[];
+
+  @OneToMany(()=> CategoryBebida, categoryBebidas => categoryBebidas.restaurante)
+  categoryBebidas: CategoryBebida[];
 
 }

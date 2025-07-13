@@ -34,7 +34,7 @@ export class CategoryMenuService {
   }
 
   async findOne(id: number) {
-    const categyMenu= await this.repositorymenu.findOne({
+    const categoryMenu= await this.repositorymenu.findOne({
       where: {id},
       relations:['menus',
         'menus.nombre',
@@ -42,7 +42,7 @@ export class CategoryMenuService {
         'menus.precio'
       ]
     })
-    return categyMenu;
+    return categoryMenu;
   }
 
   async findByRestauranteId(restauranteId: number) {
