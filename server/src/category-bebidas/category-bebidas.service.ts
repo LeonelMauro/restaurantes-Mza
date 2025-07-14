@@ -53,6 +53,12 @@ export class CategoryBebidasService {
   const updated = Object.assign(categoria, dto);
   return await this.repositoryCategoryBebidas.save(updated);
 }
+  async findCategoriasConBebida(restauranteId: number) {
+  return await this.repositoryCategoryBebidas.find({
+    where: { restaurante: { id: restauranteId } },
+    relations: ['bebidas'],
+  });
+}
 
 
    async remove(id: number) {

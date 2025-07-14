@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography, Paper } from "@mui/material";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
@@ -103,33 +103,67 @@ const LoginForm = () => {
           Bienvenidos
         </Typography>
       </Box>
-      <Paper elevation={3} sx={{ padding: 4, width: 300 }}>
-        <Typography variant="h5" mb={2}>Iniciar sesión</Typography>
+      <Paper
+        elevation={6}
+        sx={{
+          padding: 5,
+          width: 320,
+          mx: 'auto',
+          borderRadius: 4,
+          backgroundColor: '#FFF9F2',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+        }}
+      >
+        <Typography
+          variant="h4"
+          align="center"
+          gutterBottom
+          sx={{
+            fontFamily: 'Kaushan Script',
+            fontWeight: 'bold',
+            color: '#8B5E3C',
+            mb: 3,
+          }}
+        >
+          Iniciar sesión
+        </Typography>
+
         <form onSubmit={handleSubmit}>
           <TextField
             name="email"
             label="Email"
             fullWidth
-            color='#3D3C3B'
             margin="normal"
             value={data.email}
             onChange={handleChange}
+            InputProps={{
+              sx: {
+                borderRadius: 2,
+                backgroundColor: '#F5E6D3',
+              },
+            }}
           />
+
           <TextField
             name="password"
             label="Contraseña"
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             fullWidth
             margin="normal"
             value={data.password}
             onChange={handleChange}
             InputProps={{
+              sx: {
+                borderRadius: 2,
+                backgroundColor: '#F5E6D3',
+              },
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
                     onClick={handleClickShowPassword}
                     onMouseDown={handleMouseDownPassword}
                     edge="end"
+                    sx={{ color: '#8B5E3C' }}
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
@@ -137,9 +171,40 @@ const LoginForm = () => {
               ),
             }}
           />
-          <Button type="submit" sx={{ backgroundColor: '#3D3C3B', color: '#fff' }} fullWidth>Iniciar</Button>
+
+          <Button
+            type="submit"
+            fullWidth
+            sx={{
+              mt: 3,
+              backgroundColor: '#3D3C3B',
+              color: '#fff',
+              fontWeight: 'bold',
+              '&:hover': { backgroundColor: '#2E2D2C' },
+              borderRadius: 2,
+            }}
+          >
+            Iniciar
+          </Button>
+
+          <Button
+            component={Link}
+            to="/register"
+            fullWidth
+            sx={{
+              mt: 2,
+              backgroundColor: '#3D3C3B',
+              color: '#fff',
+              fontWeight: 'bold',
+              '&:hover': { backgroundColor: '#2E2D2C' },
+              borderRadius: 2,
+            }}
+          >
+            Registrarse
+          </Button>
         </form>
       </Paper>
+
     </Box>
   );
 };

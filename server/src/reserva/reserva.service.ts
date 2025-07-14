@@ -54,4 +54,34 @@ export class ReservaService {
       relations: ['usuario'],
     });
   }
+
+  // src/reserva/reserva.service.ts
+
+  async remove(id: number): Promise<string> {
+  const reserva = await this.reservaRepository.findOneBy({ id });
+
+  if (!reserva) {
+    throw new NotFoundException('Reserva no encontrada');
+  }
+
+  await this.reservaRepository.remove(reserva);
+  return 'Reserva eliminada correctamente';
+}
+
+  async findReservasByPropietario(userId: number) {
+  const restaurante = await this.restauranteRepository.findOne({
+    where: { usuario: { id: userId } },
+  });
+
+  if (!restaurante) {
+    throw new NotFoundException('No se encontró un restaurante para este usuario');
+  }
+
+  return this.reservaRepository.find({
+    where: { restaurante: { id: restaurante.id } },
+    relations: ['usuario', 'restaurante'],
+  });
+}
+
+
 }

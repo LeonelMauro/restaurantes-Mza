@@ -31,19 +31,62 @@ const beneficios = [
 const BeneficiosRegistro = () => {
   return (
     <Box sx={{ maxWidth: 1000, mx: 'auto', mt: 6, px: 2 }}>
-      <Typography variant="h4" align="center" gutterBottom>
+      <Typography variant="h2" align="center" gutterBottom sx={{ fontFamily: 'Kaushan Script'}}>
         ¿Por qué registrar tu restaurante o bar?
       </Typography>
-      <Grid container spacing={3}>
-        {beneficios.map((beneficio, index) => (
-          <Grid item xs={12} md={6} key={index}>
-            <Paper elevation={2} sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom>{beneficio.titulo}</Typography>
-              <Typography variant="body1">{beneficio.descripcion}</Typography>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
+      <Grid container spacing={4} justifyContent="center">
+      {beneficios.map((beneficio, index) => (
+        <Grid item xs={12} md={6} key={index}>
+          <Paper
+            elevation={6}
+            sx={{
+              p: 4,
+              borderRadius: 4,
+              backgroundColor: '#FFF9F2',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-6px)',
+                boxShadow: '0 12px 32px rgba(0,0,0,0.25)',
+              },
+            }}
+          >
+            <Typography
+              variant="h4"
+              align="center"
+              gutterBottom
+              sx={{
+                fontFamily: 'Kaushan Script',
+                color: '#8B5E3C',
+                fontWeight: 'bold',
+                mb: 2,
+              }}
+            >
+              {beneficio.titulo}
+            </Typography>
+
+            <Typography
+              variant="body1"
+              sx={{
+                fontStyle: 'italic',
+                color: '#3E3E3E',
+                fontSize: '1.15rem',
+                lineHeight: 1.9,
+                backgroundColor: '#F5E6D3',
+                borderRadius: 2,
+                padding: 3,
+                fontFamily: 'Georgia, serif',
+                textAlign: 'justify',
+                boxShadow: 'inset 0 0 10px rgba(0,0,0,0.1)',
+              }}
+            >
+              {beneficio.descripcion}
+            </Typography>
+          </Paper>
+        </Grid>
+      ))}
+    </Grid>
+
     </Box>
   );
 };

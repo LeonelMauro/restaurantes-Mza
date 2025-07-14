@@ -45,10 +45,14 @@ export default function RestauranteDetalle() {
   //menu
   const [menu, setMenu] = useState([]);
   const [mostrarMenu, setMostrarMenu] = useState(false);
+  const [categoriasMenu, setCategoriasMenu] = useState([]);
+
+
 
   //bebidas
   const [bebidas, setBebidas] = useState([]);
   const [mostrarBebidas, setMostrarBebidas] = useState(false);
+  const [categoriasBebidas, setCategoriasBebida] = useState([]);
   //reserva
   const [cantidadPersonas, setCantidadPersonas] = useState(1);
 
@@ -110,6 +114,31 @@ export default function RestauranteDetalle() {
       setError(err.message);
       setLoading(false);
     });
+}, [id]);
+
+  useEffect(() => {
+  fetch(`http://localhost:3000/category-menu/restaurante/${id}/categorias-con-menu`)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Categorias con menú:", data); // <-- Añadí esto
+      setCategoriasMenu(data);
+    })
+    .catch((err) => console.error("Error al traer categorías con menú:", err));
+}, [id]);
+
+  useEffect(() => {
+  fetch(`http://localhost:3000/category-bebidas/restaurante/${id}/categorias-con-bebidas`)
+    .then((res) => res.json())
+    .then((data) => {
+  console.log("categoriasBebidas recibidas:", data);
+  if (Array.isArray(data)) {
+    setCategoriasBebida(data);
+  } else {
+    setCategoriasBebida([]);
+    console.warn("Se esperaba un array, pero se recibió:", data);
+  }
+})
+    .catch((err) => console.error("Error al traer categorías con menú:", err));
 }, [id]);
 
 
@@ -300,140 +329,157 @@ export default function RestauranteDetalle() {
       <Typography variant="body1" sx={{ color: 'black', mt: 1, textAlign: 'right', fontWeight: 'bold',  }}>{restaurante.contacto}</Typography>
       
       {restaurante.promociones && restaurante.promociones.length > 0 && (
-  <Box sx={{ mt: 4 }}>
-    <Typography variant="h3" align="center" gutterBottom sx={{fontFamily: 'Kaushan Script', fontWeight: 'bold', color: 'black' }}>
-      Promociones especiales
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h3" align="center" gutterBottom sx={{fontFamily: 'Kaushan Script', fontWeight: 'bold', color: 'black' }}>
+              Promociones especiales
+            </Typography>
+
+            <Grid container spacing={3}>
+              {restaurante.promociones.map((promo) => (
+                <Grid item xs={12} sm={6} md={4} key={promo.id}>
+                  <Card sx={{ height: '100%', backgroundColor: '#3D3C3B', borderRadius: 3, boxShadow: 3 }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#ffff' }}>
+                        {promo.titulo}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 1, color: '#ffff' }}>
+                        {promo.descripcion}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+                        Vigencia: {new Date(promo.fechaInicio).toLocaleDateString()} - {new Date(promo.fechaFin).toLocaleDateString()}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
+
+      {/* Datos del usuario responsable */}
+      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+        {/* Botón Menú */}
+        <Tooltip title={mostrarMenu ? "Ocultar menú" : "Ver menú"}>
+          <IconButton
+            onClick={() => setMostrarMenu(!mostrarMenu)}
+            sx={{
+              backgroundColor: '#3D3C3B',
+              color: '#fff',
+              width: 48,
+              height: 48,
+              '&:hover': {
+                backgroundColor: '#3D3C3B',
+              },
+              '&:active': {
+                transform: 'none',
+              },
+            }}
+          >
+            <RestaurantMenuIcon fontSize="medium" />
+          </IconButton>
+        </Tooltip>
+
+        {/* Botón Bebidas */}
+        <Tooltip title={mostrarBebidas ? "Ocultar bebidas" : "Ver bebidas"}>
+          <IconButton
+            onClick={() => setMostrarBebidas(!mostrarBebidas)}
+            sx={{
+              backgroundColor: '#3D3C3B',
+              color: '#fff',
+              width: 48,
+              height: 48,
+              '&:hover': {
+                backgroundColor: '#3D3C3B',
+              },
+              '&:active': {
+                transform: 'none',
+              },
+            }}
+          >
+            <LiquorIcon fontSize="medium" />
+          </IconButton>
+        </Tooltip>
+
+        {/* Botón Eventos */}
+        <Tooltip title="Ver eventos">
+          <IconButton
+            onClick={() => {/* lógica para eventos */}}
+            sx={{
+              backgroundColor: '#3D3C3B',
+              color: '#fff',
+              width: 48,
+              height: 48,
+              '&:hover': {
+                backgroundColor: '#3D3C3B',
+              },
+              '&:active': {
+                transform: 'none',
+              },
+            }}
+          >
+            <EventIcon fontSize="medium" />
+          </IconButton>
+        </Tooltip>
+
+          
+          {mostrarMenu && (
+            <Box sx={{ mt: 3 }}>
+              <Typography variant="h3" align="center" sx={{ fontFamily: 'Kaushan Script' }} gutterBottom>
+                Menú 
+              </Typography>
+
+              {categoriasMenu.length === 0 ? (
+                <Typography variant="body1">Este restaurante aún no cargó su menú.</Typography>
+              ) : (
+                categoriasMenu.map((categoria) => (
+                  <Box key={categoria.id} sx={{ mb: 3 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#322B23' }}>
+                      {categoria.nombre}
+                    </Typography>
+                    {categoria.menus.map((item) => (
+                      <Box key={item.id} sx={{ p: 2, borderBottom: '1px solid #ccc' }}>
+                        <Typography variant="subtitle1">{item.nombre}</Typography>
+                        <Typography variant="body2">{item.descripcion}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                          ${item.precio}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                ))
+              )}
+            </Box>
+            )}
+           {mostrarBebidas && (
+  <Box sx={{ mt: 3 }}>
+    <Typography variant="h3" align="center" sx={{ fontFamily: 'Kaushan Script' }} gutterBottom>
+      Bebidas
     </Typography>
 
-    <Grid container spacing={3}>
-      {restaurante.promociones.map((promo) => (
-        <Grid item xs={12} sm={6} md={4} key={promo.id}>
-          <Card sx={{ height: '100%', backgroundColor: '#3D3C3B', borderRadius: 3, boxShadow: 3 }}>
-            <CardContent>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#ffff' }}>
-                {promo.titulo}
+    {categoriasBebidas.length === 0 ? (
+      <Typography variant="body1">Este restaurante aún no cargó sus bebidas.</Typography>
+    ) : (
+      categoriasBebidas.map((categoria) => (
+        <Box key={categoria.id} sx={{ mb: 3 }}>
+          <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#322B23' }}>
+            {categoria.nombre}
+          </Typography>
+          {categoria.bebidas?.map((item) => (
+            <Box key={item.id} sx={{ p: 2, borderBottom: '1px solid #ccc' }}>
+              <Typography variant="subtitle1">{item.nombre}</Typography>
+              <Typography variant="body2">{item.descripcion}</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                ${item.precio}
               </Typography>
-              <Typography variant="body2" sx={{ mt: 1, color: '#ffff' }}>
-                {promo.descripcion}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
-                Vigencia: {new Date(promo.fechaInicio).toLocaleDateString()} - {new Date(promo.fechaFin).toLocaleDateString()}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
+            </Box>
+          ))}
+        </Box>
+      ))
+    )}
   </Box>
 )}
 
 
-
-
-      {/* Datos del usuario responsable */}
-      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-  {/* Botón Menú */}
-  <Tooltip title={mostrarMenu ? "Ocultar menú" : "Ver menú"}>
-    <IconButton
-      onClick={() => setMostrarMenu(!mostrarMenu)}
-      sx={{
-        backgroundColor: '#3D3C3B',
-        color: '#fff',
-        width: 48,
-        height: 48,
-        '&:hover': {
-          backgroundColor: '#3D3C3B',
-        },
-        '&:active': {
-          transform: 'none',
-        },
-      }}
-    >
-      <RestaurantMenuIcon fontSize="medium" />
-    </IconButton>
-  </Tooltip>
-
-  {/* Botón Bebidas */}
-  <Tooltip title={mostrarBebidas ? "Ocultar bebidas" : "Ver bebidas"}>
-    <IconButton
-      onClick={() => setMostrarBebidas(!mostrarBebidas)}
-      sx={{
-        backgroundColor: '#3D3C3B',
-        color: '#fff',
-        width: 48,
-        height: 48,
-        '&:hover': {
-          backgroundColor: '#3D3C3B',
-        },
-        '&:active': {
-          transform: 'none',
-        },
-      }}
-    >
-      <LiquorIcon fontSize="medium" />
-    </IconButton>
-  </Tooltip>
-
-  {/* Botón Eventos */}
-  <Tooltip title="Ver eventos">
-    <IconButton
-      onClick={() => {/* lógica para eventos */}}
-      sx={{
-        backgroundColor: '#3D3C3B',
-        color: '#fff',
-        width: 48,
-        height: 48,
-        '&:hover': {
-          backgroundColor: '#3D3C3B',
-        },
-        '&:active': {
-          transform: 'none',
-        },
-      }}
-    >
-      <EventIcon fontSize="medium" />
-    </IconButton>
-  </Tooltip>
-
-          
-          {mostrarMenu && (
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="h3" align='center' sx={{fontFamily: 'Kaushan Script'}} gutterBottom >
-                  Menú del restaurante
-                </Typography>
-                {menu.length === 0 ? (
-                  <Typography variant="body1">Este restaurante aún no cargó su menú.</Typography>
-                ) : (
-                  menu.map((item) => (
-                    <Box key={item.id} sx={{ p: 2, borderBottom: '1px solid #ccc' }}>
-                      <Typography variant="subtitle1"  sx={{ fontWeight: 'bold' }}>{item.nombre}</Typography>
-                      <Typography variant="body2">{item.descripcion}</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>${item.precio}</Typography>
-                    </Box>
-                  ))
-                )}
-              </Box>
-
-            )}
-            {mostrarBebidas && (
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="h3" align="center" sx={{ fontFamily: 'Kaushan Script', mb: 3 }} gutterBottom>
-                  Bebidas del restaurante
-                </Typography>
-                {bebidas.length === 0 ? (
-                  <Typography variant="body1">Este restaurante aún no cargó su bebidas.</Typography>
-                ) : (
-                  bebidas.map((item) => (
-                    <Box key={item.id} sx={{ p: 2, borderBottom: '1px solid #ccc' }}>
-                      <Typography variant="subtitle1">{item.nombre}</Typography>
-                      <Typography variant="body2">{item.descripcion}</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>${item.precio}</Typography>
-                    </Box>
-                  ))
-                )}
-              </Box>
-              
-            )}
         </Box>
         
       

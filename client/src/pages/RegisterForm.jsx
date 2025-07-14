@@ -37,16 +37,39 @@ const RegisterForm = () => {
               >
                 Comenza yá.!! 
               </Typography>
-      <Paper elevation={3} sx={{ padding: 4, width: 300 }}>
-        <Typography variant="h5" mb={2}>Registro</Typography>
+       <Paper elevation={6} sx={{
+          padding: 5,
+          width: 320,
+          mx: 'auto',
+          borderRadius: 4,
+          backgroundColor: '#FFF9F2',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+        }}>
+        <Typography variant="h4"
+          align="center"
+          gutterBottom
+          sx={{
+            fontFamily: 'Kaushan Script',
+            fontWeight: 'bold',
+            color: '#8B5E3C',
+            mb: 3,
+          }}
+          >Registro</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
             name="nombre"
             label="Nombre"
             fullWidth
             margin="normal"
+            
             value={data.nombre}
             onChange={handleChange}
+            InputProps={{
+              sx: {
+                borderRadius: 2,
+                backgroundColor: '#F5E6D3',
+              },
+            }}
           />
           <TextField
             name="email"
@@ -55,6 +78,12 @@ const RegisterForm = () => {
             margin="normal"
             value={data.email}
             onChange={handleChange}
+            InputProps={{
+              sx: {
+                borderRadius: 2,
+                backgroundColor: '#F5E6D3',
+              },
+            }}
           />
           <TextField
             name="password"
@@ -64,8 +93,14 @@ const RegisterForm = () => {
             margin="normal"
             value={data.password}
             onChange={handleChange}
+            InputProps={{
+              sx: {
+                borderRadius: 2,
+                backgroundColor: '#F5E6D3',
+              },
+            }}
           />
-          <Button type="submit" sx={{ backgroundColor: '#3D3C3B', color: '#fff' }} fullWidth>Registrarse</Button>
+          <Button type="submit" sx={{  mt: 2,backgroundColor: '#3D3C3B', color: '#fff' }} fullWidth>Registrarse</Button>
         </form>
       </Paper>
     </Box>

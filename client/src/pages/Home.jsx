@@ -54,7 +54,7 @@ const testimonios = [
 
 const Home = () => {
   return (
-    <Box id="inicio" sx={{ mt: '64px' }}>
+    <Box id="inicio" >
       {/* Hero */}
       <Box
         sx={{

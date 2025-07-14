@@ -76,6 +76,7 @@ const Header = () => {
     { name: 'Bebidas', path: '/bebidas' },
     { name: 'Promociones', path: '/promociones' },
     { name: 'Eventos', path: '/eventos' },
+    { name: 'Reservas', path: '/ReservasResto' },
   ];
 
   const sectionsTurista = [

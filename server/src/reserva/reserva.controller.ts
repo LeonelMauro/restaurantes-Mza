@@ -6,6 +6,7 @@ import {
   Req,
   Get,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
 import { Request } from 'express';
@@ -37,9 +38,22 @@ export class ReservaController {
     const userId = req['user'].sub;
     return this.reservaService.findReservasByUsuario(userId);
   }
+  @UseGuards(JwtAuthGuard)
+  @Get('reservas-recibidas')
+  async obtenerReservasRecibidas(@Req() req: Request) {
+    const userId = req['user'].sub;
+    return this.reservaService.findReservasByPropietario(userId);
+  }
+
 
   @Get('restaurante/:id')
   async obtenerReservasDelRestaurante(@Param('id') restauranteId: number) {
     return this.reservaService.findReservasByRestaurante(restauranteId);
+
+  }
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  remove(@Param('id')id: string){
+    return this.reservaService.remove(+id)
   }
 }

@@ -26,7 +26,14 @@ export class CategoryMenuController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.categoryMenuService.findOne(+id);
+    
   }
+
+  @Get('restaurante/:id/categorias-con-menu')
+getCategoriasConMenu(@Param('id') id: number) {
+  return this.categoryMenuService.findCategoriasConMenus(id);
+}
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCategoryMenuDto: UpdateCategoryMenuDto) {

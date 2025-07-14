@@ -51,6 +51,12 @@ export class CategoryMenuService {
     relations: ['restaurante'], // opcional si querés traer info del restaurante
   });
 }
+  async findCategoriasConMenus(restauranteId: number) {
+  return await this.repositorymenu.find({
+    where: { restaurante: { id: restauranteId } },
+    relations: ['menus'],
+  });
+}
 
 
   update(id: number, updateCategoryMenuDto: UpdateCategoryMenuDto) {
