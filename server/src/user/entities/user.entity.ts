@@ -17,6 +17,13 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ nullable: true })
+  provincia: string;
+
+  @Column({ nullable: true })
+  nacionalidad: string;
+
+
   @Column({ type: 'enum', enum: ['turista', 'restaurante'] })
   tipo: 'turista' | 'restaurante';
 

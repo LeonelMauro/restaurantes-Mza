@@ -9,13 +9,14 @@ import {
   Get,
   Param,
   Patch,
-  UploadedFile,
+  Query,
+  BadRequestException
 } from '@nestjs/common';
 import { RestauranteService } from './restaurante.service';
 import { CreateRestauranteDto } from './dto/create-restaurante.dto';
 import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
 import { Request } from 'express';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { Restaurante } from './entities/restaurante.entity';
@@ -25,6 +26,7 @@ import { UpdateRestauranteDto } from './dto/update-restaurante.dto';
 export class RestauranteController {
   constructor(private readonly restauranteService: RestauranteService) {}
 
+  // ✅ Crear restaurante (requiere token y fotos)
   @UseGuards(JwtAuthGuard)
   @Post('create')
   @UseInterceptors(
@@ -44,35 +46,42 @@ export class RestauranteController {
     @Req() req: Request,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    const userId = req['user'].sub; // viene del token
+    const userId = req['user'].sub;
     const imagePaths = files.map(file => file.path);
-
     return this.restauranteService.create(dto, userId, imagePaths);
   }
-  @Get()
-  async findAll() {
-    return this.restauranteService.findAll();
-  }
-  @Get(':id')
-async findOne(@Param('id') id: number): Promise<Restaurante> {
-  return this.restauranteService.findOne(id);
+// Obtener todos
+@Get()
+async findAll() {
+  return this.restauranteService.findAll();
 }
 
-
-@Patch(':id')
-async update(
-  @Param('id') id: number,
-  @Body() updateRestauranteDto: UpdateRestauranteDto,
-) {
-  return this.restauranteService.update(+id, updateRestauranteDto);
+// Buscar por texto
+@Get('search')
+async search(@Query('query') query: string) {
+  if (!query || query.trim() === '') return [];
+  return this.restauranteService.search(query);
 }
 
+// Buscar uno por nombre exacto
+@Get('search-one')
+async searchOne(@Query('name') name: string): Promise<Restaurante | null> {
+  if (!name || name.trim() === '') return null;
+  return this.restauranteService.findOneByName(name);
+}
 
-  @Get('/by-user/:userId')
-  async findByUserId(@Param('userId') userId: number): Promise<Restaurante | null> {
-    const restaurante = await this.restauranteService.findByUserId(userId);
-    if (!restaurante) return null;
-    return restaurante;
-  }
-  
+// Buscar por userId
+@Get('by-user/:userId')
+async findByUserId(@Param('userId') userId: number): Promise<Restaurante | null> {
+  return this.restauranteService.findByUserId(userId);
+}
+
+// 🔥 Este VA AL FINAL para evitar conflictos con rutas como "search"
+@Get(':id')
+async findOne(@Param('id') id: string): Promise<Restaurante> {
+  const parsedId = parseInt(id);
+  if (isNaN(parsedId)) throw new BadRequestException('ID inválido');
+  return this.restauranteService.findOne(parsedId);
+}
+
 }

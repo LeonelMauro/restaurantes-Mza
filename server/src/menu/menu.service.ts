@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
 import { Repository, Unique } from 'typeorm';
 import { Menu } from './entities/menu.entity';
+import { CategoryMenu } from 'src/category-menu/entities/category-menu.entity';
 
 @Injectable()
 export class MenuService {
@@ -14,6 +15,10 @@ export class MenuService {
     
     @InjectRepository(Menu)
     private menuRepository: Repository<Menu>,
+
+    @InjectRepository(CategoryMenu)
+    private categoryRepository: Repository<CategoryMenu>
+
   ){}
 
   async create(createMenuDto: CreateMenuDto) {
@@ -24,12 +29,20 @@ export class MenuService {
   if (!restaurante) {
     throw new Error('Restaurante no encontrado');
   }
-
+  
+  const categoria= await this.categoryRepository.findOne({
+    where:{ id: createMenuDto.categoryMenuId}
+  })
+  if (!categoria){
+    throw new Error('Categoría no encontrada');
+  }
+  
   const menu = this.menuRepository.create({
     nombre: createMenuDto.nombre,
     descripcion: createMenuDto.descripcion,
     precio: createMenuDto.precio,
     restaurante: restaurante,
+    categoryMenu: categoria,
   });
 
   return this.menuRepository.save(menu);

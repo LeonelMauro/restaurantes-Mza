@@ -293,6 +293,7 @@ export default function RestauranteDetalle() {
                   maxHeight: '100%',
                   objectFit: 'contain',
                   borderRadius: 7,
+                  
                 }}
               />
             </Box>
@@ -497,7 +498,7 @@ export default function RestauranteDetalle() {
             resenas.map((resena) => (
               <Box key={resena.id} sx={{ my: 2, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-                  {resena.usuario?.nombre || "Usuario anónimo"}
+                  {resena.usuario?.nombre } , {resena.usuario?.provincia }
                 </Typography>
                 <Rating value={resena.puntuacion} readOnly />
                 <Typography variant="body2">{resena.comentario}</Typography>

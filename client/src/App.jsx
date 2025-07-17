@@ -18,6 +18,7 @@ import DepartamentoDialog from './pages/Departamentos/fetchDepartamentos';
 import DepartamentoDetalle from './pages/Departamentos/DepartamentoDetalle';
 import { Box } from '@mui/material';
 import ReservasResto from './pages/Restaurantes/ReservaResto';
+import Busqueda from './Busqueda';
 
 function App() {
   return (
@@ -40,6 +41,8 @@ function App() {
         <Route path="/form1" element={<DepartamentoDialog />} />
         <Route path="/departamento/:id" element={<DepartamentoDetalle />} />
         <Route path="/ReservasResto" element={<ReservasResto />} />
+        <Route path="/buscar" element={<Busqueda />} />
+
       </Routes>
       <Footer/>
     </BrowserRouter>

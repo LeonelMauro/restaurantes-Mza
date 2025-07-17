@@ -18,7 +18,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useTheme } from '@mui/material/styles';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import SearchIcon from '@mui/icons-material/Search';
+import { InputAdornment, TextField } from '@mui/material';
 const Header = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [restauranteExistente, setRestauranteExistente] = useState(null);
@@ -31,6 +32,9 @@ const Header = () => {
   const isLoggedIn = localStorage.getItem('token');
   const tipoUsuario = localStorage.getItem('tipo');
   const userId = localStorage.getItem('userId');
+
+  // Dentro del componente Header buscardor:
+const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchRestaurante = async () => {
@@ -60,6 +64,13 @@ const Header = () => {
     window.location.reload();
   };
 
+  const handleSearch = (e) => {
+  if (e.key === 'Enter') {
+    // Redireccionar o hacer algo con la búsqueda
+    navigate(`/buscar?query=${searchTerm}`);
+  }
+};
+
   const sectionsBase = [
     { name: 'Inicio', path: '/' },
     { name: 'Servicio', path: '/servicios' },
@@ -87,6 +98,7 @@ const Header = () => {
     { name: 'Iniciar sesión', path: '/login' },
     { name: 'Registro', path: '/register' },
   ];
+  
 
   let sections = [...sectionsBase];
 
@@ -207,13 +219,45 @@ const Header = () => {
               )}
             </>
           )}
+          {!isMobile && (
+            <TextField
+              variant="outlined"
+              size="small"
+              placeholder="Buscar ..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearch}
+              sx={{
+                ml: 'auto',
+                mr: 2,
+                backgroundColor: '#F5E6D3',
+                borderRadius: '20px',
+                width: 250,
+                input: {
+                  padding: '6px 10px',
+                  fontSize: '0.85rem',
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '20px',
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
 
           <IconButton
             onClick={() => navigate(isLoggedIn ? '/perfil' : '/login')}
-            sx={{ color: '#F5E6D3', ml: 'auto' }}
+            sx={{ color: '#F5E6D3' }}
           >
             <AccountCircleIcon fontSize="large" />
           </IconButton>
+
         </Toolbar>
       </AppBar>
     </>

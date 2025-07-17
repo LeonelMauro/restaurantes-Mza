@@ -14,6 +14,9 @@ export class CreateMenuDto {
   precio: number;
 
   @IsNumber()
+  categoryMenuId: number;
+
+  @IsNumber()
   @IsNotEmpty()
   restauranteId: number; // <--- Agregar esto
 }

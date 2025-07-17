@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect} from 'react';
 import axios from 'axios';
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -14,6 +14,19 @@ import {
 } from '@mui/material';
 
 const AddRestaurantForm = () => {
+  
+  useEffect(() => {
+  const fetchDepartamentos = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/departamento');
+      setDepartamentos(res.data);
+    } catch (error) {
+      console.error('Error al obtener departamentos:', error);
+    }
+  };
+
+  fetchDepartamentos();
+}, []);
   const [formData, setFormData] = useState({
     nombre: '',
     direccion: '',
@@ -21,8 +34,10 @@ const AddRestaurantForm = () => {
     horario: '',
     imagen: '',
     contacto: '',
+    departamentoId: '', // 👈 nuevo campo
   });
 
+  const [departamentos, setDepartamentos] = useState([]);
   const [imagenes, setImagenes] = useState([]);
 
   const handleChange = (e) => {
@@ -42,6 +57,8 @@ const AddRestaurantForm = () => {
   const handleSubmit = async (e) => {
   e.preventDefault();
 
+  
+
   try {
     const token = localStorage.getItem('token');
 
@@ -51,10 +68,11 @@ const AddRestaurantForm = () => {
     data.append('descripcion', formData.descripcion);
     data.append('horario', formData.horario);
     data.append('contacto', formData.contacto);
+    data.append('departamentoId', formData.departamentoId);
     imagenes.forEach((img) => {
       data.append('images', img);
     });
-
+    
     const res = await axios.post('http://localhost:3000/restaurante/create', data, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -66,6 +84,7 @@ const AddRestaurantForm = () => {
     // Podés agregar un mensaje de éxito o redireccionar
   } catch (error) {
     console.error('Error al crear restaurante:', error.response?.data || error.message);
+    alert(JSON.stringify(error.response?.data || error.message, null, 2)); // 👈 para mostrar el detalle
   }
 };
 
@@ -97,7 +116,25 @@ const AddRestaurantForm = () => {
               onChange={handleChange}
               required
             />
-        
+            <Grid item xs={12}>
+              <TextField
+                select
+                label="Departamento"
+                name="departamentoId"
+                value={formData.departamentoId}
+                onChange={handleChange}
+                fullWidth
+                required
+                SelectProps={{ native: true }}
+              >
+                <option value="">Seleccione un departamento</option>
+                {departamentos.map((dep) => (
+                  <option key={dep.id} value={dep.id}>
+                    {dep.nombre}
+                  </option>
+                ))}
+              </TextField>
+            </Grid>
 
             <TextField
               label="Descripción"
