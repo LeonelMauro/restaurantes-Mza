@@ -45,8 +45,21 @@ export class ReseñaService {
       restaurante: restaurante,
       usuario:usuario,
     })
-    return this,this.reseñaRepository.save(resena);
+    return this.reseñaRepository.save(resena);
   };
+  async obtenerPromedioPorRestaurante(restauranteId: number) {
+  const resultado = await this.reseñaRepository
+    .createQueryBuilder('resena')
+    .select('AVG(resena.puntuacion)', 'promedio')
+    .where('resena.restauranteId = :restauranteId', { restauranteId })
+    .getRawOne();
+
+  return {
+    restauranteId,
+    promedio: parseFloat(resultado.promedio) || 0,
+  };
+}
+
 
    async findAll() {
     return this.reseñaRepository.find({

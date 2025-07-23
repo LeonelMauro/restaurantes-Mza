@@ -1,5 +1,16 @@
 import React from 'react';
-import { Box, Typography, Paper, Grid } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Paper,
+  Grid,
+  IconButton,
+  Stack,
+} from '@mui/material';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+
 
 const beneficios = [
   {
@@ -27,6 +38,7 @@ const beneficios = [
     descripcion: 'Nuestro equipo te acompaña en la configuración y optimización de tu perfil.',
   },
 ];
+
 
 const BeneficiosRegistro = () => {
   return (
@@ -86,6 +98,52 @@ const BeneficiosRegistro = () => {
         </Grid>
       ))}
     </Grid>
+    {/* Redes Sociales */}
+      <Box mt={6} textAlign="center">
+        <Typography
+          variant="h4"
+          sx={{
+            fontFamily: 'Kaushan Script',
+            color: '#8B5E3C',
+            fontWeight: 'bold',
+            mb: 2,
+          }}
+        >
+          Contactanos por nuestras redes
+        </Typography>
+
+        <Stack direction="row" justifyContent="center" spacing={4}>
+          <IconButton
+            component="a"
+            href="https://www.facebook.com/tu_pagina"
+            target="_blank"
+            rel="noopener"
+            sx={{ color: '#3b5998' }}
+          >
+            <FacebookIcon fontSize="large" />
+          </IconButton>
+
+          <IconButton
+            component="a"
+            href=""
+            target="_blank"
+            rel="noopener"
+            sx={{ color: '#E1306C' }}
+          >
+            <InstagramIcon fontSize="large" />
+          </IconButton>
+
+          <IconButton
+            component="a"
+            href=""
+            target="_blank"
+            rel="noopener"
+            sx={{ color: '#25D366' }}
+          >
+            <WhatsAppIcon fontSize="large" />
+          </IconButton>
+        </Stack>
+      </Box>
 
     </Box>
   );

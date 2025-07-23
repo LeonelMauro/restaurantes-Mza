@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Delete, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete, Patch, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { ReseñaService } from './reseña.service';
 import { CreateReseñaDto } from './dto/create-reseña.dto';
 import { UpdateReseñaDto } from './dto/update-reseña.dto';
@@ -14,6 +14,11 @@ export class ReseñaController {
   create(@Body() createReseñaDto: CreateReseñaDto) {
     return this.reseñaService.create(createReseñaDto);
   }
+  @Get('promedio/:restauranteId')
+getPromedio(@Param('restauranteId', ParseIntPipe) restauranteId: number) {
+  return this.reseñaService.obtenerPromedioPorRestaurante(restauranteId);
+}
+
 
   // Obtener todas las reseñas (opcional)
   @Get()

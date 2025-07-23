@@ -208,39 +208,40 @@ export default function RestauranteDetalle() {
     alert("Por favor completá la fecha y la cantidad de personas.");
     return;
   }
+  if (parseInt(cantidadPersonas) < 1 || parseInt(cantidadPersonas) > 6) {
+    alert("La cantidad de personas debe ser entre 1 y 6.");
+    return;
+  }
   
 
   try {
+    const body = {
+      fecha: new Date(fechaReserva).toISOString(),
+      cantidadPersonas: parseInt(cantidadPersonas),
+    };
+
     const response = await fetch(`http://localhost:3000/reserva/crear/${restaurante.id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        fecha: new Date(fechaReserva).toISOString(),
-        cantidadPersonas: parseInt(cantidadPersonas),
-        usuarioId: parseInt(userId),
-        restauranteId: restaurante.id,
-      }),
+      body: JSON.stringify(body),
     });
 
-    if (!response.ok) throw new Error("Error al guardar la reserva");
-
-    if (parseInt(cantidadPersonas) < 1 || parseInt(cantidadPersonas) > 8) {
-    alert("La cantidad de personas debe ser entre 1 y 8.");
-    return;
-  }
-
+    if (!response.ok) {
+      const errorText = await response.text(); // para saber qué responde Nest
+      console.error("Error del backend:", errorText);
+      throw new Error("Error al guardar la reserva");
+    }
 
     const data = await response.json();
     alert("¡Reserva registrada correctamente para: " + new Date(data.fecha).toLocaleString() + "!");
-
-    // Limpiar campos si se desea
+    
     setFechaReserva('');
     setCantidadPersonas(1);
   } catch (error) {
-    console.error(error);
+    console.error("Error al guardar la reserva:", error);
     alert("Ocurrió un error al guardar la reserva");
   }
 };
@@ -346,7 +347,10 @@ export default function RestauranteDetalle() {
                       <Typography variant="body2" sx={{ mt: 1, color: '#ffff' }}>
                         {promo.descripcion}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+                      <Typography variant="h6" sx={{ mt: 1, color: '#ffff' }}>
+                        ${promo.precio}
+                      </Typography>
+                      <Typography variant="caption" color="#ffff" sx={{ mt: 2, display: 'block' }}>
                         Vigencia: {new Date(promo.fechaInicio).toLocaleDateString()} - {new Date(promo.fechaFin).toLocaleDateString()}
                       </Typography>
                     </CardContent>
@@ -498,7 +502,7 @@ export default function RestauranteDetalle() {
             resenas.map((resena) => (
               <Box key={resena.id} sx={{ my: 2, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-                  {resena.usuario?.nombre } , {resena.usuario?.provincia }
+                  {resena.usuario?.nombre } . {resena.usuario?.provincia }
                 </Typography>
                 <Rating value={resena.puntuacion} readOnly />
                 <Typography variant="body2">{resena.comentario}</Typography>

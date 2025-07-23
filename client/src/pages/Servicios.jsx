@@ -111,7 +111,7 @@ const Servicios = () => {
               <Button
                 variant="contained"
                 sx={{ mt: 3, backgroundColor: '#8B5E3C', '&:hover': { backgroundColor: '#A7714C' } }}
-                href="/register"
+                href="/beneficios"
               >
                 Publicar Mi Restaurante
               </Button>

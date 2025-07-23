@@ -18,6 +18,9 @@ export class Promocion {
   @Column()
   fechaFin: Date;
 
+  @Column({ default: 0 })
+  precio : number;
+
   @ManyToOne(() => Restaurante, restaurante => restaurante.promociones)
   restaurante: Restaurante;
 }

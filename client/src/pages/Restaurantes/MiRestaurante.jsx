@@ -194,21 +194,23 @@ const MiRestaurante = () => {
       <Button
         startIcon={<AddPhotoAlternateIcon />}
         variant="contained"
-        color="primary"
+        color="#2E2D2C"
         onClick={() => setOpenImagen(true)}
       >
         Agregar nuevas fotos
       </Button>
 
       <Box mt={4}>
-        <Button variant="contained" onClick={() => navigate(`/menu/${id}`)} sx={{ mr: 2 }}>
+        <Button variant="contained" onClick={() => navigate(`/menu/create`)} sx={{ mr: 2,backgroundColor: '#2E2D2C', color: 'white' }}>
           Menú
         </Button>
-        <Button variant="contained" onClick={() => navigate(`/promociones/${id}`)} sx={{ mr: 2 }}>
+        <Button variant="contained" onClick={() => navigate(`/promos`)} sx={{ mr: 2 ,backgroundColor: '#2E2D2C', color: 'white'}}>
           Promociones
         </Button>
-        <Button variant="contained" onClick={() => navigate(`/eventos/${id}`)} sx={{ mr: 2 }}>
+        <Button variant="contained" onClick={() => navigate(`/eventos/${id}`)} sx={{ mr: 2, backgroundColor: '#2E2D2C', color: 'white' }}>
           Eventos
+        </Button><Button variant="contained" onClick={() => navigate(`/bebidas`)} sx={{ mr: 2 ,backgroundColor: '#2E2D2C', color: 'white'}}>
+          Bebidas
         </Button>
       </Box>
 

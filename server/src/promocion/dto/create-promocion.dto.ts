@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreatePromocionDto {
   @IsString()
@@ -14,6 +14,9 @@ export class CreatePromocionDto {
 
   @IsDateString()
   fechaFin: Date;
+  
+  @IsNumber()
+  precio: number;
 
   @IsNotEmpty()
   restauranteId: number;

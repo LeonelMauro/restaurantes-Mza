@@ -5,6 +5,7 @@ import { UpdateDepartamentoDto } from './dto/update-departamento.dto';
 import {  FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { Departamento } from './entities/departamento.entity';
 
 @Controller('departamento')
 export class DepartamentoController {
@@ -48,6 +49,17 @@ return this.departamentoService.create(dto, file?.path);
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.departamentoService.findOne(+id);
+  }
+
+  @Get('search/:nombre')
+  async findByNombre(@Param('nombre') nombre: string) {
+  return this.departamentoService.findByNombre(nombre);
+}
+
+
+  @Get('by-departamento/:departamentoId')
+  async findByUserId(@Param('departamentoId') departamentoId: number): Promise<Departamento | null> {
+    return this.departamentoService.findByCategoryId(departamentoId);
   }
 
  @Patch(':id')

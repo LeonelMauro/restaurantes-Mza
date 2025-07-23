@@ -125,6 +125,23 @@ export class RestauranteService {
       relations: ['usuario'],
     });
   }
+  async obtenerRestaurantesConPromedio() {
+  const restaurantes = await this.restauranteRepository
+    .createQueryBuilder('restaurante')
+    .leftJoinAndSelect('restaurante.photos', 'photo')
+    .leftJoin('restaurante.resenas', 'resena')
+    .addSelect('AVG(resena.puntuacion)', 'promedio')
+    .groupBy('restaurante.id')
+    .addGroupBy('photo.id')
+    .orderBy('promedio', 'DESC') // <- ordenado
+    .getRawAndEntities();
+
+  return restaurantes.entities.map((resto, index) => ({
+    ...resto,
+    promedio: parseFloat(restaurantes.raw[index].promedio) || 0
+  }));
+}
+
 
   async search(query: string): Promise<Restaurante[]> {
     return this.restauranteRepository

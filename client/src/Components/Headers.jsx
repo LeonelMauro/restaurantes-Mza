@@ -75,6 +75,8 @@ const [searchTerm, setSearchTerm] = useState('');
     { name: 'Inicio', path: '/' },
     { name: 'Servicio', path: '/servicios' },
     { name: 'Restaurantes', path: '/VistaMontaña' },
+    { name: 'Lugares', path: '/Lugares' },
+    
   ];
 
   const sectionsRestauranteSinRegistro = [
@@ -83,15 +85,13 @@ const [searchTerm, setSearchTerm] = useState('');
 
   const sectionsRestauranteConRegistro = [
     { name: 'Mi Restaurante', path: `/mi-restaurante/${restauranteExistente?.id}` },
-    { name: 'Menú', path: '/menu/create' },
-    { name: 'Bebidas', path: '/bebidas' },
-    { name: 'Promociones', path: '/promociones' },
     { name: 'Eventos', path: '/eventos' },
     { name: 'Reservas', path: '/ReservasResto' },
   ];
 
   const sectionsTurista = [
     { name: 'Mis Reservas', path: '/mis-reservas' },
+    { name: 'Eventos', path: '/eventos' }
   ];
 
   const sectionsNoLogin = [

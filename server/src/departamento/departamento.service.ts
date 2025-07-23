@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Departamento } from './entities/departamento.entity';
 import { CreateDepartamentoDto } from './dto/create-departamento.dto';
 import { UpdateDepartamentoDto } from './dto/update-departamento.dto';
@@ -62,4 +62,18 @@ export class DepartamentoService {
     await this.departamentoRepository.remove(departamento);
     return { message: `Departamento con ID ${id} eliminado correctamente` };
   }
+  async findByCategoryId(departamentoId: number): Promise<Departamento | null> {
+    return this.departamentoRepository.findOne({
+      where: { restaurantes: { id: departamentoId } },
+      relations: ['restaurante'],
+    });
+  }
+  async findByNombre(nombre: string) {
+  return this.departamentoRepository.find({
+    where: {
+      nombre: ILike(`%${nombre}%`), // ILike permite búsquedas insensibles a mayúsculas/minúsculas
+    },
+  });
+}
+
 }

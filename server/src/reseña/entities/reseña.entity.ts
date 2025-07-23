@@ -13,7 +13,7 @@ export class Reseña {
   @ManyToOne(() => Restaurante, restaurante => restaurante.resenas)
   restaurante: Restaurante;
 
-  @Column()
+  @Column({ type: 'float', default: 0 })
   puntuacion: number;
 
   @Column()

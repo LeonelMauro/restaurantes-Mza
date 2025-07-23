@@ -50,11 +50,18 @@ export class RestauranteController {
     const imagePaths = files.map(file => file.path);
     return this.restauranteService.create(dto, userId, imagePaths);
   }
+  @Get('top-rated')
+getRestaurantesOrdenadosPorPuntuacion() {
+  return this.restauranteService.obtenerRestaurantesConPromedio();
+}
+
 // Obtener todos
 @Get()
 async findAll() {
   return this.restauranteService.findAll();
 }
+
+
 
 // Buscar por texto
 @Get('search')

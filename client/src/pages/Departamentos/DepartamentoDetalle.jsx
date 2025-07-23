@@ -10,6 +10,7 @@ import {
   Grid,
   Paper,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const DepartamentoDetalle = () => {
   const { id } = useParams();
@@ -72,8 +73,9 @@ const DepartamentoDetalle = () => {
       {/* Lista de Restaurantes */}
       <Grid container spacing={3} justifyContent="center">
         {departamento.restaurantes.map((r) => (
-          <Grid item xs={12} sm={6} md={4} key={r.id}>
-            <Card sx={{ height: '100%' }}>
+        <Grid item xs={12} sm={6} md={4} key={r.id}>
+          <Link to={`/restaurante/${r.id}`} style={{ textDecoration: 'none' }}>
+            <Card sx={{ height: '100%', cursor: 'pointer' }}>
               {r.photos && r.photos[0]?.url && (
                 <CardMedia
                   component="img"
@@ -83,12 +85,13 @@ const DepartamentoDetalle = () => {
                 />
               )}
               <CardContent>
-                <Typography variant="h6" gutterBottom>{r.nombre}</Typography>
-                <Typography variant="body2">{r.descripcion}</Typography>
+                <Typography variant="h6" gutterBottom sx={{ color: 'black' }}>{r.nombre}</Typography>
+                <Typography variant="body2" sx={{ color: '#333' }}>{r.descripcion}</Typography>
               </CardContent>
             </Card>
-          </Grid>
-        ))}
+          </Link>
+        </Grid>
+      ))}
       </Grid>
     </Box>
   );

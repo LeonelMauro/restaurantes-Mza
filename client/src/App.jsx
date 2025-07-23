@@ -19,6 +19,8 @@ import DepartamentoDetalle from './pages/Departamentos/DepartamentoDetalle';
 import { Box } from '@mui/material';
 import ReservasResto from './pages/Restaurantes/ReservaResto';
 import Busqueda from './Busqueda';
+import FormPromocion from './pages/Restaurantes/FormPromocion';
+import Lugares from './pages/Departamentos/Lugares';
 
 function App() {
   return (
@@ -42,6 +44,8 @@ function App() {
         <Route path="/departamento/:id" element={<DepartamentoDetalle />} />
         <Route path="/ReservasResto" element={<ReservasResto />} />
         <Route path="/buscar" element={<Busqueda />} />
+        <Route path="/promos" element={<FormPromocion />} />
+        <Route path="/Lugares" element={<Lugares />} />
 
       </Routes>
       <Footer/>

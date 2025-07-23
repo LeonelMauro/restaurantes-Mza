@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import Rating from '@mui/material/Rating';
 
 
 import {
@@ -30,10 +31,29 @@ export default function VistaMontaña() {
 
 
   useEffect(() => {
-    axios.get('http://localhost:3000/restaurante') // Cambiá esto si tu API tiene otro puerto o URL
-      .then(res => setRestaurantes(res.data))
-      .catch(err => console.error('Error cargando restaurantes:', err));
-  }, []);
+  axios.get('http://localhost:3000/restaurante')
+    .then(async res => {
+      const restaurantesConPromedio = await Promise.all(
+        res.data.map(async (restaurante) => {
+          try {
+            const promedioRes = await axios.get(`http://localhost:3000/resenas/promedio/${restaurante.id}`);
+            return {
+              ...restaurante,
+              promedio: promedioRes.data.promedio
+            };
+          } catch (err) {
+            console.error('Error obteniendo promedio de restaurante', restaurante.id, err);
+            return { ...restaurante, promedio: 0 };
+          }
+        })
+      );
+      // 🔽 Acá se ordenan de mayor a menor promedio
+      restaurantesConPromedio.sort((a, b) => b.promedio - a.promedio);
+    console.log(restaurantesConPromedio)
+      setRestaurantes(restaurantesConPromedio);
+    })
+    .catch(err => console.error('Error cargando restaurantes:', err));
+}, []);
 
   return (
     <Box sx={{ backgroundColor: '#fff', py: 6 }}>
@@ -87,7 +107,7 @@ export default function VistaMontaña() {
                     />
                   )}
 
-                  <CardContent sx={{ flexGrow: 1 }}>
+                  <CardContent sx={{ flexGrow: 1 }} >
                     <Typography
                         variant="h5"
                         align="center"
@@ -104,7 +124,17 @@ export default function VistaMontaña() {
                         }}
                       >
                         {resto.nombre}
+                        <Box display="flex" justifyContent="center" mt={1}>
+                          <Rating 
+                            name="read-only" 
+                            value={resto.promedio} 
+                            readOnly 
+                            precision={0.5} 
+                          />
+                        </Box>
                       </Typography>
+                      
+
                   </CardContent>
                 </Card>
               </Link>

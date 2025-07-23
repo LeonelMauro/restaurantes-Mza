@@ -26,7 +26,7 @@ export class PromocionService {
       ...dto,
       restaurante,
     });
-
+    console.log(dto.precio);
     return this.promocionRepository.save(promocion);
   }
 
