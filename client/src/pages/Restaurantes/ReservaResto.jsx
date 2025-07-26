@@ -10,14 +10,37 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
+const EstadoReserva = {
+  Pendiente: 'pendiente',
+  Confirmada: 'confirmada',
+  Asistido: 'asistido',
+  Cancelada: 'cancelada',
+  NoAsistio: 'no-asistio',
+};
+
 const ReservasResto = () => {
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('token');
 
-  useEffect(() => {
-    fetchReservas();
-  }, [token]);
+  const actualizarEstadoReserva = async (id, estado) => {
+  const endpoint =
+    estado === EstadoReserva.Asistido
+      ? `http://localhost:3000/reserva/${id}/asistio`
+      : `http://localhost:3000/reserva/${id}/no-asistio`;
+
+  try {
+    await axios.patch(endpoint, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    fetchReservas(); // Refrescar las reservas luego del cambio
+  } catch (error) {
+    console.error('Error al actualizar estado de reserva:', error);
+  }
+};
+
 
   const fetchReservas = async () => {
     try {
@@ -34,17 +57,9 @@ const ReservasResto = () => {
     }
   };
 
-  const handleOpenDialog = (reserva) => {
-    setReservaSeleccionada(reserva);
-    setDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setReservaSeleccionada(null);
-    setDialogOpen(false);
-  };
-
-  
+  useEffect(() => {
+    fetchReservas();
+  }, [token]);
 
   if (loading) {
     return (
@@ -57,7 +72,9 @@ const ReservasResto = () => {
   if (reservas.length === 0) {
     return (
       <Box textAlign="center" mt={4}>
-        <Typography variant="h3"sx={{fontFamily: 'Kaushan Script'}}>No tenés reservas aún.</Typography>
+        <Typography variant="h3" sx={{ fontFamily: 'Kaushan Script' }}>
+          No tenés reservas aún.
+        </Typography>
       </Box>
     );
   }
@@ -72,7 +89,6 @@ const ReservasResto = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Overlay oscuro */}
       <Box
         sx={{
           position: 'absolute',
@@ -84,36 +100,68 @@ const ReservasResto = () => {
           zIndex: 1,
         }}
       />
-
-      {/* Contenido encima del overlay */}
       <Box sx={{ fontFamily: 'Kaushan Script', position: 'relative', zIndex: 2, p: 2, mt: 8 }}>
-        <Typography variant="h4" mb={2} textAlign="center" color="white" sx={{fontFamily: 'Kaushan Script'}}>
+        <Typography variant="h4" mb={2} textAlign="center" color="white">
           Mis Reservas
         </Typography>
         <Grid container spacing={2}>
-          {reservas.map((reserva) => (
-            <Grid item xs={12} sm={6} md={4} key={reserva.id}>
-              <Card sx={{ backgroundColor: '#F5E6D3' }}>
-                <CardContent>
-                  <Typography variant="h6">
-                    Cliente: {reserva.usuario?.nombre}
-                    </Typography>
-                  <Typography variant="body2">
-                    Fecha: {new Date(reserva.fecha).toLocaleDateString()}
-                  </Typography>
-                  <Typography variant="body2">
-                    Personas: {reserva.cantidadPersonas}
-                  </Typography>
-                  <Typography variant="body2">
-                    Hora: {new Date(reserva.fecha).toLocaleTimeString('es-AR', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+          {reservas.map((reserva) => {
+  console.log("Nombre", reserva.usuario);          
+  console.log('Estado:', reserva.estado);
+  console.log('Fecha reserva:', new Date(reserva.fecha));
+  console.log('Fecha actual:', new Date());
+
+  return (
+    <Grid item xs={12} sm={6} md={4} key={reserva.id}>
+      <Card sx={{ backgroundColor: '#F5E6D3' }}>
+        <CardContent>
+          <Typography variant="h6">Cliente: {reserva.usuario?.nombre}</Typography>
+          <Typography variant="body2">
+            Fecha: {new Date(reserva.fecha).toLocaleDateString()}
+          </Typography>
+          <Typography variant="body2">Personas: {reserva.cantidadPersonas}</Typography>
+          <Typography variant="body2">
+            Hora:{' '}
+            {new Date(reserva.fecha).toLocaleTimeString('es-AR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </Typography>
+          <Typography variant="body2" mt={1}>
+            Estado: {reserva.estado}
+          </Typography>
+
+          {new Date(reserva.fecha) < new Date() &&
+            (reserva.estado === EstadoReserva.Confirmada || reserva.estado === EstadoReserva.Pendiente)&&  (
+              <Box mt={2} display="flex" gap={1}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  size="small"
+                  onClick={() =>
+                    actualizarEstadoReserva(reserva.id, EstadoReserva.Asistido)
+                  }
+                >
+                  Asistió
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  size="small"
+                  onClick={() =>
+                    actualizarEstadoReserva(reserva.id, EstadoReserva.NoAsistio)
+                  }
+                >
+                  No asistió
+                </Button>
+              </Box>
+            )}
+        </CardContent>
+      </Card>
+    </Grid>
+  );
+})}
+
         </Grid>
       </Box>
     </Box>

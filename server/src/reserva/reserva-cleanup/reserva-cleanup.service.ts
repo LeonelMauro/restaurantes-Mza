@@ -1,9 +1,8 @@
 // src/reserva/reserva-cleanup.service.ts
-
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Reserva } from '../entities/reverva.entity';
+import { Reserva, EstadoReserva } from '../entities/reverva.entity';
 import { Repository, LessThan } from 'typeorm';
 
 @Injectable()
@@ -13,13 +12,24 @@ export class ReservaCleanupService {
     private reservaRepository: Repository<Reserva>,
   ) {}
 
-  @Cron('*/30 * * * * *') // todos los días a la medianoche
-  async eliminarReservasPasadas() {
+  @Cron('*/1 * * * *') // corre cada minuto para testear
+  async finalizarReservasPasadas() {
     const ahora = new Date();
-    const result = await this.reservaRepository.delete({
-      fecha: LessThan(ahora),
+
+    const reservasPasadas = await this.reservaRepository.find({
+      where: {
+        fecha: LessThan(ahora),
+        estado: EstadoReserva.Confirmada, // o también Pendiente si querés finalizar esas
+      },
     });
 
-    console.log(`🧹 Reservas pasadas eliminadas: ${result.affected}`);
+    for (const reserva of reservasPasadas) {
+      reserva.estado = EstadoReserva.Finalizada;
+      await this.reservaRepository.save(reserva);
+    }
+
+    if (reservasPasadas.length > 0) {
+      console.log(`✅ Reservas finalizadas: ${reservasPasadas.length}`);
+    }
   }
 }

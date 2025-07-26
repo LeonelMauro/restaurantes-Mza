@@ -91,7 +91,7 @@ const [searchTerm, setSearchTerm] = useState('');
 
   const sectionsTurista = [
     { name: 'Mis Reservas', path: '/mis-reservas' },
-    { name: 'Eventos', path: '/eventos' }
+    { name: 'Eventos', path: '/Listaeventos' }
   ];
 
   const sectionsNoLogin = [
@@ -188,12 +188,6 @@ const [searchTerm, setSearchTerm] = useState('');
                     marginLeft: 10,
                     marginRight: 10,
                     color: 'white',
-                    textShadow: `
-                      -1px -1px 0 #000,
-                      1px -1px 0 #000,
-                      -1px  1px 0 #000,
-                      1px  1px 2px rgba(0,0,0,1)
-                    `,
                     textDecoration: 'none',
                     fontSize: '0.9rem',
                     fontWeight: 500,

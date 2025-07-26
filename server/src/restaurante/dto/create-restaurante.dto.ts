@@ -24,6 +24,7 @@ export class CreateRestauranteDto {
   @IsString()
   @IsNotEmpty()
   horario: string;
+  
   @Transform(({ value }) => parseInt(value, 10))
   @IsNumber()
   @IsNotEmpty()

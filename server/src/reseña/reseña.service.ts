@@ -1,12 +1,14 @@
-import { Injectable, UseGuards } from '@nestjs/common';
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { CreateReseñaDto } from './dto/create-reseña.dto';
 import { UpdateReseñaDto } from './dto/update-reseña.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Reseña } from './entities/reseña.entity';
-import { Repository } from 'typeorm';
+import { In, LessThan, Repository } from 'typeorm';
 import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
+import { Reserva } from 'src/reserva/entities/reverva.entity';
+import { EstadoReserva } from 'src/reserva/entities/reverva.entity'; // Asegurate de importar esto
 
 @Injectable()
 export class ReseñaService {
@@ -19,34 +21,68 @@ export class ReseñaService {
 
     @InjectRepository(Reseña)
     private reseñaRepository: Repository<Reseña>,
+
+    @InjectRepository(Reserva)
+    private reservaRepository: Repository<Reserva>,
+
   ){}
 
   @UseGuards(JwtAuthGuard)
   async create(CreateReseñaDto: CreateReseñaDto) {
-    const restaurante= await this.restauranteRepository.findOne({
-      where: {id: CreateReseñaDto.restauranteId,},
-    });
+  const { restauranteId, userId, puntuacion, comentario } = CreateReseñaDto;
 
-    if(!restaurante) {
-      throw new Error('Restaurante no encontrado')
-    };
+  const restaurante = await this.restauranteRepository.findOne({
+    where: { id: restauranteId },
+  });
+  if (!restaurante) {
+    throw new NotFoundException('Restaurante no encontrado');
+  }
 
-    const usuario= await this.userRepository.findOne({
-      where: {id: CreateReseñaDto.userId}
-    });
+  const usuario = await this.userRepository.findOne({
+    where: { id: userId },
+  });
+  if (!usuario) {
+    throw new NotFoundException('Usuario no encontrado');
+  }
 
-    if(!usuario) {
-      throw new Error('Usuario no encontrado')
-    }
+  // ✅ Validar que haya una reserva confirmada o asistida
+  const reservaValida = await this.reservaRepository.findOne({
+  where: {
+    usuario: { id: userId },
+    restaurante: { id: restauranteId },
+    estado: In([EstadoReserva.Confirmada, EstadoReserva.Asistido]), // 🟢 Usar enum
+    fecha: LessThan(new Date()), // Solo fechas pasadas
+  },
+});
 
-    const resena= this.reseñaRepository.create({
-      puntuacion:CreateReseñaDto.puntuacion,
-      comentario:CreateReseñaDto.comentario,
-      restaurante: restaurante,
-      usuario:usuario,
-    })
-    return this.reseñaRepository.save(resena);
-  };
+  if (!reservaValida) {
+    throw new Error(
+      'Solo podés dejar una reseña si reservaste y asististe al restaurante',
+    );
+  }
+
+  // ❗ Opcional: Verificar si ya hizo reseña para este restaurante
+  const yaComento = await this.reseñaRepository.findOne({
+    where: {
+      usuario: { id: userId },
+      restaurante: { id: restauranteId },
+    },
+  });
+
+  if (yaComento) {
+    throw new Error('Ya realizaste una reseña para este restaurante.');
+  }
+
+  const resena = this.reseñaRepository.create({
+    puntuacion,
+    comentario,
+    restaurante,
+    usuario,
+  });
+
+  return this.reseñaRepository.save(resena);
+}
+
   async obtenerPromedioPorRestaurante(restauranteId: number) {
   const resultado = await this.reseñaRepository
     .createQueryBuilder('resena')

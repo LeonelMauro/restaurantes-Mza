@@ -1,5 +1,6 @@
+import { Reserva } from "src/reserva/entities/reverva.entity";
 import { Restaurante } from "src/restaurante/entities/restaurante.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Evento {
@@ -17,7 +18,13 @@ export class Evento {
 
   @Column()
   hora: string;
+  
+  @Column()
+  imagenUrl:string;
 
   @ManyToOne(() => Restaurante, restaurante => restaurante.eventos)
   restaurante: Restaurante;
+
+  @OneToMany(()=> Reserva ,reservas => reservas.evento)
+  reservas: Reserva[];
 }

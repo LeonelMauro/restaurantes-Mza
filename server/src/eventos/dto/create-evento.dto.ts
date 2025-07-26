@@ -1,4 +1,4 @@
-import { IsDate, IsDateString, IsNotEmpty, IsString } from "class-validator";
+import { IsDate, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateEventoDto {
     @IsNotEmpty()
@@ -15,4 +15,11 @@ export class CreateEventoDto {
     @IsNotEmpty()
     @IsString()
     hora: string;
+
+    @IsOptional()
+    @IsString()
+    imagenUrl:string;
+
+    
+
 }

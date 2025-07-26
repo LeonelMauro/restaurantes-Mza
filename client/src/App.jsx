@@ -21,6 +21,7 @@ import ReservasResto from './pages/Restaurantes/ReservaResto';
 import Busqueda from './Busqueda';
 import FormPromocion from './pages/Restaurantes/FormPromocion';
 import Lugares from './pages/Departamentos/Lugares';
+import Eventos from './pages/Restaurantes/Eventos';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
         <Route path="/buscar" element={<Busqueda />} />
         <Route path="/promos" element={<FormPromocion />} />
         <Route path="/Lugares" element={<Lugares />} />
+        <Route path="/Eventos" element={<Eventos />} />
 
       </Routes>
       <Footer/>

@@ -125,6 +125,11 @@ const MisReservas = () => {
                       minute: '2-digit',
                     })}
                   </Typography>
+                  <Typography variant="body2" mt={1}>
+                     Estado: {reserva.estado}
+                  </Typography>
+                  
+                  
                   <Button
                     variant="outlined"
                     color="error"

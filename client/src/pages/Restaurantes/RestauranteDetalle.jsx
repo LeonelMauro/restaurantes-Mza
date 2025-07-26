@@ -18,19 +18,70 @@ import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import LiquorIcon from '@mui/icons-material/Liquor';
 import EventIcon from '@mui/icons-material/Event';
 import dayjs from 'dayjs'; // si no lo tenés instalado: npm install dayjs
+import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
+
 
 
 export default function RestauranteDetalle() {
+  const NextArrow = (props) => {
+  const { onClick } = props;
+  return (
+    <Box
+      onClick={onClick}
+      sx={{
+        position: 'absolute',
+        top: '50%',
+        right: 10,
+        transform: 'translateY(-50%)',
+        zIndex: 2,
+        cursor: 'pointer',
+        color: 'white',
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        borderRadius: '50%',
+        p: 1,
+      }}
+    >
+      <ArrowForwardIos />
+    </Box>
+  );
+};
+
+const PrevArrow = (props) => {
+  const { onClick } = props;
+  return (
+    <Box
+      onClick={onClick}
+      sx={{
+        position: 'absolute',
+        top: '50%',
+        left: 10,
+        transform: 'translateY(-50%)',
+        zIndex: 2,
+        cursor: 'pointer',
+        color: 'white',
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        borderRadius: '50%',
+        p: 1,
+      }}
+    >
+      <ArrowBackIos />
+    </Box>
+  );
+};
+
   const settings = {
-    autoplay: true,
-    autoplaySpeed: 4000,
-    infinite: true,
-    speed: 1000,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    fade: true,
-    arrows: false,
-  };
+  dots: true,
+  infinite: true,
+  speed: 3000,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 3000,
+  arrows: true,
+  nextArrow: <NextArrow />,
+  prevArrow: <PrevArrow />,
+};
+
 
 
   const { id } = useParams();
@@ -64,7 +115,7 @@ export default function RestauranteDetalle() {
   const [fechaReserva, setFechaReserva] = useState('');
   const generarHorarios = () => {
   const horarios = [];
-  for (let h = 10; h <= 23; h++) {
+  for (let h = 0; h <= 24; h++) {
     horarios.push(`${String(h).padStart(2, '0')}:00`);
     horarios.push(`${String(h).padStart(2, '0')}:30`);
   }
@@ -73,7 +124,7 @@ export default function RestauranteDetalle() {
 };
   const horarios = generarHorarios();
   const generarHorariosDisponibles = (fechaSeleccionada) => {
-  const horaInicio = 10;
+  const horaInicio = 0;
   const horaFin = 24;
   const intervalos = [];
 
@@ -191,7 +242,7 @@ export default function RestauranteDetalle() {
 
   } catch (err) {
     console.error(err);
-    setReseñaError("Error al enviar reseña");
+    setReseñaError("Error al enviar reseña, primero debe tener usuario luego de asistir recientemente para realizar dejar reserña");
   }
 };
 
@@ -336,15 +387,15 @@ export default function RestauranteDetalle() {
               Promociones especiales
             </Typography>
 
-            <Grid container spacing={3}>
+            <Grid container spacing={3}align="center" >
               {restaurante.promociones.map((promo) => (
                 <Grid item xs={12} sm={6} md={4} key={promo.id}>
                   <Card sx={{ height: '100%', backgroundColor: '#3D3C3B', borderRadius: 3, boxShadow: 3 }}>
                     <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#ffff' }}>
+                      <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#ffff' }}>
                         {promo.titulo}
                       </Typography>
-                      <Typography variant="body2" sx={{ mt: 1, color: '#ffff' }}>
+                      <Typography variant="body1" sx={{ mt: 1, color: '#ffff' }}>
                         {promo.descripcion}
                       </Typography>
                       <Typography variant="h6" sx={{ mt: 1, color: '#ffff' }}>
@@ -362,10 +413,11 @@ export default function RestauranteDetalle() {
         )}
 
       {/* Datos del usuario responsable */}
-      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+      <Box sx={{ display: 'flex', gap: 1, mt: 4 }}>
         {/* Botón Menú */}
         <Tooltip title={mostrarMenu ? "Ocultar menú" : "Ver menú"}>
           <IconButton
+            
             onClick={() => setMostrarMenu(!mostrarMenu)}
             sx={{
               backgroundColor: '#3D3C3B',
@@ -425,26 +477,94 @@ export default function RestauranteDetalle() {
             <EventIcon fontSize="medium" />
           </IconButton>
         </Tooltip>
+        </Box>
+        <Box sx={{
+            display: 'flex',
+            justifyContent: mostrarMenu && mostrarBebidas ? 'space-between' : 'center',
+            gap: 3,
+            mt: 2,
+            flexWrap: 'wrap',
+            transition: 'all 0.5s ease',
+          }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', mt: 4 }}>
+            {mostrarMenu && (
+              <Box
+                sx={{
+                  width: mostrarMenu && mostrarBebidas ? '50%' : '100%',
+                  px: 3,
+                }}
+              >
+            <Card elevation={3} sx={{ p: 3, borderRadius: 3, }}>
+            <Typography
+              variant="h3"
+              align="center"
+              sx={{ fontFamily: 'Kaushan Script' }}
+              gutterBottom
+            >
+              ~ Menú ~
+            </Typography>
 
-          
-          {mostrarMenu && (
-            <Box sx={{ mt: 3 }}>
-              <Typography variant="h3" align="center" sx={{ fontFamily: 'Kaushan Script' }} gutterBottom>
-                Menú 
+            {categoriasMenu.length === 0 ? (
+              <Typography variant="body1" align="center">
+                Este restaurante aún no cargó su menú.
+              </Typography>
+            ) : (
+              categoriasMenu.map((categoria) => (
+                <Box key={categoria.id} sx={{ mb: 3 }}>
+                  <Typography variant="h5" align="center"sx={{ fontWeight: 'bold', color: '#322B23' }}>
+                    {categoria.nombre}
+                  </Typography>
+                  {categoria.menus.map((item) => (
+                    <Box key={item.id} sx={{ p: 2, borderBottom: '1px solid #ccc' }}>
+                      <Typography variant="subtitle1" sx={{fontWeight: 'bold'}}>~ {item.nombre}</Typography>
+                      <Typography variant="body2" sx={{ textAlign: 'justify' }}>
+                        {item.descripcion}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        ${item.precio}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              ))
+            )}</Card>
+          </Box>
+          )}
+
+
+          {mostrarBebidas && (
+          <Box
+            sx={{
+              width: mostrarMenu && mostrarBebidas ? '50%' : '100%',
+              px: 3,
+            }}
+          >
+            <Card elevation={3} sx={{ p: 3, borderRadius: 3, }}>
+              <Typography
+                variant="h3"
+                align="center"
+                sx={{ fontFamily: 'Kaushan Script' }}
+                gutterBottom
+              >
+                ~ Bebidas ~
               </Typography>
 
-              {categoriasMenu.length === 0 ? (
-                <Typography variant="body1">Este restaurante aún no cargó su menú.</Typography>
+              {categoriasBebidas.length === 0 ? (
+                <Typography variant="body1" align="center">
+                  Este restaurante aún no cargó sus bebidas.
+                </Typography>
               ) : (
-                categoriasMenu.map((categoria) => (
+                categoriasBebidas.map((categoria) => (
                   <Box key={categoria.id} sx={{ mb: 3 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#322B23' }}>
+                    <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', color: '#322B23' ,}}>
                       {categoria.nombre}
                     </Typography>
-                    {categoria.menus.map((item) => (
-                      <Box key={item.id} sx={{ p: 2, borderBottom: '1px solid #ccc' }}>
-                        <Typography variant="subtitle1">{item.nombre}</Typography>
-                        <Typography variant="body2">{item.descripcion}</Typography>
+                    {categoria.bebidas?.map((item) => (
+                      <Box key={item.id} sx={{ py: 1.5, borderBottom: '1px solid #ccc' }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}> ~{item.nombre}</Typography>
+                        <Typography variant="body2" sx={{ textAlign: 'justify' }}>
+                          {item.descripcion}
+                        </Typography>
                         <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                           ${item.precio}
                         </Typography>
@@ -453,42 +573,11 @@ export default function RestauranteDetalle() {
                   </Box>
                 ))
               )}
-            </Box>
-            )}
-           {mostrarBebidas && (
-  <Box sx={{ mt: 3 }}>
-    <Typography variant="h3" align="center" sx={{ fontFamily: 'Kaushan Script' }} gutterBottom>
-      Bebidas
-    </Typography>
-
-    {categoriasBebidas.length === 0 ? (
-      <Typography variant="body1">Este restaurante aún no cargó sus bebidas.</Typography>
-    ) : (
-      categoriasBebidas.map((categoria) => (
-        <Box key={categoria.id} sx={{ mb: 3 }}>
-          <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#322B23' }}>
-            {categoria.nombre}
-          </Typography>
-          {categoria.bebidas?.map((item) => (
-            <Box key={item.id} sx={{ p: 2, borderBottom: '1px solid #ccc' }}>
-              <Typography variant="subtitle1">{item.nombre}</Typography>
-              <Typography variant="body2">{item.descripcion}</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                ${item.precio}
-              </Typography>
-            </Box>
-          ))}
+            </Card>
+          </Box>
+        )}  
         </Box>
-      ))
-    )}
-  </Box>
-)}
-
-
         </Box>
-        
-      
-
       {/* Formulario de Reseña */}
       <Box component="form" onSubmit={handleEnviarReseña} sx={{ mt: 6 }}>
         <Box sx={{ mt: 6 }}>
@@ -534,22 +623,22 @@ export default function RestauranteDetalle() {
           value={comentario}
           onChange={(e) => setComentario(e.target.value)}
           sx={{ my: 2 ,'& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#ccc', // color normal
-      },
-      '&:hover fieldset': {
-        borderColor: '#999', // color al pasar el mouse
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#322B23', // color al hacer foco (tu color deseado)
-      },
-    },
-    '& .MuiInputLabel-root': {
-      color: '#444', // color del label normal
-      '&.Mui-focused': {
-        color: '#322B23', // color del label al hacer foco
-      },},}}
-        />
+              '& fieldset': {
+                borderColor: '#ccc', // color normal
+              },
+              '&:hover fieldset': {
+                borderColor: '#999', // color al pasar el mouse
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#322B23', // color al hacer foco (tu color deseado)
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: '#444', // color del label normal
+              '&.Mui-focused': {
+                color: '#322B23', // color del label al hacer foco
+              },},}}
+                />
 
         <Button variant="contained" color="3D3C3B" type="submit" 
         sx={{backgroundColor: '#3D3C3B', color: '#fff'}}>
@@ -560,114 +649,125 @@ export default function RestauranteDetalle() {
         {reseñaError && <Alert severity="error" sx={{ mt: 2 }}>{reseñaError}</Alert>}
       </Box>
     
-<Box sx={{ mt: 6, p: 3, backgroundColor: '#B29C7D', borderRadius: 3 }}>
-  <Typography variant="h5" gutterBottom>
-    Hacer una reserva
-  </Typography>
-<TextField
-    label="Seleccioná una fecha"
-    type="date"
-    fullWidth
-    value={fechaReserva.split('T')[0] || ''}
-    onChange={(e) => {
-      const fecha = e.target.value;
-      const hora = fechaReserva.split('T')[1] || '10:00';
-      setFechaReserva(`${fecha}T${hora}`);
-    }}
-    InputLabelProps={{ shrink: true }}
-    inputProps={{
-      min: hoy, // ⛔ bloquea fechas pasadas
-    }}
-    sx={{ my: 2 ,backgroundColor: '#fff','& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#ccc', // color normal
-      },
-      '&:hover fieldset': {
-        borderColor: '#999', // color al pasar el mouse
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#322B23', // color al hacer foco (tu color deseado)
-      },
-    },
-    '& .MuiInputLabel-root': {
-      color: '#444', // color del label normal
-      '&.Mui-focused': {
-        color: '#322B23', // color del label al hacer foco
-      },},}}
-  />
+      <Box sx={{ mt: 6, p: 3, backgroundColor: '#B29C7D', borderRadius: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Vamos hace una reserva .!
+        </Typography>
+        <TextField
+            
+            type="date"
+            
+            fullWidth
+            value={fechaReserva.split('T')[0] || ''}
+            onChange={(e) => {
+              const fecha = e.target.value;
+              const hora = fechaReserva.split('T')[1] || '00:00';
+              const fechaSeleccionada = dayjs(fecha);
+              const hoyFecha = dayjs().startOf('day');
+
+              if (fechaSeleccionada.isBefore(hoyFecha)) {
+                setMensaje('⚠️ La fecha seleccionada ya pasó.');
+              } else {
+                setMensaje('');
+              }
+
+              setFechaReserva(`${fecha}T${hora}`);
+            }}
+
+            InputLabelProps={{ shrink: true }}
+            inputProps={{
+              min: hoy, // ⛔ bloquea fechas pasadas
+            }}
+            sx={{ my: 2 ,backgroundColor: '#fff','& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#ccc', // color normal
+              },
+              '&:hover fieldset': {
+                borderColor: '#999', // color al pasar el mouse
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#322B23', // color al hacer foco (tu color deseado)
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: '#444', // color del label normal
+              '&.Mui-focused': {
+                color: '#322B23', // color del label al hacer foco
+              },},}}
+          />
 
 
-  {/* Horario */}
-  <TextField
-  select
-  label="Horario"
-  fullWidth
-  value={fechaReserva.split('T')[1] || '10:00'}
-  onChange={(e) => {
-    const hora = e.target.value;
-    const fecha = fechaReserva.split('T')[0] || hoy;
-    setFechaReserva(`${fecha}T${hora}`);
-  }}
-  sx={{ my: 2 ,backgroundColor: '#fff','& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#ccc', // color normal
-      },
-      '&:hover fieldset': {
-        borderColor: '#999', // color al pasar el mouse
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#322B23', // color al hacer foco (tu color deseado)
-      },
-    },
-    '& .MuiInputLabel-root': {
-      color: '#444', // color del label normal
-      '&.Mui-focused': {
-        color: '#322B23', // color del label al hacer foco
-      },},}}
->
-  {generarHorariosDisponibles(fechaReserva.split('T')[0] || hoy).map((hora) => (
-    <MenuItem key={hora} value={hora}>
-      {hora}
-    </MenuItem>
-  ))}
-</TextField>
+            {/* Horario */}
+            <TextField
+            select
+            label="Horario"
+            fullWidth
+            value={fechaReserva.split('T')[1] }
+            onChange={(e) => {
+              const hora = e.target.value;
+              const fecha = fechaReserva.split('T')[0] || hoy;
+              setFechaReserva(`${fecha}T${hora}`);
+            }}
+            sx={{ my: 2 ,backgroundColor: '#fff','& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: '#ccc', // color normal
+                },
+                '&:hover fieldset': {
+                  borderColor: '#999', // color al pasar el mouse
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#322B23', // color al hacer foco (tu color deseado)
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: '#444', // color del label normal
+                '&.Mui-focused': {
+                  color: '#322B23', // color del label al hacer foco
+                },},}}
+          >
+            {generarHorariosDisponibles(fechaReserva.split('T')[0] || hoy).map((hora) => (
+              <MenuItem key={hora} value={hora}>
+                {hora}
+              </MenuItem>
+            ))}
+          </TextField>
 
 
-  {/* Cantidad de personas */}
-  <TextField
-    label="Cantidad de personas"
-    type="number"
-    fullWidth
-    value={cantidadPersonas}
-    onChange={(e) => setCantidadPersonas(e.target.value)}
-    inputProps={{ min: 1, max: 8 }}
-    sx={{ my: 2 ,backgroundColor: '#fff','& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#ccc', // color normal
-      },
-      '&:hover fieldset': {
-        borderColor: '#999', // color al pasar el mouse
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#322B23', // color al hacer foco (tu color deseado)
-      },
-    },
-    '& .MuiInputLabel-root': {
-      color: '#444', // color del label normal
-      '&.Mui-focused': {
-        color: '#322B23', // color del label al hacer foco
-      },},}}
-  />
+        {/* Cantidad de personas */}
+        <TextField
+          
+          type="number"
+          fullWidth
+          value={cantidadPersonas}
+          onChange={(e) => setCantidadPersonas(e.target.value)}
+          inputProps={{ min: 1, max: 6 }}
+          sx={{ my: 2 ,backgroundColor: '#fff','& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: '#ccc', // color normal
+            },
+            '&:hover fieldset': {
+              borderColor: '#999', // color al pasar el mouse
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#322B23', // color al hacer foco (tu color deseado)
+            },
+          },
+          '& .MuiInputLabel-root': {
+            color: '#444', // color del label normal
+            '&.Mui-focused': {
+              color: '#322B23', // color del label al hacer foco
+            },},}}
+        />
 
-  {/* Botón Reservar */}
-  <Button
-    variant="contained"
-    sx={{ backgroundColor: '#322B23', color: '#fff', mt: 1 }}
-    onClick={handleReserva}
-  >
-    Reservar
-  </Button>
-</Box>
+        {/* Botón Reservar */}
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: '#322B23', color: '#fff', mt: 1 }}
+          onClick={handleReserva}
+        >
+          Reservar
+        </Button>
+      </Box>
 
 
     </Container>

@@ -75,7 +75,14 @@ const DepartamentoDetalle = () => {
         {departamento.restaurantes.map((r) => (
         <Grid item xs={12} sm={6} md={4} key={r.id}>
           <Link to={`/restaurante/${r.id}`} style={{ textDecoration: 'none' }}>
-            <Card sx={{ height: '100%', cursor: 'pointer' }}>
+            <Card
+          sx={{
+            height: '100%',
+            maxWidth: 320, // Limita el ancho de la tarjeta
+            margin: '0 auto', // Centra la tarjeta dentro del Grid item
+            cursor: 'pointer',
+          }}
+        >
               {r.photos && r.photos[0]?.url && (
                 <CardMedia
                   component="img"
@@ -86,7 +93,21 @@ const DepartamentoDetalle = () => {
               )}
               <CardContent>
                 <Typography variant="h6" gutterBottom sx={{ color: 'black' }}>{r.nombre}</Typography>
-                <Typography variant="body2" sx={{ color: '#333' }}>{r.descripcion}</Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#333',
+                    textAlign: 'justify',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {r.descripcion}
+                </Typography>
+
+
               </CardContent>
             </Card>
           </Link>
