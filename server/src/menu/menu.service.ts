@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -34,7 +34,7 @@ export class MenuService {
     where:{ id: createMenuDto.categoryMenuId}
   })
   if (!categoria){
-    throw new Error('Categoría no encontrada');
+    throw new NotFoundException('Categoría no encontrada');
   }
   
   const menu = this.menuRepository.create({
@@ -50,12 +50,23 @@ export class MenuService {
 
 
   async findAll() {
-    return this.menuRepository.find();
+    return this.menuRepository.find({
+       relations: ['restaurante','categoryMenu'],
+    });
+  }
+  async findOne(id: number) {
+  const menu = await this.menuRepository.findOne({
+    where: { id },
+    relations: ['restaurante', 'categoryMenu'],
+  });
+
+  if (!menu) {
+    throw new NotFoundException('Comida no encontrada');
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} menu`;
-  }
+  return menu;
+}
+
 
   async updateMenu(id: number, updateMenuDto: UpdateMenuDto) {
     const menu =await this.menuRepository.findOne({
@@ -64,7 +75,7 @@ export class MenuService {
     })
     
     if (!menu){
-      throw new Error('Cominda no encontrada')
+      throw new NotFoundException('Cominda no encontrada')
     }
     //Solo se actualiza el dato a modificar
 
@@ -88,7 +99,7 @@ export class MenuService {
 
 
     if (!menu){
-      throw new Error ('Comida no encontrada')
+      throw new NotFoundException ('Comida no encontrada')
     }
     
     await this.menuRepository.remove(menu) ;
