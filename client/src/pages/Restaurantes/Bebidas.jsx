@@ -196,8 +196,12 @@ const BebidasDialog = () => {
             name="descripcion"
             fullWidth
             multiline
+            minRows={4}
+            maxRows={10}
+            inputProps={{ style: { textAlign: 'justify' } }}
             value={form.descripcion}
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+            
           />
           <TextField
             margin="dense"

@@ -31,7 +31,7 @@ const paisesExtranjeros = [
 
 
 const provinciasArgentinas = [
-  "Buenos Aires", "CABA", "Catamarca", "Chaco", "Chubut", "Córdoba", "Corrientes",
+  "Buenbos Aires", "CABA", "Catamarca", "Chaco", "Chubut", "Córdoba", "Corrientes",
   "Entre Ríos", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones",
   "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe",
   "Santiago del Estero", "Tierra del Fuego", "Tucumán"
@@ -72,12 +72,16 @@ const RegisterForm = () => {
 
   return (
     <Box
-      display="flex"
-      justifyContent="center"
-      flexDirection="column"
-      alignItems="center"
-      height="100vh"
+      
+       display="flex" 
+    flexDirection='column'
+    justifyContent="center" 
+    alignItems="center" 
+    height="100vh"
+      pt={10} // este valor crea espacio arriba
     >
+      <Box>
+
       <Typography
         variant="h2"
         align="center"
@@ -90,7 +94,7 @@ const RegisterForm = () => {
       >
         ¡Comenzá ya!
       </Typography>
-
+      </Box>
       <Paper
         elevation={6}
         sx={{

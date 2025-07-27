@@ -205,7 +205,11 @@ const FormularioMenu = () => {
             value={form.descripcion}
             onChange={handleChange}
             required
-          />
+            multiline
+            minRows={4}
+            maxRows={10}
+            inputProps={{ style: { textAlign: 'justify' } }}
+                    />
           <TextField
             label="Precio"
             name="precio"

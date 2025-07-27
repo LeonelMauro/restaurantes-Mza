@@ -88,7 +88,13 @@ const LoginForm = () => {
 
 
   return (
-    <Box display="flex" flexDirection='column' justifyContent="center" alignItems="center" height="100vh">
+    <Box 
+    display="flex" 
+    flexDirection='column'
+    justifyContent="center" 
+    alignItems="center" 
+    height="100vh"
+    >
       <Box>
       <Typography
           variant="h2"

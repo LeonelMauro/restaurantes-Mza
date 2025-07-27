@@ -90,5 +90,12 @@ async findOne(@Param('id') id: string): Promise<Restaurante> {
   if (isNaN(parsedId)) throw new BadRequestException('ID inválido');
   return this.restauranteService.findOne(parsedId);
 }
+@Patch(':id')
+async update(
+  @Param('id') id: number,
+  @Body() updateRestauranteDto: UpdateRestauranteDto,
+) {
+  return this.restauranteService.update(+id, updateRestauranteDto);}
+
 
 }

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -29,6 +30,15 @@ const MiRestaurante = () => {
   const [previewFotos, setPreviewFotos] = useState([]);
   const [campoActual, setCampoActual] = useState(null);
   const navigate = useNavigate();
+  const [imagenes, setImagenes] = useState([]);
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setImagenes((prev) => [...prev, ...files]);
+  };
+
+  const handleRemoveImage = (index) => {
+    setImagenes((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const getCampoNombreBonito = (campo) => {
     switch (campo) {
@@ -137,14 +147,28 @@ const MiRestaurante = () => {
 
   return (
     <Box p={4}>
-      <Typography variant="h4">
+      <Typography variant="h1" align="center" sx={{ fontFamily: 'Kaushan Script', mb: 3 }}>
         {restaurante.nombre}
         <IconButton onClick={() => handleEditClick('nombre')} size="small">
           <EditIcon fontSize="small" />
         </IconButton>
       </Typography>
 
-      <Typography variant="body1">
+      <Typography variant="body1"sx={{
+            fontStyle: 'italic',
+            color: '#3E3E3E', // Gris cálido
+            fontSize: '1.15rem',
+            lineHeight: 1.9,
+            mt: 3,
+            mb: 4,
+            px: 3,
+            py: 2,
+            backgroundColor: '#F5E6D3', // Beige claro tipo montaña/tierra
+            borderRadius: 4,
+            boxShadow: '0 2px 8px rgba(15, 3, 13, 0.93)',
+            fontFamily: 'Georgia, serif',
+            textAlign: 'justify', 
+          }}>
         {restaurante.descripcion}
         <IconButton onClick={() => handleEditClick('descripcion')} size="small">
           <EditIcon fontSize="small" />
@@ -226,6 +250,10 @@ const MiRestaurante = () => {
             onChange={(e) =>
               setForm((prev) => ({ ...prev, [campoActual]: e.target.value }))
             }
+            multiline
+            minRows={4}
+            maxRows={10}
+            inputProps={{ style: { textAlign: 'justify' } }} // Opcional: justifica el texto
           />
         </DialogContent>
         <DialogActions>
@@ -249,15 +277,33 @@ const MiRestaurante = () => {
             }}
           />
           {previewFotos.length > 0 && (
-            <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
               {previewFotos.map((src, index) => (
-                <CardMedia
-                  key={index}
-                  component="img"
-                  image={src}
-                  alt="preview"
-                  sx={{ height: 100, width: 130, borderRadius: 2 }}
-                />
+                <Box key={index} sx={{ position: 'relative' }}>
+                  <CardMedia
+                    component="img"
+                    image={src}
+                    alt={`preview-${index}`}
+                    sx={{ height: 100, width: 130, borderRadius: 2 }}
+                  />
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setPreviewFotos((prev) => prev.filter((_, i) => i !== index));
+                      setNuevasFotos((prev) => prev.filter((_, i) => i !== index));
+                    }}
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                      backgroundColor: 'white',
+                      color: 'red',
+                      fontSize: 14,
+                    }}
+                  >
+                    ✖
+                  </IconButton>
+                </Box>
               ))}
             </Box>
           )}
