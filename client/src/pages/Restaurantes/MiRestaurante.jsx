@@ -14,8 +14,13 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Tooltip,
 } from '@mui/material';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import LiquorIcon from '@mui/icons-material/Liquor';
+import EventIcon from '@mui/icons-material/Event';
 import EditIcon from '@mui/icons-material/Edit';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 // ...importaciones iguales
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 
@@ -224,20 +229,86 @@ const MiRestaurante = () => {
         Agregar nuevas fotos
       </Button>
 
-      <Box mt={4}>
-        <Button variant="contained" onClick={() => navigate(`/menu/create`)} sx={{ mr: 2,backgroundColor: '#2E2D2C', color: 'white' }}>
-          Menú
-        </Button>
-        <Button variant="contained" onClick={() => navigate(`/promos`)} sx={{ mr: 2 ,backgroundColor: '#2E2D2C', color: 'white'}}>
-          Promociones
-        </Button>
-        <Button variant="contained" onClick={() => navigate(`/eventos/${id}`)} sx={{ mr: 2, backgroundColor: '#2E2D2C', color: 'white' }}>
-          Eventos
-        </Button><Button variant="contained" onClick={() => navigate(`/bebidas`)} sx={{ mr: 2 ,backgroundColor: '#2E2D2C', color: 'white'}}>
-          Bebidas
-        </Button>
-      </Box>
+      <Box sx={{ display: 'flex', gap: 1, mt: 4 }}>
+        
+        {/* Botón Menú */}
+        <Tooltip >
+          <IconButton
+            onClick={() => navigate(`/menu/create`)}
+            sx={{
+              backgroundColor: '#3D3C3B',
+              color: '#fff',
+              width: 48,
+              height: 48,
+              '&:hover': {
+                backgroundColor: '#3D3C3B',
+              },
+              '&:active': {
+                transform: 'none',
+              },
+            }}
+          >
+            <RestaurantMenuIcon fontSize="medium" />
+          </IconButton>
+        </Tooltip>
 
+        {/* Botón Bebidas */}
+        <Tooltip >
+          <IconButton
+            onClick={() => navigate(`/bebidas`)}
+            sx={{
+              backgroundColor: '#3D3C3B',
+              color: '#fff',
+              width: 48,
+              height: 48,
+              '&:hover': {
+                backgroundColor: '#3D3C3B',
+              },
+              '&:active': {
+                transform: 'none',
+              },
+            }}
+          >
+            <LiquorIcon fontSize="medium" />
+          </IconButton>
+        </Tooltip>
+
+        {/* Botón Eventos */}
+        <Tooltip title="Ver eventos">
+          <IconButton
+            onClick={() => navigate(`/eventos/${id}`)}
+            sx={{
+              backgroundColor: '#3D3C3B',
+              color: '#fff',
+              width: 48,
+              height: 48,
+              '&:hover': {
+                backgroundColor: '#3D3C3B',
+              },
+              '&:active': {
+                transform: 'none',
+              },
+            }}
+          >
+            <EventIcon fontSize="medium" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Ver promociones">
+        <IconButton
+          onClick={() => navigate(`/promos`)}
+          sx={{
+            backgroundColor: '#3D3C3B',
+            color: '#fff',
+            width: 48,
+            height: 48,
+            '&:hover': { backgroundColor: '#3D3C3B' },
+            '&:active': { transform: 'none' },
+          }}
+        >
+          <LocalOfferIcon fontSize="medium" />
+        </IconButton>
+      </Tooltip>
+      </Box>
       {/* Diálogo para campos */}
       <Dialog open={openCampo} onClose={handleCloseCampos}>
         <DialogTitle>Editar {getCampoNombreBonito(campoActual)}</DialogTitle>

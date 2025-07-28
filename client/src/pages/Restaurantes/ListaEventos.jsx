@@ -2,8 +2,13 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Box,
+  Button,
+  Card,
+  CardContent,
+  Grid,
   Typography,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; // ✅ FALTABA ESTA LÍNEA
 
 const ListaEventos = () => {
   const [eventos, setEventos] = useState([]);
@@ -26,27 +31,59 @@ const ListaEventos = () => {
         <Typography variant="h1" align="center" sx={{ fontFamily: 'Kaushan Script', mb: 3 }}>
             Eventos 
         </Typography>
-        {eventos.map((evento) => (
-            <Box key={evento.id} my={2} p={2} border="1px solid #ccc">
-            <Typography variant="h6">{evento.titulo}</Typography>
-            <Typography>{evento.descripcion}</Typography>
-            <Typography>Fecha: {new Date(evento.fecha).toLocaleDateString()}</Typography>
-            <Typography>Hora: {evento.hora}</Typography>
-            {evento.imagenUrl && (
+        <Grid container spacing={3} align="center" mt={4}>
+      {eventos.map((evento) => (
+        <Grid item xs={12} sm={6} md={4} key={evento.id}>
+          <Card sx={{ height: '100%', backgroundColor: '#3D3C3B', color: '#fff', borderRadius: 3, }}>
+            <CardContent>
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                {evento.titulo}
+              </Typography>
+
+              <Typography sx={{ textAlign: 'justify', mb: 1 }}>
+                {evento.descripcion}
+              </Typography>
+
+              <Typography>📅 Fecha: {evento.fecha}</Typography>
+              <Typography>⏰ Hora: {evento.hora}</Typography>
+
+              {evento.imagenUrl && (
                 <Box
-                component="img"
-                src={`http://localhost:3000/uploads/${evento.imagenUrl}`}
-                alt={evento.titulo}
-                sx={{
+                  component="img"
+                  src={`http://localhost:3000/${evento.imagenUrl}`}
+                  alt={evento.titulo}
+                  sx={{
                     width: '100%',
-                    height: { xs: 250, sm: 350, md: 400 },
+                    height: 180,
                     objectFit: 'cover',
+                    mt: 2,
                     borderRadius: 2,
-                }}
+                  }}
                 />
-            )}
-            </Box>
-        ))}
+              )}
+
+              {/* Botón Reservar centrado */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: '#F5E6D3',
+                    color: '#3D3C3B',
+                    fontWeight: 'bold',
+                    '&:hover': {
+                      backgroundColor: '#e2d3c1',
+                    },
+                  }}
+                  onClick={() => navigate(`/reservar-evento/${evento.id}`)}
+                >
+                  Reservar
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
     </Box>
 
   );
