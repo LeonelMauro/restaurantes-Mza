@@ -46,6 +46,20 @@ export class EventosService {
     relations: ['restaurante', 'reservas'],
   });
 }
+  async findByRestaurante(restauranteId: number) {
+  const restaurante = await this.restauranteRepository.findOne({
+    where: { id: restauranteId },
+  });
+
+  if (!restaurante) {
+    throw new NotFoundException(`Restaurante con ID ${restauranteId} no encontrado`);
+  }
+
+  return this.eventoRepository.find({
+    where: { restaurante: { id: restauranteId } },
+    relations: ['restaurante', 'reservas'],
+  });
+}
 
 
   async findOne(id: number) {
@@ -62,18 +76,15 @@ export class EventosService {
 }
 
 
- async update(id: number, updateDto: UpdateEventoDto) {
-  const evento = await this.eventoRepository.preload({
-    id,
-    ...updateDto,
-  });
-
-  if (!evento) {
-    throw new NotFoundException(`Evento con ID ${id} no encontrado`);
-  }
-
-  return this.eventoRepository.save(evento);
-}
+ async update(id: number, dto: UpdateEventoDto) {
+     const evento = await this.eventoRepository.findOneBy({ id });
+     if (!evento) {
+       throw new NotFoundException(`Evento con ID ${id} no encontrado`);
+     }
+ 
+     Object.assign(evento, dto);
+     return this.eventoRepository.save(evento);
+   }
 
 
   async remove(id: number) {
