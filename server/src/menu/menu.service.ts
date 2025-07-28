@@ -105,4 +105,12 @@ export class MenuService {
     await this.menuRepository.remove(menu) ;
     return {message :'Comida eliminada correctamente' }
   }
+  async search(query: string): Promise<Menu[]> {
+      return this.menuRepository
+        .createQueryBuilder('menu')
+        .leftJoinAndSelect('categoryMenu', 'category')
+        .where('LOWER(menu.nombre) LIKE :query', { query: `%${query.toLowerCase()}%` })
+        .orWhere('LOWER(category.nombre) LIKE :query', { query: `%${query.toLowerCase()}%` })
+        .getMany();
+    }
 }

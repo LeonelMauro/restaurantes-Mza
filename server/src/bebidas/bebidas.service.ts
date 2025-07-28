@@ -88,4 +88,13 @@ export class BebidasService {
     await this.bebidaRepository.remove(bebida)
     return {mesagge:`Bebida eliminada`} ;
   }
+
+  async search(query: string): Promise<Bebida[]> {
+    return this.bebidaRepository
+      .createQueryBuilder('bebidas')
+      .leftJoinAndSelect('categoryBebidas', 'category')
+      .where('LOWER(bebidas.nombre) LIKE :query', { query: `%${query.toLowerCase()}%` })
+      .orWhere('LOWER(category.nombre) LIKE :query', { query: `%${query.toLowerCase()}%` })
+      .getMany();
+  }
 }

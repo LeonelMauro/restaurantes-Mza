@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { BebidasService } from './bebidas.service';
 import { CreateBebidaDto } from './dto/create-bebida.dto';
 import { UpdateBebidaDto } from './dto/update-bebida.dto';
@@ -33,4 +33,11 @@ export class BebidasController {
   remove(@Param('id') id: string) {
     return this.bebidasService.remove(+id);
   }
+
+  @Get('search')
+async search(@Query('query') query: string) {
+  if (!query || query.trim() === '') return [];
+  return this.bebidasService.search(query);
+}
+
 }

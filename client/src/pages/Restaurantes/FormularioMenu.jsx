@@ -1,104 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Box,
-  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   Button,
+  TextField,
+  IconButton,
   Typography,
+  Box,
   Paper,
-  MenuItem, Select, InputLabel, FormControl,
-  Container
+  Grid,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import axios from 'axios';
-// Agrupar por categoría
-const agruparPorCategoria = (menu) => {
-  const grupos = {};
-  menu.forEach((item) => {
-    const categoria = item.categoryMenu?.nombre || 'Sin categoría';
-    if (!grupos[categoria]) {
-      grupos[categoria] = [];
-    }
-    grupos[categoria].push(item);
-  });
-
-  return grupos;
-};
-
 
 const FormularioMenu = () => {
-  const [modoEdicion, setModoEdicion] = useState(false);
-  const [menuIdEditando, setMenuIdEditando] = useState(null);
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
-
-  const [menu, setMenu] = useState([]); // ✅ Aquí está bien
-  const [form, setForm] = useState({
-    categoria: '',
-    nombre: '',
-    descripcion: '',
-    precio: '',
-  });
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({ nombre: '', descripcion: '', precio: '',categoryMenuId: '' });
+  const [menu, setMenu] = useState([]);
+  const [editingId, setEditingId] = useState(null);
   const [restauranteId, setRestauranteId] = useState(null);
+  //categorias
+  const [categorias, setCategorias] = useState([]);
+  const [formCat, setFormCat] = useState({ nombre: '' });
   const [mensaje, setMensaje] = useState('');
-
-  const [formCat, setFormCat]= useState({
-    nombre:'',
-  })
-  const [categories, setCategories] = useState([]);
-  const [categoryId, setCategoryId] = useState('');
-
-
-  const eliminarMenuItem = async (id) => {
-  const confirm = window.confirm("¿Estás seguro de que querés eliminar este ítem?");
-  if (!confirm) return;
-  
-
-  const token = localStorage.getItem('token');
-  try {
-    await axios.delete(`http://localhost:3000/menu/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    setMensaje('Ítem eliminado correctamente');
-    fetchMenu(); // refresca el menú
-  } catch (error) {
-    console.error('Error al eliminar el ítem:', error);
-    setMensaje('Error al eliminar el ítem');
-  }
-};
-const cargarParaEditar = (item) => {
-  setForm({
-    nombre: item.nombre,
-    descripcion: item.descripcion,
-    precio: item.precio,
-  });
-  setCategoryId(item.categoryMenuId);
-  setModoEdicion(true);
-  setMenuIdEditando(item.id);
-  setMostrarFormulario(true);
-};
-
-  useEffect(() => {
-  const fetchCategories = async () => {
-    const token = localStorage.getItem('token');
-    if (!token || !restauranteId) return;
-
-    try {
-      const response = await axios.get(`http://localhost:3000/category-menu/by-restaurante/${restauranteId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setCategories(response.data);
-    } catch (error) {
-      console.error('Error al obtener categorías:', error);
-    }
-  };
-
-  if (restauranteId) {
-    fetchCategories();
-  }
-}, [restauranteId]);
-
+  // buscador
+  const [busqueda, setBusqueda] = useState('');
 
 
 
@@ -106,300 +36,296 @@ const cargarParaEditar = (item) => {
     const fetchRestauranteId = async () => {
       const userId = localStorage.getItem('userId');
       const token = localStorage.getItem('token');
-
       if (!token || !userId) return;
-
       try {
         const res = await axios.get(`http://localhost:3000/restaurante/by-user/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setRestauranteId(res.data.id);
+        fetchMenu(res.data.id);
+        fetchCategorias(res.data.id);
       } catch (err) {
         console.error('Error al obtener restaurante:', err);
       }
     };
-
     fetchRestauranteId();
   }, []);
-  
-  const handleSubmitcategoryMenu= async (e) =>{
-    e.preventDefault();
-    const token= localStorage.getItem('token');
-    if(!token || !restauranteId){
-      alert('Falta token o restaurante');
-      return;
-    }
-    try{
-      await axios.post(
-        'http://localhost:3000/category-menu',
-        {
-          ...formCat,
-          nombre: (formCat.nombre),
-          restauranteId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setMensaje('Menú agregado exitosamente');
-      setForm({ nombre: '', descripcion: '', precio: '' });
-      setCategoryId('');
-      fetchMenu(); // 🔄 actualiza sin depender de useEffect
 
+  //categoria menu
+    const fetchCategorias = async (restauranteId) => {
+        try {
+          const res = await axios.get('http://localhost:3000/category-menu');
+          console.log('CATEGORÍAS:', res.data); // 👈 esto te mostrará si llegan o no
+          const filtradas = res.data.filter(cat => cat.restaurante.id === restauranteId);
+          setCategorias(filtradas);
+        } catch (err) {
+          console.error('Error al cargar categorías:', err);
+        }
+      };
+    const handleSubmitcategoryMenu= async (e) =>{
+        e.preventDefault();
+        const token= localStorage.getItem('token');
+        if(!token || !restauranteId){
+          alert('Falta token o restaurante');
+          return;
+        }
+        try{
+          await axios.post(
+            'http://localhost:3000/category-menu',
+            {
+              ...formCat,
+              nombre: (formCat.nombre),
+              restauranteId,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setMensaje('Menú agregado exitosamente');
+          setFormCat({ nombre: '' });
+        } catch (err) {
+          console.error(err);
+          setMensaje('Error al agregar menú');
+        }
+      };    
+
+
+
+  const fetchMenu = async (restauranteId) => {
+    try {
+      const res = await axios.get('http://localhost:3000/menu/');
+      const menuFiltradas = res.data.filter(b => b.restaurante.id === restauranteId);
+      setMenu(menuFiltradas);
     } catch (err) {
-      console.error(err);
-      setMensaje('Error al agregar menú');
+      console.error('Error al cargar menu', err);
     }
-  };    
-    
-      
-  const handleChangeCat = (e) => {
-  setFormCat({ ...formCat, [e.target.name]: e.target.value });
-};
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
   };
-  
-  const fetchMenu = async () => {
-  try {
-    const response = await axios.get('http://localhost:3000/menu');
-    setMenu(response.data); // <- este se llena si el backend responde bien
-  } catch (error) {
-    console.error('Error al obtener el menú', error);
-  }
+  //buscador
+  const menuFiltradas = menu.filter((b) =>
+  b.nombre.toLowerCase().includes(busqueda.toLowerCase())
+);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    setForm({ nombre: '', descripcion: '', precio: '', categoryMenuId: '' });
+    setEditingId(null);
+  };
+
+  const handleSubmit = async () => {
+    const token = localStorage.getItem('token');
+    const data = {
+  ...form,
+  precio: parseFloat(form.precio),
+  restauranteId,
+  categoryMenuId: parseInt(form.categoryMenuId)
 };
 
-
-
-useEffect(() => {
-  if (restauranteId) {
-    fetchMenu();
-  }
-}, [restauranteId, mensaje]); // opcional: que recargue al cambiar el mensaje
-
-
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  const token = localStorage.getItem('token');
-
-  if (!token || !restauranteId) {
-    alert('Falta token o restaurante.');
-    return;
-  }
-
-  try {
-    if (modoEdicion) {
-      // 🟡 EDITAR
-      await axios.patch(
-        `http://localhost:3000/menu/${menuIdEditando}`,
-        {
-          ...form,
-          precio: parseFloat(form.precio),
-          restauranteId,
-          categoryMenuId: categoryId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setMensaje('Ítem actualizado correctamente');
-    } else {
-      // 🟢 CREAR
-      await axios.post(
-        'http://localhost:3000/menu/create',
-        {
-          ...form,
-          precio: parseFloat(form.precio),
-          restauranteId,
-          categoryMenuId: categoryId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setMensaje('Menú agregado exitosamente');
+    try {
+      if (editingId) {
+        await axios.patch(`http://localhost:3000/menu/${editingId}`, data, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else {
+        await axios.post('http://localhost:3000/menu/create', data, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+      fetchMenu(restauranteId);
+      handleClose();
+    } catch (err) {
+      console.error('Error al guardar menu:', err);
     }
+  };
+  const agruparMenuPorCategoria = (menu) => {
+  const grupos = {};
+  menu.forEach((b) => {
+    const categoria = b.categoryMenu?.nombre || 'Sin categoría';
+    if (!grupos[categoria]) {
+      grupos[categoria] = [];
+    }
+    grupos[categoria].push(b);
+  });
+  return grupos;
+};
 
-    // Limpiar campos
-    setForm({ nombre: '', descripcion: '', precio: '' });
-    setCategoryId('');
-    setModoEdicion(false);
-    setMenuIdEditando(null);
-    fetchMenu();
-  } catch (err) {
-    console.error(err);
-    setMensaje('Error al guardar el ítem');
-  }
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`http://localhost:3000/menu/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchMenu(restauranteId);
+    } catch (err) {
+      console.error('Error al eliminar menu:', err);
+    }
+  };
+
+  const handleEdit = (item) => {
+  setForm({
+    nombre: item.nombre,
+    descripcion: item.descripcion,
+    precio: item.precio,
+    categoryMenuId: item.categoryMenu?.id || ''
+  });
+  setEditingId(item.id);
+  setOpen(true);
 };
 
 
   return (
-    <Container sx={{ py: 5, }}>
-      <Button
-        variant="contained"
-        sx={{ mb: 2, backgroundColor: '#8B5E3C', color: 'white' }}
-        onClick={() => setMostrarFormulario(!mostrarFormulario)}
-      >
-        {mostrarFormulario ? 'Cerrar Formulario' : 'Agregar/Editar Producto'}
-      </Button>
-      {mostrarFormulario && (
-      <Paper elevation={3} sx={{ padding: 4, width: 400 }}>
-        <Typography variant="h5" gutterBottom>
-          Agregar Categoria
+    <Box>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          mb: 3,
+        }}
+        >
+        {/* Botón izquierdo */}
+        <Button
+          onClick={handleOpen}
+          sx={{ background: '#8B5E3C', color: '#fff', mr: 2 }}
+        >
+          Agregar Menu
+        </Button>
+
+        {/* Título centrado */}
+        <Typography
+          variant="h2"
+          sx={{
+            flexGrow: 1,
+            textAlign: 'center',
+            fontFamily: 'Kaushan Script',
+            fontWeight: 'bold',
+            color: '#8B5E3C',
+          }}
+        >
+          Menu 
         </Typography>
-        <form onSubmit={handleSubmitcategoryMenu}>
-          <TextField
-            label="Nombre de la categoría"
-            name="nombre"
-            fullWidth
-            margin="normal"
-            value={formCat.nombre}
-            onChange={handleChangeCat}
-            required
-          />
-          <Button
-            type="submit"
-            fullWidth
-            sx={{ mt: 2, backgroundColor: '#8B5E3C', color: 'white' }}
-          >
-            Guardar Categoría
-          </Button>
-        </form>
-        <Typography variant="h5" gutterBottom>
-          Agregar ítem al Menú
-        </Typography>
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Categoría</InputLabel>
-          <Select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            required
-          >
-            {categories.map((cat) => (
-              <MenuItem key={cat.id} value={cat.id}>
-                {cat.nombre}
-              </MenuItem>
+
+        {/* Buscador derecho */}
+        <TextField
+          size="small"
+          placeholder="Buscar plato..."
+          onChange={(e) => setBusqueda(e.target.value)}
+          sx={{ minWidth: 200 }}
+        />
+      </Box>
+      <Box sx={{ mt: 4 }}>
+        {menu.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">No hay menu cargadas.</Typography>
+        ) : (
+          <Grid container spacing={2}>
+            {Object.entries(agruparMenuPorCategoria(menuFiltradas)).map(([categoria, items]) => (
+              <Grid item xs={12} key={categoria}>
+                <Typography variant="h4" sx={{ 
+                  mt:2,
+                  fontFamily: 'Kaushan Script',
+                  fontWeight: 'bold', }}>{categoria}</Typography>
+                <Grid container spacing={2}>
+                  {items.map((item) => (
+                    <Grid item xs={12} sm={6} md={4} key={item.id}>
+                      <Paper sx={{ p: 2 }}>
+                        <Typography variant="subtitle1">{item.nombre}</Typography>
+                        <Typography variant="body2" color="text.secondary">{item.descripcion}</Typography>
+                        <Typography variant="body2" fontWeight="bold">Precio: ${Number(item.precio).toFixed(2)}</Typography>
+                        <Button size="small" onClick={() => handleEdit(item)}>Editar</Button>
+                        <Button size="small" color="error" onClick={() => handleDelete(item.id)}>Eliminar</Button>
+                      </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
             ))}
-          </Select>
-        </FormControl>
-        <form onSubmit={handleSubmit}>
+          </Grid>
+        )}
+      </Box>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>{editingId ? 'Editar Menu' : 'Agregar Menu'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Complete los campos de la menu</DialogContentText>
           <TextField
-            label="Nombre del plato"
+            select
+            
+            fullWidth
+            margin="dense"
+            value={form.categoryMenuId || ''}
+            onChange={(e) => setForm({ ...form, categoryMenuId: e.target.value })}
+            SelectProps={{ native: true }}
+          >
+            <option value="">Seleccione una categoría</option>
+            {categorias.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.nombre}
+              </option>
+            ))}
+          </TextField>
+          <TextField
+            margin="dense"
+            label="Nombre"
             name="nombre"
             fullWidth
-            margin="normal"
+            variant="outlined"
             value={form.nombre}
-            onChange={handleChange}
-            required
+            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
           />
           <TextField
+            margin="dense"
             label="Descripción"
             name="descripcion"
             fullWidth
-            margin="normal"
-            value={form.descripcion}
-            onChange={handleChange}
-            required
             multiline
             minRows={4}
             maxRows={10}
             inputProps={{ style: { textAlign: 'justify' } }}
-                    />
+            value={form.descripcion}
+            onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+            
+          />
           <TextField
+            margin="dense"
             label="Precio"
             name="precio"
             type="number"
             fullWidth
-            margin="normal"
             value={form.precio}
-            onChange={handleChange}
-            required
-            inputProps={{ step: "0.01", min: 0 }}
+            onChange={(e) => setForm({ ...form, precio: e.target.value })}
           />
-          <Button
-            type="submit"
-            fullWidth
-            sx={{ mt: 2, backgroundColor: '#8B5E3C', color: 'white' }}
-          >
-            Guardar
-          </Button>
-          {mensaje && (
-            <Typography mt={2} color={mensaje.includes('Error') ? 'error' : 'green'}>
-              {mensaje}
-            </Typography>
-          )}
-          {modoEdicion && (
-          <Button
-            fullWidth
-            sx={{ mt: 2, backgroundColor: '#8B5E3C', color: 'white' }}
-            color="inherit"
-            onClick={() => {
-              setModoEdicion(false);
-              setMenuIdEditando(null);
-              setForm({ nombre: '', descripcion: '', precio: '' });
-              setCategoryId('');
-              setMensaje('');
-            }}
-          >
-            Cancelar edición
-          </Button>
-        )}
-        </form>
-      </Paper>
-      )}
-      <Box sx={{ width: 400, ml: 4 }}>
-          <Typography variant="h5" gutterBottom>Menú Actual</Typography>
-          {menu.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">No hay ítems cargados.</Typography>
-          ) : (
-            Object.entries(agruparPorCategoria(menu)).map(([categoria, items]) => (
-              <Box key={categoria} sx={{ mb: 3 }}>
-                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main' }}>
-                  {categoria}
-                </Typography>
-                {items.map((item) => (
-                  <Paper key={item.id} sx={{ p: 2, mb: 2 }}>
-                    <Typography variant="subtitle1">{item.nombre}</Typography>
-                    <Typography variant="body2" color="text.secondary">{item.descripcion}</Typography>
-                    <Typography variant="body2" fontWeight="bold">
-                      Precio: ${Number(item.precio).toFixed(2)}
-                    </Typography>
-                    <Button
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => cargarParaEditar(item)}
-                    sx={{ mr: 1, mt: 1 }}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="error"
-                    onClick={() => eliminarMenuItem(item.id)}
-                    sx={{ mt: 1 }}
-                  >
-                    Eliminar
-                  </Button>
-
-                  </Paper>
-                ))}
-              </Box>
-            ))
-          )}
-        </Box>
-
-    </Container>
+          <Box sx={{ mt: 2, p: 2, border: '1px dashed #ccc', borderRadius: 2 }}>
+            <Typography variant="subtitle1">Agregar nueva categoría</Typography>
+            <TextField
+              label="Nombre de la categoría"
+              fullWidth
+              margin="dense"
+              value={formCat.nombre}
+              onChange={(e) => setFormCat({ nombre: e.target.value })}
+            />
+            <Button
+              variant="outlined"
+              onClick={handleSubmitcategoryMenu}
+              sx={{ mt: 1 }}
+            >
+              Crear Categoría
+            </Button>
+            {mensaje && (
+              <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
+                {mensaje}
+              </Typography>
+            )}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleSubmit} variant="contained">Guardar</Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };
 

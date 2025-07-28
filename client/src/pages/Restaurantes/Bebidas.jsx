@@ -10,6 +10,8 @@ import {
   IconButton,
   Typography,
   Box,
+  Paper,
+  Grid,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -25,6 +27,8 @@ const BebidasDialog = () => {
   const [categorias, setCategorias] = useState([]);
   const [formCat, setFormCat] = useState({ nombre: '' });
   const [mensaje, setMensaje] = useState('');
+  // buscador
+  const [busqueda, setBusqueda] = useState('');
 
 
 
@@ -91,13 +95,17 @@ const BebidasDialog = () => {
 
   const fetchBebidas = async (restauranteId) => {
     try {
-      const res = await axios.get('http://localhost:3000/bebidas');
+      const res = await axios.get('http://localhost:3000/bebidas/');
       const bebidasFiltradas = res.data.filter(b => b.restaurante.id === restauranteId);
       setBebidas(bebidasFiltradas);
     } catch (err) {
       console.error('Error al cargar bebidas:', err);
     }
   };
+  //buscador
+  const bebidasFiltradas = bebidas.filter((b) =>
+  b.nombre.toLowerCase().includes(busqueda.toLowerCase())
+);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -125,7 +133,17 @@ const BebidasDialog = () => {
       console.error('Error al guardar bebida:', err);
     }
   };
-
+  const agruparBebidasPorCategoria = (bebidas) => {
+  const grupos = {};
+  bebidas.forEach((b) => {
+    const categoria = b.categoryBebidas?.nombre || 'Sin categoría';
+    if (!grupos[categoria]) {
+      grupos[categoria] = [];
+    }
+    grupos[categoria].push(b);
+  });
+  return grupos;
+};
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
     try {
@@ -151,15 +169,74 @@ const BebidasDialog = () => {
 
   return (
     <Box>
-      <Button variant="contained" onClick={handleOpen} sx={{ mb: 2 }}>Agregar Bebida</Button>
-      {bebidas.map(b => (
-        <Box key={b.id} sx={{ mb: 1, border: '1px solid #ccc', p: 2, borderRadius: 2 }}>
-          <Typography variant="h6">{b.nombre} - ${b.precio}</Typography>
-          <Typography>{b.descripcion}</Typography>
-          <IconButton onClick={() => handleEdit(b)}><EditIcon /></IconButton>
-          <IconButton onClick={() => handleDelete(b.id)}><DeleteIcon /></IconButton>
-        </Box>
-      ))}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          mb: 3,
+        }}
+        >
+        {/* Botón izquierdo */}
+        <Button
+          onClick={handleOpen}
+          sx={{ background: '#8B5E3C', color: '#fff', mr: 2 }}
+        >
+          Agregar Bebida
+        </Button>
+
+        {/* Título centrado */}
+        <Typography
+          variant="h2"
+          sx={{
+            flexGrow: 1,
+            textAlign: 'center',
+            fontFamily: 'Kaushan Script',
+            fontWeight: 'bold',
+            color: '#8B5E3C',
+          }}
+        >
+          Bebidas 
+        </Typography>
+
+        {/* Buscador derecho */}
+        <TextField
+          size="small"
+          placeholder="Buscar bebida..."
+          onChange={(e) => setBusqueda(e.target.value)}
+          sx={{ minWidth: 200 }}
+        />
+      </Box>
+      <Box sx={{ mt: 4 }}>
+        {bebidas.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">No hay bebidas cargadas.</Typography>
+        ) : (
+          <Grid container spacing={2}>
+            {Object.entries(agruparBebidasPorCategoria(bebidasFiltradas)).map(([categoria, items]) => (
+              <Grid item xs={12} key={categoria}>
+                <Typography variant="h4" sx={{ 
+                  mt:2,
+                  fontFamily: 'Kaushan Script',
+                  fontWeight: 'bold', }}>{categoria}</Typography>
+                <Grid container spacing={2}>
+                  {items.map((item) => (
+                    <Grid item xs={12} sm={6} md={4} key={item.id}>
+                      <Paper sx={{ p: 2 }}>
+                        <Typography variant="subtitle1">{item.nombre}</Typography>
+                        <Typography variant="body2" color="text.secondary">{item.descripcion}</Typography>
+                        <Typography variant="body2" fontWeight="bold">Precio: ${Number(item.precio).toFixed(2)}</Typography>
+                        <Button size="small" onClick={() => handleEdit(item)}>Editar</Button>
+                        <Button size="small" color="error" onClick={() => handleDelete(item.id)}>Eliminar</Button>
+                      </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Box>
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{editingId ? 'Editar Bebida' : 'Agregar Bebida'}</DialogTitle>
