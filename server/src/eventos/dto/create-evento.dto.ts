@@ -12,9 +12,6 @@ export class CreateEventoDto {
     @IsDateString()
     fecha: Date;
 
-    @IsNotEmpty()
-    @IsString()
-    hora: string;
 
     @IsOptional()
     @IsString()

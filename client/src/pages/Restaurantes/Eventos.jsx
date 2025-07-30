@@ -189,7 +189,7 @@ const Eventos = () => {
           <Box key={evento.id} my={2} p={2} border="1px solid #ccc" borderRadius={2}>
             <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{evento.titulo}</Typography>
             <Typography sx={{ textAlign: 'justify' }}>{evento.descripcion}</Typography>
-            <Typography>Fecha: {evento.fecha}</Typography>
+            <Typography>Fecha: {new Date(evento.fecha).toLocaleDateString()}</Typography>
             <Typography>Hora: {evento.hora}</Typography>
             {evento.imagenUrl && (
               <Box
@@ -211,8 +211,7 @@ const Eventos = () => {
             </Box>
           </Box>
         ))}
-      
-
+ 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{editingId ? 'Editar Evento' : 'Agregar Evento'}</DialogTitle>
         <DialogContent>

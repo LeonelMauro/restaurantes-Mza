@@ -33,7 +33,6 @@ export class EventosService {
     titulo: dto.titulo,
     descripcion: dto.descripcion,
     fecha: dto.fecha,
-    hora: dto.hora,
     imagenUrl: file?.filename || '', // o `file.path` o una URL si usás S3
     restaurante: user.restaurante,
   });

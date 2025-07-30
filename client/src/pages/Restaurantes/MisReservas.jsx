@@ -78,6 +78,9 @@ const MisReservas = () => {
       </Box>
     );
   }
+  const reservasEvento = reservas.filter((r) => r.evento);
+  const reservasNormales = reservas.filter((r) => !r.evento );
+
 
   return (
     <Box
@@ -108,7 +111,7 @@ const MisReservas = () => {
           Mis Reservas
         </Typography>
         <Grid container spacing={2}>
-          {reservas.map((reserva) => (
+          {reservasNormales.map((reserva) => (
             <Grid item xs={12} sm={6} md={4} key={reserva.id}>
               <Card sx={{ backgroundColor: '#F5E6D3' }}>
                 <CardContent>
@@ -143,6 +146,44 @@ const MisReservas = () => {
             </Grid>
           ))}
         </Grid>
+        <Typography variant="h4" mb={2} textAlign="center" color="white" sx={{fontFamily: 'Kaushan Script'}}>
+          Eventos 
+        </Typography>
+        <Grid container spacing={2}>
+        {reservasEvento.map((reserva) => (
+          <Grid item xs={12} sm={6} md={4} key={reserva.id}>
+            <Card sx={{ backgroundColor: '#F5E6D3' }}>
+              <CardContent>
+                <Typography variant="h6">🎉 {reserva.evento?.titulo}</Typography>
+                <Typography variant="body2">
+                  Restaurante: {reserva.restaurante?.nombre}
+                </Typography>
+                <Typography variant="body2">
+                  Fecha: {new Date(reserva.fecha).toLocaleDateString()}
+                </Typography>
+                <Typography variant="body2">
+                  Hora: {new Date(reserva.fecha).toLocaleTimeString('es-AR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </Typography>
+                <Typography variant="body2">
+                  Personas: {reserva.cantidadPersonas}
+                </Typography>
+                <Typography variant="body2">Estado: {reserva.estado}</Typography>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  sx={{ mt: 2 }}
+                  onClick={() => handleOpenDialog(reserva)}
+                >
+                  Cancelar reserva
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
       </Box>
 
       {/* Dialog de confirmación */}

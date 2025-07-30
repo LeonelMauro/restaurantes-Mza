@@ -85,7 +85,7 @@ const [searchTerm, setSearchTerm] = useState('');
 
   const sectionsRestauranteConRegistro = [
     { name: 'Mi Restaurante', path: `/mi-restaurante/${restauranteExistente?.id}` },
-    { name: 'Eventos', path: '/eventos' },
+    { name: 'Eventos', path: '/Listaeventos' },
     { name: 'Reservas', path: '/ReservasResto' },
   ];
 

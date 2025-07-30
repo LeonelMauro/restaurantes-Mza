@@ -7,6 +7,7 @@ import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Reserva } from './entities/reverva.entity';
 import { CreateReservaDto } from './dto/create-reserva.dto';
+import { Evento } from 'src/eventos/entities/evento.entity';
 
 @Injectable()
 export class ReservaService {
@@ -19,6 +20,10 @@ export class ReservaService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    
+    @InjectRepository(Evento)
+    private eventoRepository: Repository<Evento>,
+
   ) {}
 
   async createReserva(
@@ -41,10 +46,35 @@ export class ReservaService {
     return await this.reservaRepository.save(reserva);
   }
 
+  async createReservaConEvento(
+  restauranteId: number,
+  eventoId: number,
+  userId: number,
+  createReservaDto: CreateReservaDto
+) {
+  const restaurante = await this.restauranteRepository.findOneBy({ id: restauranteId });
+  const usuario = await this.userRepository.findOneBy({ id: userId });
+  const evento = await this.eventoRepository.findOneBy({ id: eventoId });
+
+  if (!restaurante) throw new NotFoundException('Restaurante no encontrado');
+  if (!usuario) throw new NotFoundException('Usuario no encontrado');
+  if (!evento) throw new NotFoundException('Evento no encontrado');
+
+  const reserva = this.reservaRepository.create({
+    ...createReservaDto,
+    restaurante,
+    usuario,
+    evento,
+  });
+  console.log(reserva)
+  return await this.reservaRepository.save(reserva);
+}
+
+
   async findReservasByUsuario(userId: number) {
     return this.reservaRepository.find({
       where: { usuario: { id: userId } },
-      relations: ['restaurante'],
+      relations: ['restaurante','evento'],
     });
   }
 

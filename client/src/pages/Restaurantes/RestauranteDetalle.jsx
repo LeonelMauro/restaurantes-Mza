@@ -11,7 +11,11 @@ import {
   Rating,
   Alert,
   MenuItem,
-   Grid, Card, CardContent
+   Grid, Card, CardContent,
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogActions
 } from '@mui/material';
 import { Tooltip, IconButton } from '@mui/material';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
@@ -98,6 +102,24 @@ const PrevArrow = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [categoriasMenu, setCategoriasMenu] = useState([]);
 
+  //evento
+  const [eventos, setEventos] = useState([]);
+  const [mostrarEventos, setMostrarEventos] = useState(false);
+  const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
+  const [dialogoReservaAbierto, setDialogoReservaAbierto] = useState(false);
+  const [cantidadPersonasEvento, setCantidadPersonasEvento] = useState(1);
+
+  const abrirDialogoReservaEvento = (evento) => {
+    setEventoSeleccionado(evento);
+    setCantidadPersonasEvento(1);
+    setDialogoReservaAbierto(true);
+  };
+
+  const cerrarDialogoReservaEvento = () => {
+    setEventoSeleccionado(null);
+    setDialogoReservaAbierto(false);
+  };
+
 
 
   //bebidas
@@ -149,6 +171,20 @@ const PrevArrow = (props) => {
   return intervalos;
 };
   const hoy = dayjs().format('YYYY-MM-DD');
+
+  const toggleEventos = async () => {
+  if (!mostrarEventos && eventos.length === 0) {
+    try {
+      const res = await fetch(`http://localhost:3000/eventos/restaurante/${id}`);
+      const data = await res.json();
+      setEventos(data);
+    } catch (err) {
+      console.error('Error al obtener eventos:', err);
+    }
+  }
+  setMostrarEventos(!mostrarEventos);
+};
+
 
 
   useEffect(() => {
@@ -294,6 +330,58 @@ const PrevArrow = (props) => {
   } catch (error) {
     console.error("Error al guardar la reserva:", error);
     alert("Ocurrió un error al guardar la reserva");
+  }
+};
+  const handleReservaEvento = async () => {
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
+  if (!userId || !token) {
+    alert("Debes iniciar sesión para realizar una reserva.");
+    return;
+  }
+
+  if (!eventoSeleccionado || !cantidadPersonasEvento) {
+    alert("Faltan datos para la reserva del evento.");
+    return;
+  }
+
+  if (parseInt(cantidadPersonasEvento) < 1 || parseInt(cantidadPersonasEvento) > 6) {
+    alert("La cantidad de personas debe ser entre 1 y 6.");
+    return;
+  }
+
+  try {
+    // Usá directamente eventoSeleccionado.fecha si tiene hora incluida
+    const fechaIso = new Date(eventoSeleccionado.fecha).toISOString();
+
+    const body = {
+      fecha: fechaIso,
+      cantidadPersonas: parseInt(cantidadPersonasEvento),
+     
+    };
+
+    const response = await fetch(`http://localhost:3000/reserva/crear-evento/${restaurante.id}/${eventoSeleccionado.id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error del backend:", errorText);
+      throw new Error("No se pudo reservar el evento");
+    }
+
+    const data = await response.json();
+    alert(`¡Reserva realizada con éxito para el evento "${eventoSeleccionado.titulo}"!`);
+    cerrarDialogoReservaEvento();
+  } catch (error) {
+    console.error("Error al reservar evento", error);
+    alert("Ocurrió un error al reservar el evento.");
   }
 };
 
@@ -460,7 +548,7 @@ const PrevArrow = (props) => {
         {/* Botón Eventos */}
         <Tooltip title="Ver eventos">
           <IconButton
-            onClick={() => {/* lógica para eventos */}}
+            onClick={toggleEventos}
             sx={{
               backgroundColor: '#3D3C3B',
               color: '#fff',
@@ -530,8 +618,69 @@ const PrevArrow = (props) => {
             )}</Card>
           </Box>
           )}
+          {mostrarEventos && (
+            <Box mt={4}>
+              <Typography variant="h3" align="center" sx={{ fontWeight: 'bold', mb: 2 ,fontFamily: 'Kaushan Script'}}>
+                Eventos del restaurante
+              </Typography>
+              <Grid container spacing={3}>
+                {eventos.length === 0 ? (
+                  <Typography variant="body1" align="center" sx={{ width: '100%' }}>
+                    No hay eventos disponibles en este restaurante.
+                  </Typography>
+                ) : (
+                  eventos.map((evento) => (
+                    <Grid item xs={12} sm={6} md={4} key={evento.id}>
+                      <Card sx={{ backgroundColor: '#3D3C3B', color: '#fff', borderRadius: 3 }}>
+                        <CardContent>
+                          <Typography variant="h6" align="center" gutterBottom fontWeight="bold">
+                            {evento.titulo}
+                          </Typography>
+                          <Typography sx={{ textAlign: 'justify' }}>
+                            {evento.descripcion}
+                          </Typography>
+                          <Typography>📅 {new Date(evento.fecha).toLocaleDateString()}</Typography>
+                          <Typography>⏰ {evento.hora}</Typography>
 
+                          {evento.imagenUrl && (
+                            <Box
+                              component="img"
+                              src={`http://localhost:3000/${evento.imagenUrl}`}
+                              alt={evento.titulo}
+                              sx={{
+                                width: '100%',
+                                height: 160,
+                                objectFit: 'cover',
+                                borderRadius: 2,
+                                mt: 2,
+                              }}
+                            />
+                          )}
 
+                          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                            <Button
+                              variant="contained"
+                              sx={{
+                                backgroundColor: '#F5E6D3',
+                                color: '#3D3C3B',
+                                fontWeight: 'bold',
+                                '&:hover': {
+                                  backgroundColor: '#e2d3c1',
+                                },
+                              }}
+                              onClick={() => abrirDialogoReservaEvento(evento)}
+                            >
+                              Reservar
+                            </Button>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))
+                )}
+              </Grid>
+            </Box>
+          )}
           {mostrarBebidas && (
           <Box
             sx={{
@@ -768,6 +917,34 @@ const PrevArrow = (props) => {
           Reservar
         </Button>
       </Box>
+      <Dialog open={dialogoReservaAbierto} onClose={cerrarDialogoReservaEvento} fullWidth maxWidth="sm">
+        <DialogTitle>Reservar Evento</DialogTitle>
+        <DialogContent>
+          {eventoSeleccionado && (
+            <>
+              <Typography variant="h6">{eventoSeleccionado.titulo}</Typography>
+              <Typography>📅 {new Date(eventoSeleccionado.fecha).toLocaleDateString()}</Typography>
+              <Typography>⏰ {new Date(eventoSeleccionado.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Typography>
+              <TextField
+                label="Cantidad de personas"
+                type="number"
+                fullWidth
+                margin="normal"
+                value={cantidadPersonasEvento}
+                onChange={(e) => setCantidadPersonasEvento(e.target.value)}
+                inputProps={{ min: 1, max: 6 }}
+              />
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cerrarDialogoReservaEvento}>Cancelar</Button>
+          <Button onClick={handleReservaEvento} variant="contained" color="primary">
+            Confirmar Reserva
+          </Button>
+        </DialogActions>
+      </Dialog>
+
 
 
     </Container>

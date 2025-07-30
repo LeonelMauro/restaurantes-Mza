@@ -44,13 +44,34 @@ export class ReservaController {
       createReservaDto,
     );
   }
+  @Post('crear-evento/:restauranteId/:eventoId')
+@UseGuards(JwtAuthGuard)
+createReservaConEvento(
+  @Param('restauranteId') restauranteId: number,
+  @Param('eventoId') eventoId: number,
+  @Req() req,
+  @Body() createReservaDto: CreateReservaDto
+) {
+  const userId = req.user.sub; // ✅ cambio importante
+  return this.reservaService.createReservaConEvento(
+    restauranteId,
+    eventoId,
+    userId,
+    createReservaDto
+  );
+}
+
+
 
   @UseGuards(JwtAuthGuard)
   @Get('mis-reservas')
-  async obtenerReservasDelUsuario(@Req() req: Request) {
-    const userId = req['user'].sub;
-    return this.reservaService.findReservasByUsuario(userId);
-  }
+async obtenerReservasDelUsuario(@Req() req: Request) {
+  const userId = req['user'].sub;
+  const reservas = await this.reservaService.findReservasByUsuario(userId);
+  console.log('Reservas del usuario:', reservas); // 👈 VERIFICA ACÁ
+  return reservas;
+}
+
   @UseGuards(JwtAuthGuard)
   @Get('reservas-recibidas')
   async obtenerReservasRecibidas(@Req() req: Request) {

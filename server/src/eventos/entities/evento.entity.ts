@@ -13,11 +13,9 @@ export class Evento {
   @Column()
   descripcion: string;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   fecha: Date;
 
-  @Column()
-  hora: string;
   
   @Column()
   imagenUrl:string;
