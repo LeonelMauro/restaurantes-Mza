@@ -12,6 +12,7 @@ import {
   Box,
   Paper,
   Grid,
+  MenuItem,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -85,10 +86,12 @@ const FormularioMenu = () => {
           );
           setMensaje('Menú agregado exitosamente');
           setFormCat({ nombre: '' });
+          await fetchCategorias(restauranteId); // 👈 vuelve a traer las categorías
         } catch (err) {
           console.error(err);
           setMensaje('Error al agregar menú');
         }
+
       };    
 
 
@@ -202,7 +205,6 @@ const FormularioMenu = () => {
             textAlign: 'center',
             fontFamily: 'Kaushan Script',
             fontWeight: 'bold',
-            color: '#8B5E3C',
           }}
         >
           Menu 
@@ -252,20 +254,20 @@ const FormularioMenu = () => {
           <DialogContentText>Complete los campos de la menu</DialogContentText>
           <TextField
             select
-            
+            label="Categoría"
             fullWidth
             margin="dense"
             value={form.categoryMenuId || ''}
             onChange={(e) => setForm({ ...form, categoryMenuId: e.target.value })}
-            SelectProps={{ native: true }}
           >
-            <option value="">Seleccione una categoría</option>
+            <MenuItem value="">Seleccione una categoría</MenuItem>
             {categorias.map((cat) => (
-              <option key={cat.id} value={cat.id}>
+              <MenuItem key={cat.id} value={cat.id}>
                 {cat.nombre}
-              </option>
+              </MenuItem>
             ))}
           </TextField>
+
           <TextField
             margin="dense"
             label="Nombre"

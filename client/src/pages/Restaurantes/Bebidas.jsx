@@ -181,7 +181,7 @@ const BebidasDialog = () => {
         {/* Botón izquierdo */}
         <Button
           onClick={handleOpen}
-          sx={{ background: '#8B5E3C', color: '#fff', mr: 2 }}
+          sx={{ background: '#9b8b7fff', color: '#fff', mr: 2 }}
         >
           Agregar Bebida
         </Button>
@@ -194,7 +194,7 @@ const BebidasDialog = () => {
             textAlign: 'center',
             fontFamily: 'Kaushan Script',
             fontWeight: 'bold',
-            color: '#8B5E3C',
+            color: '#9b8b7fff',
           }}
         >
           Bebidas 
@@ -215,11 +215,12 @@ const BebidasDialog = () => {
           <Grid container spacing={2}>
             {Object.entries(agruparBebidasPorCategoria(bebidasFiltradas)).map(([categoria, items]) => (
               <Grid item xs={12} key={categoria}>
-                <Typography variant="h4" sx={{ 
+                <Typography variant="h4" align='center' sx={{ 
+                  
                   mt:2,
                   fontFamily: 'Kaushan Script',
                   fontWeight: 'bold', }}>{categoria}</Typography>
-                <Grid container spacing={2}>
+                <Grid container spacing={4}>
                   {items.map((item) => (
                     <Grid item xs={12} sm={6} md={4} key={item.id}>
                       <Paper sx={{ p: 2 }}>

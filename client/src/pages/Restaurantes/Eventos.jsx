@@ -176,11 +176,12 @@ const handleRemoveImage = () => {
                 justifyContent: 'space-between',
                 flexWrap: 'wrap',
                 mb: 3,
+                 color: '#9b8b7fff'
               }}
             >
               <Button
                 onClick={handleOpen}
-                sx={{ background: '#8B5E3C', color: '#fff', mr: 2 }}
+                sx={{ background: '#9b8b7fff', color: '#fff', mr: 2 }}
               >
                 Agregar Evento
               </Button>
@@ -200,7 +201,7 @@ const handleRemoveImage = () => {
         
         {eventos.map((evento) => (
           <Box key={evento.id} my={2} p={2} border="1px solid #ccc" borderRadius={2}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{evento.titulo}</Typography>
+            <Typography variant="h5" sx={{textAlign: 'center', fontWeight: 'bold',fontFamily: 'Kaushan Script', }}>{evento.titulo}</Typography>
             <Typography sx={{ textAlign: 'justify' }}>{evento.descripcion}</Typography>
             <Typography>Fecha: {new Date(evento.fecha).toLocaleDateString()}</Typography>
             <Typography>Hora: {new Date(evento.fecha).toLocaleTimeString('es-AR', {

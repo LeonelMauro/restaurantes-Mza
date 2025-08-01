@@ -30,7 +30,7 @@ export class CategoryMenuService {
   }
 
   findAll() {
-    return this.repositorymenu.find();
+    return this.repositorymenu.find({ relations: ['restaurante'] });
   }
 
   async findOne(id: number) {

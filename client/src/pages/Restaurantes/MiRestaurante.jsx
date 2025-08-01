@@ -152,7 +152,7 @@ const MiRestaurante = () => {
 
   return (
     <Box p={4}>
-      <Typography variant="h1" align="center" sx={{ fontFamily: 'Kaushan Script', mb: 3 }}>
+      <Typography variant="h1" align="center" sx={{ fontFamily: 'Kaushan Script', mb: 3,color: '#9b8b7fff' }}>
         {restaurante.nombre}
         <IconButton onClick={() => handleEditClick('nombre')} size="small">
           <EditIcon fontSize="small" />

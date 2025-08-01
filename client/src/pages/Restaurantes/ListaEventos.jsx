@@ -80,23 +80,7 @@ const ListaEventos = () => {
                 )}
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      backgroundColor: '#F5E6D3',
-                      color: '#3D3C3B',
-                      fontWeight: 'bold',
-                      '&:hover': {
-                        backgroundColor: '#e2d3c1',
-                      },
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation(); // para que no se dispare el onClick del Card
-                      navigate(`/reservar-evento/${evento.id}`);
-                    }}
-                  >
-                    Reservar
-                  </Button>
+                  
                 </Box>
               </CardContent>
             </Card>

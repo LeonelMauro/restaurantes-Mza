@@ -163,7 +163,7 @@ const FormPromocion = () => {
       >
         <Button
           onClick={handleOpen}
-          sx={{ background: '#8B5E3C', color: '#fff', mr: 2 }}
+          sx={{ background: '#9b8b7fff', color: '#fff', mr: 2 }}
         >
           Agregar Promo
         </Button>
@@ -175,7 +175,7 @@ const FormPromocion = () => {
             textAlign: 'center',
             fontFamily: 'Kaushan Script',
             fontWeight: 'bold',
-            color: '#8B5E3C',
+            color: '#9b8b7fff'
           }}
         >
           Promociones
