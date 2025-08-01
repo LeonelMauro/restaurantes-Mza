@@ -28,7 +28,11 @@ create(
   @Body() dto: CreateEventoDto,
   @UploadedFile() file: Express.Multer.File,
   @Req() req,
-) {
+)  {
+  if (file) {
+    // Guardamos solo la ruta relativa para usarla en el frontend
+    dto.imagenUrl = `uploads/${file.filename}`;
+  }
   return this.eventosService.create(dto, req.user.id, file);
 }
 

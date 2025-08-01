@@ -33,7 +33,7 @@ export class EventosService {
     titulo: dto.titulo,
     descripcion: dto.descripcion,
     fecha: dto.fecha,
-    imagenUrl: file?.filename || '', // o `file.path` o una URL si usás S3
+    imagenUrl: file ? `uploads/${file.filename}` : '',
     restaurante: user.restaurante,
   });
 
@@ -75,15 +75,28 @@ export class EventosService {
 }
 
 
- async update(id: number, dto: UpdateEventoDto) {
-     const evento = await this.eventoRepository.findOneBy({ id });
-     if (!evento) {
-       throw new NotFoundException(`Evento con ID ${id} no encontrado`);
-     }
- 
-     Object.assign(evento, dto);
-     return this.eventoRepository.save(evento);
-   }
+async update(id: number, dto: UpdateEventoDto, reqBody: any = {}) {
+  const evento = await this.eventoRepository.findOneBy({ id });
+  if (!evento) {
+    throw new NotFoundException(`Evento con ID ${id} no encontrado`);
+  }
+
+  const { fecha } = dto;
+  const hora = reqBody.hora; // ← aunque no está en el DTO, viene en el body
+
+  // Si recibiste fecha y hora, combinás ambas
+  if (fecha && hora) {
+    const fechaHoraStr = `${fecha}T${hora}:00`; // Ej: "2025-08-10T19:00:00"
+    evento.fecha = new Date(fechaHoraStr);
+  } else if (fecha) {
+    evento.fecha = new Date(fecha);
+  }
+
+  // Asignar el resto de los campos (sin tocar la fecha)
+  Object.assign(evento, dto);
+
+  return this.eventoRepository.save(evento);
+}
 
 
   async remove(id: number) {

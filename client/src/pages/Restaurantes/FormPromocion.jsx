@@ -49,6 +49,9 @@ const FormPromocion = () => {
   const fetchRestauranteId = async () => {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
+    console.log('token:', token);
+    console.log('restauranteId:', restauranteId);
+
     if (!token || !userId) return;
     try {
       const res = await axios.get(`http://localhost:3000/restaurante/by-user/${userId}`, {
@@ -214,8 +217,10 @@ const FormPromocion = () => {
             fullWidth
             value={form.fechaInicio}
             onChange={(e) => setForm({ ...form, fechaInicio: e.target.value })}
+            inputProps={{
+              min: new Date().toISOString().slice(0, 16), // formato: YYYY-MM-DDTHH:MM
+            }}
           />
-
           <TextField
             margin="dense"
             name="fechaFin"
@@ -223,6 +228,10 @@ const FormPromocion = () => {
             fullWidth
             value={form.fechaFin}
             onChange={(e) => setForm({ ...form, fechaFin: e.target.value })}
+            inputProps={{
+              min: form.fechaInicio || new Date().toISOString().slice(0, 16)
+
+            }}
           />
 
           <TextField
@@ -238,7 +247,8 @@ const FormPromocion = () => {
 
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleSubmit} variant="contained">
+          <Button onClick={handleSubmit} variant="contained" disabled={!restauranteId} // <-- desactiva si aún no está
+>
             Guardar
           </Button>
         </DialogActions>

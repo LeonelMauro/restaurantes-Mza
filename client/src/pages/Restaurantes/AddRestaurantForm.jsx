@@ -2,7 +2,7 @@ import React, { useState,useEffect} from 'react';
 import axios from 'axios';
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import { useNavigate } from 'react-router-dom';
 
 import {
   Box,
@@ -14,6 +14,8 @@ import {
 } from '@mui/material';
 
 const AddRestaurantForm = () => {
+
+  const navigate = useNavigate()
   
   useEffect(() => {
   const fetchDepartamentos = async () => {
@@ -82,6 +84,7 @@ const AddRestaurantForm = () => {
 
     console.log('Restaurante creado:', res.data);
     // Podés agregar un mensaje de éxito o redireccionar
+    navigate(`/mi-restaurante/${res.data.id}`);
   } catch (error) {
     console.error('Error al crear restaurante:', error.response?.data || error.message);
     alert(JSON.stringify(error.response?.data || error.message, null, 2)); // 👈 para mostrar el detalle
@@ -119,7 +122,7 @@ const AddRestaurantForm = () => {
             <Grid item xs={12}>
               <TextField
                 select
-                label="Departamento"
+                
                 name="departamentoId"
                 value={formData.departamentoId}
                 onChange={handleChange}
@@ -141,6 +144,10 @@ const AddRestaurantForm = () => {
               name="descripcion"
               color="#3D3C3B"
               fullWidth
+              multiline
+              minRows={4}
+              maxRows={10}
+              inputProps={{ style: { textAlign: 'justify' } }}
               value={formData.descripcion}
               onChange={handleChange}
               placeholder="Ej: Parrilla, Italiana, Vegana"

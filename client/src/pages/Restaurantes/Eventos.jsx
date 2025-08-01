@@ -12,6 +12,9 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { IconButton } from '@mui/material';
+
 
 const Eventos = () => {
   const [formData, setFormData] = useState({
@@ -57,9 +60,16 @@ const Eventos = () => {
   };
 
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImagenes(files);
-  };
+    const file = e.target.files[0];
+  if (file) {
+    setImagenes([file]);
+    setFormData({ ...formData, imagenPreview: URL.createObjectURL(file) });
+  }
+};
+const handleRemoveImage = () => {
+  setImagenes([]);
+  setFormData({ ...formData, imagenPreview: '' });
+};
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -68,14 +78,16 @@ const Eventos = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-
+    
     try {
+      const fechaHora = `${formData.fecha}T${formData.hora}:00`;
+
       const data = new FormData();
       data.append('titulo', formData.titulo);
       data.append('descripcion', formData.descripcion);
-      data.append('fecha', formData.fecha);
-      data.append('hora', formData.hora);
+      data.append('fecha', fechaHora); 
       if (imagenes[0]) data.append('imagen', imagenes[0]);
+      
 
       let res;
       if (editingId) {
@@ -105,11 +117,12 @@ const Eventos = () => {
   };
 
   const handleEdit = (evento) => {
+     const fechaISO = new Date(evento.fecha).toISOString();
     setFormData({
       titulo: evento.titulo,
       descripcion: evento.descripcion,
-      fecha: evento.fecha?.split('T')[0],
-      hora: evento.hora,
+      fecha: fechaISO.split('T')[0],         // YYYY-MM-DD
+      hora: fechaISO.split('T')[1].substring(0, 5), // HH:mm
       imagenUrl: evento.imagenUrl || '',
     });
     setEditingId(evento.id);
@@ -190,7 +203,10 @@ const Eventos = () => {
             <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{evento.titulo}</Typography>
             <Typography sx={{ textAlign: 'justify' }}>{evento.descripcion}</Typography>
             <Typography>Fecha: {new Date(evento.fecha).toLocaleDateString()}</Typography>
-            <Typography>Hora: {evento.hora}</Typography>
+            <Typography>Hora: {new Date(evento.fecha).toLocaleTimeString('es-AR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}</Typography>
             {evento.imagenUrl && (
               <Box
                 component="img"
@@ -243,7 +259,11 @@ const Eventos = () => {
             InputLabelProps={{ shrink: true }}
             value={formData.fecha}
             onChange={handleChange}
+            inputProps={{
+              min: new Date().toISOString().split("T")[0], // Fecha mínima = hoy
+            }}
           />
+
           <TextField
             margin="dense"
             label="Hora"
@@ -254,10 +274,35 @@ const Eventos = () => {
             value={formData.hora}
             onChange={handleChange}
           />
+
           <Button variant="contained" component="label" sx={{ mt: 2 }}>
             Subir Imagen
             <input type="file" hidden onChange={handleImageChange} />
           </Button>
+          {formData.imagenPreview && (
+          <Box sx={{ mt: 2, position: 'relative', display: 'inline-block' }}>
+            <img
+              src={formData.imagenPreview}
+              alt="Vista previa"
+              style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 8 }}
+            />
+            <IconButton
+              size="small"
+              onClick={handleRemoveImage}
+              sx={{
+                position: 'absolute',
+                top: 5,
+                right: 5,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                color: '#fff',
+                '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' }
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        )}
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
