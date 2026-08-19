@@ -49,9 +49,18 @@ const Servicios = () => {
           Comer entre Montañas conecta a turistas con experiencias gastronómicas inolvidables en los mejores restaurantes de Mendoza.
         </Typography>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={4}
+        sx={{
+            justifyContent: 'center',
+            alignItems: 'stretch',
+        }}>
           {/* Turistas */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
             <Paper
               elevation={6}
               sx={{
@@ -85,7 +94,13 @@ const Servicios = () => {
           </Grid>
 
           {/* Restaurantes */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          >
             <Paper
               elevation={6}
               sx={{

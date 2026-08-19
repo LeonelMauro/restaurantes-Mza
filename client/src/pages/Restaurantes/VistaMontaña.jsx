@@ -3,6 +3,8 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Rating from '@mui/material/Rating';
+import { restaurantesStyles } from '../../styles/restaurantesStyles';
+
 
 
 import {
@@ -56,109 +58,112 @@ export default function VistaMontaña() {
 }, []);
 
   return (
-    <Box sx={{ backgroundColor: '#fff', py: 6 }}>
-      <Container>
-        {/* Restaurantes */}
-        <Typography
-          variant="h1"
-          align="center"
-          sx={{
-            fontFamily: 'Kaushan Script',
-            fontWeight: 'bold',
-            color: 'black',
-            mb: 4,
-          }}
+    <Box sx={restaurantesStyles.section}>
+  <Container sx={restaurantesStyles.container}>
+
+    <Typography
+      variant="h1"
+      align="center"
+      sx={{
+        ...restaurantesStyles.title,
+        ...restaurantesStyles.restaurantsTitle,
+      }}
+    >
+      Restaurantes
+    </Typography>
+
+    <Grid
+      container
+      spacing={4}
+      justifyContent="center"
+      alignItems="stretch"
+    >
+      {restaurantes.map((resto, index) => (
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={4}
+          key={index}
+          sx={restaurantesStyles.restaurantGridItem}
         >
-          Restaurantes
-        </Typography>
+          <Link
+            to={`/restaurante/${resto.id}`}
+            style={restaurantesStyles.link}
+          >
+            <Card sx={restaurantesStyles.restaurantCard}>
 
-        <Grid container spacing={4}>
-          {restaurantes.map((resto, index) => (
-            <Grid item xs={12} sm={4} key={index} sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Link to={`/restaurante/${resto.id}`} style={{ textDecoration: 'none' }}>
-                <Card
-                  sx={{
-                    height: '100%', // Para que todas las tarjetas se expandan igual
-                    maxWidth: 320, // Ancho fijo para todas las tarjetas
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    borderRadius: 3,
-                    boxShadow: 3,
-                    backgroundColor: '#d2b48c',
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                    '&:hover': {
-                      transform: 'scale(1.03)',
-                      boxShadow: 6,
-                    },
-                  }}
+              <Box sx={restaurantesStyles.restaurantImageContainer}>
+                {resto.photos?.[0]?.url ? (
+                  <CardMedia
+                    component="img"
+                    image={`http://localhost:3000/${resto.photos[0].url}`}
+                    alt={resto.nombre}
+                    sx={restaurantesStyles.image}
+                  />
+                ) : (
+                  <Box sx={restaurantesStyles.noImage} />
+                )}
+              </Box>
+
+              <CardContent sx={restaurantesStyles.restaurantContent}>
+                <Typography
+                  variant="h5"
+                  align="center"
+                  sx={restaurantesStyles.restaurantName}
                 >
-                  {resto.photos && resto.photos[0]?.url && (
-                    <CardMedia
-                      component="img"
-                      image={`http://localhost:3000/${resto.photos[0].url}`}
-                      alt={resto.nombre}
-                      sx={{
-                        height: 180,
-                        objectFit: 'cover',
-                        borderRadius: '12px 12px 0 0',
-                      }}
-                    />
-                  )}
+                  {resto.nombre}
+                </Typography>
 
-                  <CardContent sx={{ flexGrow: 1 }} >
-                    <Typography
-                        variant="h5"
-                        align="center"
-                        sx={{
-                          fontFamily: 'Kaushan Script',
-                          fontWeight: 'bold',
-                          color: '#000',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2, // Máximo 2 líneas
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          minHeight: '64px', // Espacio reservado para evitar tarjetas más bajas
-                        }}
-                      >
-                        {resto.nombre}
-                        <Box display="flex" justifyContent="center" mt={1}>
-                          <Rating 
-                            name="read-only" 
-                            value={resto.promedio} 
-                            readOnly 
-                            precision={0.5} 
-                          />
-                        </Box>
-                      </Typography>
-                      
+                <Rating
+                  name={`rating-${resto.id}`}
+                  value={resto.promedio}
+                  readOnly
+                  precision={0.5}
+                  sx={restaurantesStyles.rating}
+                />
+              </CardContent>
 
-                  </CardContent>
-                </Card>
-              </Link>
-            </Grid>
-          ))}
+            </Card>
+          </Link>
         </Grid>
+      ))}
+    </Grid>
         {/* Lugares */}
         <Typography
           variant="h1"
           align="center"
           sx={{
-            fontFamily: 'Kaushan Script',
-            fontWeight: 'bold',
-            color: 'black',
-            my: 6,
-          }}
+        ...restaurantesStyles.title,
+        ...restaurantesStyles.restaurantsTitle,
+      }}
         >
           Lugares
         </Typography>
-        <Slider dots={true} infinite={true} speed={500} slidesToShow={3} slidesToScroll={1}
-          arrows={true}        // 👈 activa las flechas
-          autoplay={true}      // 👈 mueve automáticamente
-          autoplaySpeed={3000} // 👈 cada 3 segundos
-                >
+        <Slider
+          dots
+          infinite
+          speed={500}
+          slidesToScroll={1}
+          arrows
+          autoplay
+          autoplaySpeed={3000}
+          slidesToShow={3}
+          responsive={[
+            {
+              breakpoint: 900,
+              settings: {
+                slidesToShow: 2,
+              },
+            },
+            {
+              breakpoint: 600,
+              settings: {
+                slidesToShow: 1,
+              },
+            },
+          ]}
+        >
           {departamentos.map((dep) => (
             <Box key={dep.id} sx={{ px: 1 }}>
               <Link to={`/departamento/${dep.id}`} style={{ textDecoration: 'none' }}>
@@ -166,10 +171,18 @@ export default function VistaMontaña() {
                   {dep.imagenUrl && (
                     <CardMedia
                       component="img"
-                      height="180"
                       image={`http://localhost:3000/${dep.imagenUrl}`}
                       alt={dep.nombre}
-                      sx={{ borderRadius: '12px 12px 0 0' }}
+                      sx={{
+                        width: '100%',
+                        height: {
+                          xs: 160,
+                          sm: 170,
+                          md: 180,
+                        },
+                        objectFit: 'cover',
+                        borderRadius: '12px 12px 0 0',
+                      }}
                     />
                   )}
                   <CardContent>
