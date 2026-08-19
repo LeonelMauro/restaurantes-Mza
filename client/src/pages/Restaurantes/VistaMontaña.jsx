@@ -134,9 +134,9 @@ export default function VistaMontaña() {
           variant="h1"
           align="center"
           sx={{
-        ...restaurantesStyles.title,
-        ...restaurantesStyles.restaurantsTitle,
-      }}
+          ...restaurantesStyles.title,
+          ...restaurantesStyles.restaurantsTitle,
+        }}
         >
           Lugares
         </Typography>
