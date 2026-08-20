@@ -16,6 +16,8 @@ import experiencia from '../assets/img/nosotros/experiencia.jpg';
 import SearchIcon from '@mui/icons-material/Search';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
+import { restaurantesStyles } from '../styles/restaurantesStyles';
+
 
 const features = [descubrir, reservar, experiencia];
 
@@ -98,7 +100,7 @@ const Home = () => {
 
       {/* Cómo funciona */}
       <Box sx={{ py: 8, px: 4, textAlign: 'center', backgroundColor: '#F5E6D3' }}>
-        <Typography variant="h2" sx={{ fontFamily: 'Kaushan Script', mb: 6, fontWeight: 'bold', color: 'black' }}>
+        <Typography variant="h2" sx={{ ...restaurantesStyles.title,}}>
           ¿Cómo funciona?
         </Typography>
         <Grid container spacing={4} justifyContent="center">
@@ -119,7 +121,7 @@ const Home = () => {
         <Typography
           variant="h2"
           gutterBottom
-          sx={{ fontFamily: 'Kaushan Script', mb: 6, fontWeight: 'bold', color: 'black' }}
+          sx={{ ...restaurantesStyles.title}}
         >
           Comidas destacadas
         </Typography>
@@ -154,7 +156,7 @@ const Home = () => {
 
       {/* Testimonios */}
       <Box sx={{ py: 8, px: 4, backgroundColor: '#B29C7D', textAlign: 'center' }}>
-        <Typography variant="h2" sx={{ fontFamily: 'Kaushan Script', mb: 6, fontWeight: 'bold', color: 'black' }}>
+        <Typography variant="h2" sx={{ ...restaurantesStyles.title, }}>
           Lo que dicen nuestros visitantes
         </Typography>
         <Grid container spacing={4} justifyContent="center">

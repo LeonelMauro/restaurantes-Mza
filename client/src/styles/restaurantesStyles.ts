@@ -21,12 +21,10 @@ export const restaurantesStyles = {
       sm: '3.2rem',
       md: '4rem',
     },
+    mb: 6
   },
 
-  restaurantsTitle: {
-    mb: 4,
-  },
-
+  
   restaurantGridItem: {
     display: 'flex',
     justifyContent: 'center',

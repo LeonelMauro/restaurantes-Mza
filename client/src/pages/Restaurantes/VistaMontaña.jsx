@@ -66,7 +66,6 @@ export default function VistaMontaña() {
       align="center"
       sx={{
         ...restaurantesStyles.title,
-        ...restaurantesStyles.restaurantsTitle,
       }}
     >
       Restaurantes
@@ -135,7 +134,6 @@ export default function VistaMontaña() {
           align="center"
           sx={{
           ...restaurantesStyles.title,
-          ...restaurantesStyles.restaurantsTitle,
         }}
         >
           Lugares
