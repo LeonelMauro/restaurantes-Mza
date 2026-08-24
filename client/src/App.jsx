@@ -7,7 +7,7 @@ import Home from './pages/Home';
 import Footer from './Components/Footer';
 import Servicios from './pages/Servicios';
 import AddRestaurantForm from './pages/Restaurantes/AddRestaurantForm';
-import VistaMontaña from './pages/Restaurantes/VistaMontaña';
+import VistaMontaña from './pages/VistaMontaña';
 import RestauranteDetalle from './pages/Restaurantes/RestauranteDetalle';
 import BeneficiosRegistro from './pages/BeneficiosRegistro';
 import MisReservas from './pages/Restaurantes/MisReservas';

@@ -78,7 +78,12 @@ const Home = () => {
             sx={{
               color: 'white',
               fontWeight: 'bold',
-              textShadow: `-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 2px rgba(0,0,0,1)`
+              textShadow: `-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 2px rgba(0,0,0,1)`,
+              fontSize: {
+              xs: '4rem',
+              sm: '5rem',
+              md: '6rem',
+            },
             }}
           >
             CEM
@@ -89,6 +94,11 @@ const Home = () => {
             gutterBottom
             sx={{
               color: 'white',
+              fontSize: {
+                xs: '1.5rem',
+                sm: '2rem',
+                md: '3rem',
+              },
               textShadow: `-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 2px rgba(0,0,0,1)`
             }}
           >
@@ -175,7 +185,7 @@ const Home = () => {
 
       {/* CTA: Agregar restaurante */}
       <Box sx={{ textAlign: 'center', py: 6, backgroundColor: '#fff' }}>
-        <Typography variant="h3" sx={{ mb: 2, fontWeight: 'bold' }}>
+        <Typography variant="h2" sx={{...restaurantesStyles.title,}}>
           ¿Sos dueño de un restaurante?
         </Typography>
         <Typography variant="body1" sx={{ mb: 3 }}>

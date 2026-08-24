@@ -3,7 +3,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Rating from '@mui/material/Rating';
-import { restaurantesStyles } from '../../styles/restaurantesStyles';
+import { restaurantesStyles } from '../styles/restaurantesStyles';
 
 
 
