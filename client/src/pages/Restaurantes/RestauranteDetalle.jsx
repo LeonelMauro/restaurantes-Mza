@@ -21,6 +21,8 @@ import LiquorIcon from '@mui/icons-material/Liquor';
 import EventIcon from '@mui/icons-material/Event';
 import dayjs from 'dayjs'; // si no lo tenés instalado: npm install dayjs
 import RestauranteGaleria from './RestauranteGaleria';
+import RestauranteMenu from './RestauranteMenu';
+import RestauranteBebidas from './RestauranteBebidas';
 
 
 
@@ -38,7 +40,6 @@ export default function RestauranteDetalle() {
   //menu
   const [menu, setMenu] = useState([]);
   const [mostrarMenu, setMostrarMenu] = useState(false);
-  const [categoriasMenu, setCategoriasMenu] = useState([]);
 
   //evento
   const [eventos, setEventos] = useState([]);
@@ -64,6 +65,7 @@ export default function RestauranteDetalle() {
   const [bebidas, setBebidas] = useState([]);
   const [mostrarBebidas, setMostrarBebidas] = useState(false);
   const [categoriasBebidas, setCategoriasBebida] = useState([]);
+
   //reserva
   const [cantidadPersonas, setCantidadPersonas] = useState(1);
 
@@ -141,30 +143,9 @@ export default function RestauranteDetalle() {
     });
 }, [id]);
 
-  useEffect(() => {
-  fetch(`http://localhost:3000/category-menu/restaurante/${id}/categorias-con-menu`)
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("Categorias con menú:", data); // <-- Añadí esto
-      setCategoriasMenu(data);
-    })
-    .catch((err) => console.error("Error al traer categorías con menú:", err));
-}, [id]);
+ 
 
-  useEffect(() => {
-  fetch(`http://localhost:3000/category-bebidas/restaurante/${id}/categorias-con-bebidas`)
-    .then((res) => res.json())
-    .then((data) => {
-  console.log("categoriasBebidas recibidas:", data);
-  if (Array.isArray(data)) {
-    setCategoriasBebida(data);
-  } else {
-    setCategoriasBebida([]);
-    console.warn("Se esperaba un array, pero se recibió:", data);
-  }
-})
-    .catch((err) => console.error("Error al traer categorías con menú:", err));
-}, [id]);
+ 
 
 
   const handleEnviarReseña = async (e) => {
@@ -446,40 +427,7 @@ export default function RestauranteDetalle() {
                   px: 3,
                 }}
               >
-            <Card elevation={3} sx={{ p: 3, borderRadius: 3, }}>
-            <Typography
-              variant="h3"
-              align="center"
-              sx={{ fontFamily: 'Kaushan Script' }}
-              gutterBottom
-            >
-              ~ Menú ~
-            </Typography>
-
-            {categoriasMenu.length === 0 ? (
-              <Typography variant="body1" align="center">
-                Este restaurante aún no cargó su menú.
-              </Typography>
-            ) : (
-              categoriasMenu.map((categoria) => (
-                <Box key={categoria.id} sx={{ mb: 3 }}>
-                  <Typography variant="h5" align="center"sx={{ fontWeight: 'bold', color: '#322B23' }}>
-                    {categoria.nombre}
-                  </Typography>
-                  {categoria.menus.map((item) => (
-                    <Box key={item.id} sx={{ p: 2, borderBottom: '1px solid #ccc' }}>
-                      <Typography variant="subtitle1" sx={{fontWeight: 'bold'}}>~ {item.nombre}</Typography>
-                      <Typography variant="body2" sx={{ textAlign: 'justify' }}>
-                        {item.descripcion}
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                        ${item.precio}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Box>
-              ))
-            )}</Card>
+            <RestauranteMenu id={id} />
           </Box>
           )}
           {mostrarEventos && (
@@ -553,39 +501,7 @@ export default function RestauranteDetalle() {
             }}
           >
             <Card elevation={3} sx={{ p: 3, borderRadius: 3, }}>
-              <Typography
-                variant="h3"
-                align="center"
-                sx={{ fontFamily: 'Kaushan Script' }}
-                gutterBottom
-              >
-                ~ Bebidas ~
-              </Typography>
-
-              {categoriasBebidas.length === 0 ? (
-                <Typography variant="body1" align="center">
-                  Este restaurante aún no cargó sus bebidas.
-                </Typography>
-              ) : (
-                categoriasBebidas.map((categoria) => (
-                  <Box key={categoria.id} sx={{ mb: 3 }}>
-                    <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', color: '#322B23' ,}}>
-                      {categoria.nombre}
-                    </Typography>
-                    {categoria.bebidas?.map((item) => (
-                      <Box key={item.id} sx={{ py: 1.5, borderBottom: '1px solid #ccc' }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}> ~{item.nombre}</Typography>
-                        <Typography variant="body2" sx={{ textAlign: 'justify' }}>
-                          {item.descripcion}
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                          ${item.precio}
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Box>
-                ))
-              )}
+              <RestauranteBebidas id={id} />
             </Card>
           </Box>
         )}  
