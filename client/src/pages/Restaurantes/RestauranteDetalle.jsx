@@ -23,6 +23,7 @@ import dayjs from 'dayjs'; // si no lo tenés instalado: npm install dayjs
 import RestauranteGaleria from './RestauranteGaleria';
 import RestauranteMenu from './RestauranteMenu';
 import RestauranteBebidas from './RestauranteBebidas';
+import RestauranteResenas from './RestauranteResenas';
 
 
 
@@ -38,7 +39,6 @@ export default function RestauranteDetalle() {
   const navigate = useNavigate();
 
   //menu
-  const [menu, setMenu] = useState([]);
   const [mostrarMenu, setMostrarMenu] = useState(false);
 
   //evento
@@ -62,18 +62,12 @@ export default function RestauranteDetalle() {
 
 
   //bebidas
-  const [bebidas, setBebidas] = useState([]);
   const [mostrarBebidas, setMostrarBebidas] = useState(false);
-  const [categoriasBebidas, setCategoriasBebida] = useState([]);
 
   //reserva
   const [cantidadPersonas, setCantidadPersonas] = useState(1);
 
-  // Reseña
-  const [comentario, setComentario] = useState('');
-  const [puntuacion, setPuntuacion] = useState(5);
-  const [mensaje, setMensaje] = useState('');
-  const [reseñaError, setReseñaError] = useState('');
+ 
   const [fechaReserva, setFechaReserva] = useState('');
   const generarHorarios = () => {
   const horarios = [];
@@ -132,9 +126,9 @@ export default function RestauranteDetalle() {
     .then((res) => res.json())
     .then((data) => {
       setRestaurante(data);
-      if (data.resenas) setResenas(data.resenas);
-      if (data.menu) setMenu(data.menu);
-      if (data.bebidas) setBebidas(data.bebidas);
+      if (data.resenas) {
+        setResenas(data.resenas);
+      }
       setLoading(false);
     })
     .catch((err) => {
@@ -148,58 +142,6 @@ export default function RestauranteDetalle() {
  
 
 
-  const handleEnviarReseña = async (e) => {
-  e.preventDefault(); // prevenimos comportamiento por defecto del form
-
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
-    
-  if (!userId || !token) {
-    alert("Debes iniciar sesión para comentar y puntuar.");
-    return;
-  }
-
-  if (!comentario || puntuacion === 0) {
-    setReseñaError("Por favor completá tu comentario y puntuación.");
-    return;
-  }
-  if (!comentario.trim()) { // trim() elimina espacios al inicio y fin
-    setReseñaError('El comentario no puede estar vacío.');
-    return; // corta la ejecución y no envía nada
-  }
-
-  try {
-    const response = await fetch("http://localhost:3000/resenas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-      comentario,
-      puntuacion,
-      restauranteId: restaurante.id,
-      userId: parseInt(localStorage.getItem("userId")),
-    }),
-
-    });
-
-    if (!response.ok) throw new Error("Error al enviar reseña");
-
-    const data = await response.json();
-    setResenas((prev) => [data, ...prev]); // Agrega la nueva reseña
-    console.log("Reseña enviada con éxito:", data);
-
-    setMensaje("¡Gracias por tu reseña!");
-    setComentario("");
-    setPuntuacion(5);
-    setReseñaError("");
-
-  } catch (err) {
-    console.error(err);
-    setReseñaError("Error al enviar reseña, primero debe tener usuario luego de asistir recientemente para realizar dejar reserña");
-  }
-};
 
   const handleReserva = async () => {
   const token = localStorage.getItem("token");
@@ -494,89 +436,21 @@ export default function RestauranteDetalle() {
             </Box>
           )}
           {mostrarBebidas && (
-          <Box
-            sx={{
-              width: mostrarMenu && mostrarBebidas ? '50%' : '100%',
-              px: 3,
-            }}
-          >
-            <Card elevation={3} sx={{ p: 3, borderRadius: 3, }}>
+            <Box
+              sx={{
+                width: mostrarMenu && mostrarBebidas ? "50%" : "100%",
+                px: 3,
+              }}
+            >
               <RestauranteBebidas id={id} />
-            </Card>
-          </Box>
-        )}  
+            </Box>
+          )} 
         </Box>
         </Box>
-      {/* Formulario de Reseña */}
-      <Box component="form" onSubmit={handleEnviarReseña} sx={{ mt: 6 }}>
-        <Box sx={{ mt: 6 }}>
-          <Typography variant="h5" gutterBottom>
-            Comentarios
-          </Typography>
-
-          {resenas.length === 0 ? (
-            <Typography variant="body1">Todavía no hay reseñas.</Typography>
-          ) : (
-            resenas.map((resena) => (
-              <Box key={resena.id} sx={{ my: 2, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-                  {resena.usuario?.nombre } . {resena.usuario?.provincia }
-                </Typography>
-                <Rating value={resena.puntuacion} readOnly />
-                <Typography variant="body2">{resena.comentario}</Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {new Date(resena.fecha).toLocaleDateString()}
-                </Typography>
-              </Box>
-            ))
-          )}
-        </Box>
-
-        <Typography variant="h" gutterBottom>
-          Dejá tu comentario
-        </Typography>
-
-        <Rating
-          name="puntuacion"
-          value={puntuacion}
-          onChange={(event, newValue) => {
-            setPuntuacion(newValue);
-          }}
-        />
-
-        <TextField
-          label="Comentario"
-          multiline
-          fullWidth
-          rows={4}
-          value={comentario}
-          onChange={(e) => setComentario(e.target.value)}
-          sx={{ my: 2 ,'& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#ccc', // color normal
-              },
-              '&:hover fieldset': {
-                borderColor: '#999', // color al pasar el mouse
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#322B23', // color al hacer foco (tu color deseado)
-              },
-            },
-            '& .MuiInputLabel-root': {
-              color: '#444', // color del label normal
-              '&.Mui-focused': {
-                color: '#322B23', // color del label al hacer foco
-              },},}}
-                />
-
-        <Button variant="contained" color="3D3C3B" type="submit" 
-        sx={{backgroundColor: '#3D3C3B', color: '#fff'}}>
-          Enviar
-        </Button>
-
-        {mensaje && <Alert severity="success" sx={{ mt: 2 }}>{mensaje}</Alert>}
-        {reseñaError && <Alert severity="error" sx={{ mt: 2 }}>{reseñaError}</Alert>}
-      </Box>
+      <RestauranteResenas
+        restauranteId={restaurante.id}
+        resenasIniciales={resenas}
+      />
     
       <Box sx={{ mt: 6, p: 3, backgroundColor: '#B29C7D', borderRadius: 3 }}>
         <Typography variant="h5" gutterBottom>
