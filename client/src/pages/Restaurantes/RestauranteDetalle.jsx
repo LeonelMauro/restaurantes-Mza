@@ -25,6 +25,7 @@ import RestauranteMenu from './RestauranteMenu';
 import RestauranteBebidas from './RestauranteBebidas';
 import RestauranteResenas from './RestauranteResenas';
 import RestauranteEventos from './RestauranteEventos';
+import RestaurantePromociones from './RestaurantePromociones';
 
 
 
@@ -245,37 +246,9 @@ export default function RestauranteDetalle() {
   return (
     <Container sx={{ py: 5, }}>
       <RestauranteGaleria restaurante={restaurante} />
-      {restaurante.promociones && restaurante.promociones.length > 0 && (
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="h3" align="center" gutterBottom sx={{fontFamily: 'Kaushan Script', fontWeight: 'bold', color: 'black' }}>
-              Promociones especiales
-            </Typography>
-
-            <Grid container spacing={3}align="center" >
-              {restaurante.promociones.map((promo) => (
-                <Grid item xs={12} sm={6} md={4} key={promo.id}>
-                  <Card sx={{ height: '100%', backgroundColor: '#3D3C3B', borderRadius: 3, boxShadow: 3 }}>
-                    <CardContent>
-                      <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#ffff' }}>
-                        {promo.titulo}
-                      </Typography>
-                      <Typography variant="body1" sx={{ mt: 1, color: '#ffff' }}>
-                        {promo.descripcion}
-                      </Typography>
-                      <Typography variant="h6" sx={{ mt: 1, color: '#ffff' }}>
-                        ${promo.precio}
-                      </Typography>
-                      <Typography variant="caption" color="#ffff" sx={{ mt: 2, display: 'block' }}>
-                        Vigencia: {new Date(promo.fechaInicio).toLocaleDateString()} - {new Date(promo.fechaFin).toLocaleDateString()}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        )}
-
+      <RestaurantePromociones
+        promociones={restaurante.promociones}
+      />
       {/* Datos del usuario responsable */}
       <Box sx={{ display: 'flex', gap: 1, mt: 4 }}>
         {/* Botón Menú */}
