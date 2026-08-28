@@ -24,6 +24,7 @@ import RestauranteGaleria from './RestauranteGaleria';
 import RestauranteMenu from './RestauranteMenu';
 import RestauranteBebidas from './RestauranteBebidas';
 import RestauranteResenas from './RestauranteResenas';
+import RestauranteEventos from './RestauranteEventos';
 
 
 
@@ -42,11 +43,11 @@ export default function RestauranteDetalle() {
   const [mostrarMenu, setMostrarMenu] = useState(false);
 
   //evento
-  const [eventos, setEventos] = useState([]);
   const [mostrarEventos, setMostrarEventos] = useState(false);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const [dialogoReservaAbierto, setDialogoReservaAbierto] = useState(false);
   const [cantidadPersonasEvento, setCantidadPersonasEvento] = useState(1);
+  
 
   const abrirDialogoReservaEvento = (evento) => {
     setEventoSeleccionado(evento);
@@ -106,19 +107,7 @@ export default function RestauranteDetalle() {
 };
   const hoy = dayjs().format('YYYY-MM-DD');
 
-  const toggleEventos = async () => {
-  if (!mostrarEventos && eventos.length === 0) {
-    try {
-      const res = await fetch(`http://localhost:3000/eventos/restaurante/${id}`);
-      const data = await res.json();
-      setEventos(data);
-    } catch (err) {
-      console.error('Error al obtener eventos:', err);
-    }
-  }
-  setMostrarEventos(!mostrarEventos);
-};
-
+ 
 
 
   useEffect(() => {
@@ -335,7 +324,7 @@ export default function RestauranteDetalle() {
         {/* Botón Eventos */}
         <Tooltip title="Ver eventos">
           <IconButton
-            onClick={toggleEventos}
+            onClick={() => setMostrarEventos(!mostrarEventos)}
             sx={{
               backgroundColor: '#3D3C3B',
               color: '#fff',
@@ -373,67 +362,10 @@ export default function RestauranteDetalle() {
           </Box>
           )}
           {mostrarEventos && (
-            <Box mt={4}>
-              <Typography variant="h3" align="center" sx={{ fontWeight: 'bold', mb: 2 ,fontFamily: 'Kaushan Script'}}>
-                Eventos del restaurante
-              </Typography>
-              <Grid container spacing={3}>
-                {eventos.length === 0 ? (
-                  <Typography variant="body1" align="center" sx={{ width: '100%' }}>
-                    No hay eventos disponibles en este restaurante.
-                  </Typography>
-                ) : (
-                  eventos.map((evento) => (
-                    <Grid item xs={12} sm={6} md={4} key={evento.id}>
-                      <Card sx={{ backgroundColor: '#3D3C3B', color: '#fff', borderRadius: 3 }}>
-                        <CardContent>
-                          <Typography variant="h6" align="center" gutterBottom fontWeight="bold">
-                            {evento.titulo}
-                          </Typography>
-                          <Typography sx={{ textAlign: 'justify' }}>
-                            {evento.descripcion}
-                          </Typography>
-                          <Typography>📅 {new Date(evento.fecha).toLocaleDateString()}</Typography>
-                          <Typography>⏰ {evento.hora}</Typography>
-
-                          {evento.imagenUrl && (
-                            <Box
-                              component="img"
-                              src={`http://localhost:3000/${evento.imagenUrl}`}
-                              alt={evento.titulo}
-                              sx={{
-                                width: '100%',
-                                height: 160,
-                                objectFit: 'cover',
-                                borderRadius: 2,
-                                mt: 2,
-                              }}
-                            />
-                          )}
-
-                          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                            <Button
-                              variant="contained"
-                              sx={{
-                                backgroundColor: '#F5E6D3',
-                                color: '#3D3C3B',
-                                fontWeight: 'bold',
-                                '&:hover': {
-                                  backgroundColor: '#e2d3c1',
-                                },
-                              }}
-                              onClick={() => abrirDialogoReservaEvento(evento)}
-                            >
-                              Reservar
-                            </Button>
-                          </Box>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))
-                )}
-              </Grid>
-            </Box>
+            <RestauranteEventos
+              id={id}
+              onReservar={abrirDialogoReservaEvento}
+            />
           )}
           {mostrarBebidas && (
             <Box
@@ -534,11 +466,8 @@ export default function RestauranteDetalle() {
               </MenuItem>
             ))}
           </TextField>
-
-
         {/* Cantidad de personas */}
         <TextField
-          
           type="number"
           fullWidth
           value={cantidadPersonas}
@@ -598,9 +527,6 @@ export default function RestauranteDetalle() {
           </Button>
         </DialogActions>
       </Dialog>
-
-
-
     </Container>
   );
 }
