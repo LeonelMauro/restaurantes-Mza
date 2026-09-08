@@ -113,7 +113,7 @@ const ReservasResto = () => {
 
   return (
     <Grid item xs={12} sm={6} md={4} key={reserva.id}>
-      <Card sx={{ backgroundColor: '#F5E6D3' }}>
+      <Card sx={{ backgroundColor: '#f8f8f8ff' }}>
         <CardContent>
           <Typography variant="h6">Cliente: {reserva.usuario?.nombre}</Typography>
           <Typography variant="body2">

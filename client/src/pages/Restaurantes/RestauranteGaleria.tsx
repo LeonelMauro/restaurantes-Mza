@@ -4,6 +4,8 @@ import {
   ArrowBackIos,
   ArrowForwardIos,
 } from "@mui/icons-material";
+import { restaurantesStyles } from "../../styles/restaurantesStyles";
+
 
 type Photo = {
   id: number;
@@ -90,8 +92,7 @@ export default function RestauranteGaleria({
         variant="h1"
         align="center"
         sx={{
-          fontFamily: "Kaushan Script",
-          mb: 3,
+          ...restaurantesStyles.title,
         }}
       >
         {restaurante.nombre}
@@ -117,7 +118,11 @@ export default function RestauranteGaleria({
                 key={photo.id}
                 sx={{
                   width: "100vw",
-                  height: 500,
+                  height: {
+                  xs: 280,
+                  sm: 400,
+                  md: 500,
+                },
                   backgroundColor: "#1C1C1C",
                   display: "flex",
                   justifyContent: "center",
@@ -144,20 +149,47 @@ export default function RestauranteGaleria({
       <Typography
         variant="body1"
         sx={{
-          fontStyle: "italic",
-          color: "#3E3E3E",
-          fontSize: "1.15rem",
-          lineHeight: 1.9,
-          mt: 3,
-          mb: 4,
-          px: 3,
-          py: 2,
-          backgroundColor: "#F5E6D3",
-          borderRadius: 4,
-          boxShadow: "0 2px 8px rgba(15, 3, 13, 0.93)",
-          fontFamily: "Georgia, serif",
-          textAlign: "justify",
-        }}
+  fontStyle: "italic",
+  color: "#3E3E3E",
+
+  fontSize: {
+    xs: "0.95rem",
+    sm: "1.05rem",
+    md: "1.15rem",
+  },
+
+  lineHeight: {
+    xs: 1.6,
+    md: 1.9,
+  },
+
+  mt: {
+    xs: 2,
+    md: 3,
+  },
+
+  mb: {
+    xs: 3,
+    md: 4,
+  },
+
+  px: {
+    xs: 2,
+    sm: 3,
+  },
+
+  py: 2,
+
+  backgroundColor: "#F5E6D3",
+  borderRadius: {
+    xs: 2,
+    md: 4,
+  },
+
+  boxShadow: "0 2px 8px rgba(15, 3, 13, 0.93)",
+  fontFamily: "Georgia, serif",
+  textAlign: "justify",
+}}
       >
         {restaurante.descripcion}
       </Typography>

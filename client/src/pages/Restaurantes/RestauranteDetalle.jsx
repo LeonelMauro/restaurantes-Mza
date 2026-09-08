@@ -22,6 +22,7 @@ import RestauranteResenas from './RestauranteResenas';
 import RestauranteEventos from './RestauranteEventos';
 import RestaurantePromociones from './RestaurantePromociones';
 import RestauranteReservas from './RestauranteReservas';
+import { restaurantesStyles } from '../../styles/restaurantesStyles';
 
 
 
@@ -150,7 +151,8 @@ export default function RestauranteDetalle() {
   if (!restaurante) return <Typography>Restaurante no encontrado</Typography>;
 
   return (
-    <Container sx={{ py: 5, }}>
+    <Box sx={{  minHeight: '100vh' , ...restaurantesStyles.section}}>
+    <Container sx={{ py: 5, color:'#ffff'}}>
       <RestauranteGaleria restaurante={restaurante} />
       <RestaurantePromociones
         promociones={restaurante.promociones}
@@ -292,5 +294,6 @@ export default function RestauranteDetalle() {
         </DialogActions>
       </Dialog>
     </Container>
+    </Box>
   );
 }

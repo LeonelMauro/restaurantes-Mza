@@ -5,6 +5,7 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import { restaurantesStyles } from "../../styles/restaurantesStyles";
 
 export default function RestaurantePromociones({ promociones }) {
   if (!promociones || promociones.length === 0) {
@@ -18,9 +19,7 @@ export default function RestaurantePromociones({ promociones }) {
         align="center"
         gutterBottom
         sx={{
-          fontFamily: "Kaushan Script",
-          fontWeight: "bold",
-          color: "black",
+          ...restaurantesStyles.title,
         }}
       >
         Promociones especiales
