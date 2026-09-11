@@ -102,7 +102,7 @@ export default function RestauranteResenas({
       onSubmit={handleEnviarResena}
       sx={{ mt: 6 }}
     >
-      <Box sx={{ mt: 6 }}>
+      <Box sx={{ mt: 6, color: "#322B23" }}>
         <Typography variant="h5" gutterBottom>
           Comentarios
         </Typography>
@@ -153,7 +153,7 @@ export default function RestauranteResenas({
         )}
       </Box>
 
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom sx={{color: "#322B23"}}>
         Dejá tu comentario
       </Typography>
 

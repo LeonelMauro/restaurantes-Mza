@@ -4,7 +4,7 @@ export const restaurantesStyles = {
   // =========================
 
   section: {
-    backgroundColor: "#fff",
+    backgroundColor: "#0000000e",
 
     py: {
       xs: 3,
@@ -54,6 +54,23 @@ export const restaurantesStyles = {
       md: 1.8,
     },
   },
+  sectionTitle: {
+    fontFamily: "Kaushan Script",
+    fontWeight: "bold",
+    color: "black",
+
+    fontSize: {
+      xs: "1.8rem",
+      sm: "2.2rem",
+      md: "2.7rem",
+    },
+
+    mb: {
+      xs: 2,
+      md: 3,
+    },
+  },
+
 
   // =========================
   // GRID
@@ -150,4 +167,18 @@ export const restaurantesStyles = {
   rating: {
     mt: 1,
   },
+  iconButton: {
+  backgroundColor: "#3D3C3B",
+  color: "#fff",
+  width: 48,
+  height: 48,
+
+  "&:hover": {
+    backgroundColor: "#3D3C3B",
+  },
+
+  "&:active": {
+    transform: "none",
+  },
+},
 };

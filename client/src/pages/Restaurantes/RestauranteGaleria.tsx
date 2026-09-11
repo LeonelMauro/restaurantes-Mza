@@ -89,11 +89,9 @@ export default function RestauranteGaleria({
   return (
     <>
       <Typography
-        variant="h1"
+        variant="h3"
         align="center"
-        sx={{
-          ...restaurantesStyles.title,
-        }}
+        sx={restaurantesStyles.title}
       >
         {restaurante.nombre}
       </Typography>
@@ -146,53 +144,6 @@ export default function RestauranteGaleria({
         </Box>
       )}
 
-      <Typography
-        variant="body1"
-        sx={{
-  fontStyle: "italic",
-  color: "#3E3E3E",
-
-  fontSize: {
-    xs: "0.95rem",
-    sm: "1.05rem",
-    md: "1.15rem",
-  },
-
-  lineHeight: {
-    xs: 1.6,
-    md: 1.9,
-  },
-
-  mt: {
-    xs: 2,
-    md: 3,
-  },
-
-  mb: {
-    xs: 3,
-    md: 4,
-  },
-
-  px: {
-    xs: 2,
-    sm: 3,
-  },
-
-  py: 2,
-
-  backgroundColor: "#F5E6D3",
-  borderRadius: {
-    xs: 2,
-    md: 4,
-  },
-
-  boxShadow: "0 2px 8px rgba(15, 3, 13, 0.93)",
-  fontFamily: "Georgia, serif",
-  textAlign: "justify",
-}}
-      >
-        {restaurante.descripcion}
-      </Typography>
     </>
   );
 }

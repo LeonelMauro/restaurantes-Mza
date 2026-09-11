@@ -11,6 +11,7 @@ import {
    DialogContent,
    DialogActions
 } from '@mui/material';
+import InfoIcon from "@mui/icons-material/Info";
 import { Tooltip, IconButton } from '@mui/material';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import LiquorIcon from '@mui/icons-material/Liquor';
@@ -23,6 +24,7 @@ import RestauranteEventos from './RestauranteEventos';
 import RestaurantePromociones from './RestaurantePromociones';
 import RestauranteReservas from './RestauranteReservas';
 import { restaurantesStyles } from '../../styles/restaurantesStyles';
+import RestauranteInformacion from './RestauranteInformacion';
 
 
 
@@ -45,6 +47,9 @@ export default function RestauranteDetalle() {
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const [dialogoReservaAbierto, setDialogoReservaAbierto] = useState(false);
   const [cantidadPersonasEvento, setCantidadPersonasEvento] = useState(1);
+
+  //info descripcion resto
+  const [dialogoInfoAbierto, setDialogoInfoAbierto] = useState(false);
   
 
   const abrirDialogoReservaEvento = (evento) => {
@@ -154,28 +159,27 @@ export default function RestauranteDetalle() {
     <Box sx={{  minHeight: '100vh' , ...restaurantesStyles.section}}>
     <Container sx={{ py: 5, color:'#ffff'}}>
       <RestauranteGaleria restaurante={restaurante} />
+      <RestauranteInformacion restaurante={restaurante} />
       <RestaurantePromociones
         promociones={restaurante.promociones}
       />
       {/* Datos del usuario responsable */}
       <Box sx={{ display: 'flex', gap: 1, mt: 4 }}>
+
+        <Tooltip title="Información">
+        <IconButton
+          onClick={() => setDialogoInfoAbierto(true)}
+          sx={restaurantesStyles.iconButton}
+        >
+          <InfoIcon fontSize="medium" />
+        </IconButton>
+      </Tooltip>
         {/* Botón Menú */}
         <Tooltip title={mostrarMenu ? "Ocultar menú" : "Ver menú"}>
           <IconButton
             
             onClick={() => setMostrarMenu(!mostrarMenu)}
-            sx={{
-              backgroundColor: '#3D3C3B',
-              color: '#fff',
-              width: 48,
-              height: 48,
-              '&:hover': {
-                backgroundColor: '#3D3C3B',
-              },
-              '&:active': {
-                transform: 'none',
-              },
-            }}
+            sx={restaurantesStyles.iconButton}
           >
             <RestaurantMenuIcon fontSize="medium" />
           </IconButton>
@@ -185,18 +189,7 @@ export default function RestauranteDetalle() {
         <Tooltip title={mostrarBebidas ? "Ocultar bebidas" : "Ver bebidas"}>
           <IconButton
             onClick={() => setMostrarBebidas(!mostrarBebidas)}
-            sx={{
-              backgroundColor: '#3D3C3B',
-              color: '#fff',
-              width: 48,
-              height: 48,
-              '&:hover': {
-                backgroundColor: '#3D3C3B',
-              },
-              '&:active': {
-                transform: 'none',
-              },
-            }}
+            sx={restaurantesStyles.iconButton}
           >
             <LiquorIcon fontSize="medium" />
           </IconButton>
@@ -206,18 +199,7 @@ export default function RestauranteDetalle() {
         <Tooltip title="Ver eventos">
           <IconButton
             onClick={() => setMostrarEventos(!mostrarEventos)}
-            sx={{
-              backgroundColor: '#3D3C3B',
-              color: '#fff',
-              width: 48,
-              height: 48,
-              '&:hover': {
-                backgroundColor: '#3D3C3B',
-              },
-              '&:active': {
-                transform: 'none',
-              },
-            }}
+            sx={restaurantesStyles.iconButton}
           >
             <EventIcon fontSize="medium" />
           </IconButton>
@@ -290,6 +272,28 @@ export default function RestauranteDetalle() {
           <Button onClick={cerrarDialogoReservaEvento}>Cancelar</Button>
           <Button onClick={handleReservaEvento} variant="contained" color="primary">
             Confirmar Reserva
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={dialogoInfoAbierto}
+        onClose={() => setDialogoInfoAbierto(false)}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>Información</DialogTitle>
+
+        <DialogContent>
+          <Typography
+            sx={restaurantesStyles.description}
+          >
+            {restaurante.descripcion}
+          </Typography>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setDialogoInfoAbierto(false)}>
+            Cerrar
           </Button>
         </DialogActions>
       </Dialog>

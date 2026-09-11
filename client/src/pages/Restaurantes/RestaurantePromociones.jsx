@@ -19,7 +19,7 @@ export default function RestaurantePromociones({ promociones }) {
         align="center"
         gutterBottom
         sx={{
-          ...restaurantesStyles.title,
+          ...restaurantesStyles.sectionTitle,
         }}
       >
         Promociones especiales
@@ -30,6 +30,7 @@ export default function RestaurantePromociones({ promociones }) {
           <Grid
             size={{ xs: 12, sm: 6, md: 4 }}
             key={promo.id}
+            sx={restaurantesStyles.restaurantGridItem}
           >
             <Card
               sx={{
