@@ -13,7 +13,7 @@ const theme = createTheme({
   },
   palette: {
     background: {
-      default: '#F5E6D3', // beige claro (color tierra suave)
+      default: '#ffffffff', // beige claro (color tierra suave)
     },
   },
 });

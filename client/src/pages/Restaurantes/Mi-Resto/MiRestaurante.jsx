@@ -23,6 +23,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 // ...importaciones iguales
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import RestauranteHeader from './RestauranteHeader';
+import RestauranteInformacion from './RestauranteInformacion';
+import RestauranteAdministracion from './RestauranteAdministracion';
 
 const MiRestaurante = () => {
   const { id } = useParams();
@@ -152,54 +155,14 @@ const MiRestaurante = () => {
 
   return (
     <Box p={4}>
-      <Typography variant="h1" align="center" sx={{ fontFamily: 'Kaushan Script', mb: 3,color: '#9b8b7fff' }}>
-        {restaurante.nombre}
-        <IconButton onClick={() => handleEditClick('nombre')} size="small">
-          <EditIcon fontSize="small" />
-        </IconButton>
-      </Typography>
-
-      <Typography variant="body1"sx={{
-            fontStyle: 'italic',
-            color: '#3E3E3E', // Gris cálido
-            fontSize: '1.15rem',
-            lineHeight: 1.9,
-            mt: 3,
-            mb: 4,
-            px: 3,
-            py: 2,
-            backgroundColor: '#F5E6D3', // Beige claro tipo montaña/tierra
-            borderRadius: 4,
-            boxShadow: '0 2px 8px rgba(15, 3, 13, 0.93)',
-            fontFamily: 'Georgia, serif',
-            textAlign: 'justify', 
-          }}>
-        {restaurante.descripcion}
-        <IconButton onClick={() => handleEditClick('descripcion')} size="small">
-          <EditIcon fontSize="small" />
-        </IconButton>
-      </Typography>
-
-      <Typography variant="body2">
-        {restaurante.direccion}
-        <IconButton onClick={() => handleEditClick('direccion')} size="small">
-          <EditIcon fontSize="small" />
-        </IconButton>
-      </Typography>
-
-      <Typography variant="body2">
-        Contacto: {restaurante.contacto}
-        <IconButton onClick={() => handleEditClick('contacto')} size="small">
-          <EditIcon fontSize="small" />
-        </IconButton>
-      </Typography>
-
-      <Typography variant="body2">
-        Horario: {restaurante.horario}
-        <IconButton onClick={() => handleEditClick('horario')} size="small">
-          <EditIcon fontSize="small" />
-        </IconButton>
-      </Typography>
+      <RestauranteHeader
+        restaurante={restaurante}
+        onEditar={() => console.log("Editar restaurante")}
+      />
+      <RestauranteInformacion
+        restaurante={restaurante}
+        onEditar={() => handleEditClick('direccion')} size="small"
+      />
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3, mt: 2 }}>
         {restaurante.photos.map((photo) => (
@@ -230,84 +193,9 @@ const MiRestaurante = () => {
       </Button>
 
       <Box sx={{ display: 'flex', gap: 1, mt: 4 }}>
-        
-        {/* Botón Menú */}
-        <Tooltip >
-          <IconButton
-            onClick={() => navigate(`/menu/create`)}
-            sx={{
-              backgroundColor: '#3D3C3B',
-              color: '#fff',
-              width: 48,
-              height: 48,
-              '&:hover': {
-                backgroundColor: '#3D3C3B',
-              },
-              '&:active': {
-                transform: 'none',
-              },
-            }}
-          >
-            <RestaurantMenuIcon fontSize="medium" />
-          </IconButton>
-        </Tooltip>
-
-        {/* Botón Bebidas */}
-        <Tooltip >
-          <IconButton
-            onClick={() => navigate(`/bebidas`)}
-            sx={{
-              backgroundColor: '#3D3C3B',
-              color: '#fff',
-              width: 48,
-              height: 48,
-              '&:hover': {
-                backgroundColor: '#3D3C3B',
-              },
-              '&:active': {
-                transform: 'none',
-              },
-            }}
-          >
-            <LiquorIcon fontSize="medium" />
-          </IconButton>
-        </Tooltip>
-
-        {/* Botón Eventos */}
-        <Tooltip title="Ver eventos">
-          <IconButton
-            onClick={() => navigate(`/eventos/${id}`)}
-            sx={{
-              backgroundColor: '#3D3C3B',
-              color: '#fff',
-              width: 48,
-              height: 48,
-              '&:hover': {
-                backgroundColor: '#3D3C3B',
-              },
-              '&:active': {
-                transform: 'none',
-              },
-            }}
-          >
-            <EventIcon fontSize="medium" />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Ver promociones">
-        <IconButton
-          onClick={() => navigate(`/promos`)}
-          sx={{
-            backgroundColor: '#3D3C3B',
-            color: '#fff',
-            width: 48,
-            height: 48,
-            '&:hover': { backgroundColor: '#3D3C3B' },
-            '&:active': { transform: 'none' },
-          }}
-        >
-          <LocalOfferIcon fontSize="medium" />
-        </IconButton>
-      </Tooltip>
+       <RestauranteAdministracion
+        onNavigate={(ruta) => navigate(ruta)}
+      />
       </Box>
       {/* Diálogo para campos */}
       <Dialog open={openCampo} onClose={handleCloseCampos}>
