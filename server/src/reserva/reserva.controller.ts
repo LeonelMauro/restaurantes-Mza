@@ -12,14 +12,14 @@ import {
   NotFoundException,
   Patch,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
-import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { ReservaService } from './reserva.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reserva } from './entities/reverva.entity';
 import { Repository } from 'typeorm';
 import { EstadoReserva } from './entities/reverva.entity';
+import {AuthRequest} from '../auth/interfaces/auth-request.interface';
 
 @Controller('reserva')
 export class ReservaController {
@@ -35,9 +35,9 @@ export class ReservaController {
   async crearReserva(
     @Param('restauranteId') restauranteId: number,
     @Body() createReservaDto: CreateReservaDto,
-    @Req() req: Request,
+    @Req() req:AuthRequest,
   ) {
-    const userId = req['user'].sub;
+    const userId = req.user.sub;
     return this.reservaService.createReserva(
       restauranteId,
       userId,

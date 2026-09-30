@@ -24,7 +24,8 @@ import RestauranteEventos from './RestauranteEventos';
 import RestaurantePromociones from './RestaurantePromociones';
 import RestauranteReservas from './RestauranteReservas';
 import { restaurantesStyles } from '../../styles/restaurantesStyles';
-import RestauranteInformacion from './RestauranteInformacion';
+import RestauranteInfoUbi from './RestauranteInfoUbi';
+import RestauranteInformacion from './Mi-Resto/RestauranteInformacion';
 
 
 
@@ -159,7 +160,8 @@ export default function RestauranteDetalle() {
     <Box sx={{  minHeight: '100vh' , ...restaurantesStyles.section}}>
     <Container sx={{ py: 5, color:'#ffff'}}>
       <RestauranteGaleria restaurante={restaurante} />
-      <RestauranteInformacion restaurante={restaurante} />
+      <RestauranteInformacion restaurante={restaurante}/>
+      <RestauranteInfoUbi restaurante={restaurante} />
       <RestaurantePromociones
         promociones={restaurante.promociones}
       />

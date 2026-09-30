@@ -6,7 +6,7 @@ import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Reseña } from './entities/reseña.entity';
 import { In, LessThan, Repository } from 'typeorm';
-import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Reserva } from 'src/reserva/entities/reverva.entity';
 import { EstadoReserva } from 'src/reserva/entities/reverva.entity'; // Asegurate de importar esto
 

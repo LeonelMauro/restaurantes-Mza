@@ -15,6 +15,7 @@ import { EventosModule } from './eventos/eventos.module';
 import { DepartamentoModule } from './departamento/departamento.module';
 import { CategoryMenuModule } from './category-menu/category-menu.module';
 import { CategoryBebidasModule } from './category-bebidas/category-bebidas.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -48,6 +49,7 @@ import { CategoryBebidasModule } from './category-bebidas/category-bebidas.modul
     DepartamentoModule,
     CategoryMenuModule,
     CategoryBebidasModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

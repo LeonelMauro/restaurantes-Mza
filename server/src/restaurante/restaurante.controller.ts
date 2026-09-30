@@ -14,8 +14,8 @@ import {
 } from '@nestjs/common';
 import { RestauranteService } from './restaurante.service';
 import { CreateRestauranteDto } from './dto/create-restaurante.dto';
-import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
-import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import {AuthRequest} from '../auth/interfaces/auth-request.interface';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -43,10 +43,11 @@ export class RestauranteController {
   )
   async create(
     @Body() dto: CreateRestauranteDto,
-    @Req() req: Request,
+    @Req() req:AuthRequest,
+    
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    const userId = req['user'].sub;
+    const userId = req.user.sub;
     const imagePaths = files.map(file => file.path);
     return this.restauranteService.create(dto, userId, imagePaths);
   }

@@ -2,7 +2,7 @@ import { Controller, Post, Body, Get, Param, Delete, Patch, UseGuards, ParseIntP
 import { ReseñaService } from './reseña.service';
 import { CreateReseñaDto } from './dto/create-reseña.dto';
 import { UpdateReseñaDto } from './dto/update-reseña.dto';
-import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('resenas')
 export class ReseñaController {

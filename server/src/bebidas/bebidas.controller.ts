@@ -2,7 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } f
 import { BebidasService } from './bebidas.service';
 import { CreateBebidaDto } from './dto/create-bebida.dto';
 import { UpdateBebidaDto } from './dto/update-bebida.dto';
-import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+
 
 @Controller('bebidas')
 export class BebidasController {

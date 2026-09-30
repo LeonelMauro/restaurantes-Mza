@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { PromocionService } from './promocion.service';
 import { CreatePromocionDto } from './dto/create-promocion.dto';
-import { JwtAuthGuard } from 'src/user/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdatePromocionDto } from './dto/update-promocion.dto';
 
 @Controller('promociones')

@@ -23,6 +23,13 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
+  async findByEmail(email: string): Promise<User |null> {
+    return this.userRepository.findOne({
+      where:{email}
+    })
+    ;
+  };
+
   async loginUser(email: string, password: string) {
     const user = await this.userRepository.findOne({ where: { email } });
 

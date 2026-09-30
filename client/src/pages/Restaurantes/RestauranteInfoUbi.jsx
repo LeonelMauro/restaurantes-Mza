@@ -8,7 +8,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-export default function RestauranteInformacion({ restaurante }) {
+export default function RestauranteInfoUbi({ restaurante }) {
   const [coordenadas, setCoordenadas] = useState(null);
 
   useEffect(() => {
@@ -51,29 +51,6 @@ export default function RestauranteInformacion({ restaurante }) {
   return (
     <Box sx={{ mt: 4 }}>
       {/* Información del restaurante */}
-      <Box
-        sx={{
-          mt: 4,
-          color: "#322B23",
-          display: "flex",
-          justifyContent: "space-between",
-          gap: 2,
-          flexWrap: "wrap",
-        }}
-      >
-        <Typography>
-          {restaurante.horario}
-        </Typography>
-
-        <Typography>
-          {restaurante.contacto}
-        </Typography>
-
-        <Typography>
-          {restaurante.direccion}
-        </Typography>
-      </Box>
-
       {/* Mapa */}
       <Box sx={{ mt: 3 }}>
         {coordenadas && (
