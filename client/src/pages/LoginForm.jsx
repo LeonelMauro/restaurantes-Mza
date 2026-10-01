@@ -30,7 +30,7 @@ const LoginForm = () => {
   }
 
   axios
-  .post("http://localhost:3000/user/login", {
+  .post("http://localhost:3000/auth/login", {
     email: data.email,
     password: data.password,
   })

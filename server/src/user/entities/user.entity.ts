@@ -1,7 +1,8 @@
 import { Reseña } from "src/reseña/entities/reseña.entity";
 import { Restaurante } from "src/restaurante/entities/restaurante.entity";
 import { Reserva } from "src/reserva/entities/reverva.entity";
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Role } from "src/role/entities/role.entity";
 
 @Entity()
 export class User {
@@ -38,4 +39,8 @@ export class User {
   onDelete: 'CASCADE',
  })
   restaurante: Restaurante;
+
+  @ManyToOne(() => Role, role => role.usuarios)
+  @JoinColumn({ name: 'role_id' })
+  role: Role;
 }

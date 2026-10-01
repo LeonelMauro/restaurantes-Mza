@@ -3,7 +3,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUserDto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { LoginUserDto } from './dto/LoginUserDto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('user')
@@ -14,12 +13,7 @@ export default class UserController {
     return this.userService.createUser(createUserDto);
   }
   
-  @Post('login')
-  login(@Body() loginUserDto: LoginUserDto) {
-    const { email, password } = loginUserDto;
-    return this.userService.loginUser(email, password);
-  }
-
+  
   
   @Get()
   findAll() {
