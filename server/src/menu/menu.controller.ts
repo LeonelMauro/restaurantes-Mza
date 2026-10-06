@@ -3,6 +3,8 @@ import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 
 @Controller('menu')
@@ -15,11 +17,14 @@ export class MenuController {
     return this.menuService.create(createMenuDto);
   }
 
+  @UseGuards(JwtAuthGuard , RolesGuard) 
+  @Roles('restaurante','admin')
   @Get()
   findAll() {
     return this.menuService.findAll();
   }
-
+  @UseGuards(JwtAuthGuard , RolesGuard) 
+  @Roles('restaurante','admin')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.menuService.findOne(+id);
