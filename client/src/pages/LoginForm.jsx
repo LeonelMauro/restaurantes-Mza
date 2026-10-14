@@ -6,10 +6,12 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import {useAuth} from '../context/AuthContext'
 
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const {login} = useAuth();
   const [data, setData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -21,69 +23,60 @@ const LoginForm = () => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault(); // ¡No te olvides de prevenir el submit por defecto!
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
   if (!data.email || !data.password) {
     alert("Por favor completa todos los campos.");
     return;
   }
 
-  axios
-  .post("http://localhost:3000/auth/login", {
-    email: data.email,
-    password: data.password,
-  })
-  .then((res) => {
-    const { user, access_token } = res.data;
-    localStorage.setItem("token", access_token);
-    localStorage.setItem("tipo", user.tipo);
-    localStorage.setItem("userId", user.id);
-    localStorage.setItem("nombre", user.nombre);
-
-    // Recuperar datos desde localStorage
-    const tipo = localStorage.getItem("tipo");
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
-    const nombre = localStorage.getItem("nombre");
-
-    console.log("Usuario logueado:", { tipo, userId, token,nombre });
-
-    if (tipo && userId) {
-      console.log(`El usuario logueado es de tipo "${tipo}" con ID ${userId}`);
-    } else {
-      console.log("No hay usuario logueado.");
-    }
-
-    // Redirigir según el tipo
-    if (user.tipo === "restaurante") {
-        axios
-          .get(`http://localhost:3000/restaurante/by-user/${user.id}`)
-          .then((res) => {
-            if (res.data) {
-              // Ya tiene datos del restaurante cargados
-              navigate(`/mi-restaurante/${res.data.id}`);
-            } else {
-              // No tiene restaurante asociado, lo mandamos al formulario
-              navigate("/addrestaurantes");
-            }
-          })
-          .catch((err) => {
-            console.error("Error al verificar restaurante:", err);
-            alert("Hubo un problema al verificar tus datos.");
-          });
-          } else if (user.tipo === "turista") {
-          navigate("/VistaMontaña"); // 👈 o la ruta que tengas como home para turistas
-        
-
+  try {
+    // 1. Enviamos las credenciales al backend.
+    const res = await axios.post(
+      "http://localhost:3000/auth/login",
+      {
+        email: data.email,
+        password: data.password,
       }
+    );
 
-  })
-  .catch((err) => {
-    console.error(err);
-    alert("Error al iniciar sesión");
-  });
- };
+    // 2. Obtenemos el usuario y el JWT.
+    const { user, access_token } = res.data;
+
+    // 3. Guardamos la sesión mediante AuthContext.
+    login(user, access_token);
+
+    // 4. Redirigimos según el tipo de usuario.
+    if (user.tipo === "restaurante") {
+      const restauranteRes = await axios.get(
+        `http://localhost:3000/restaurante/by-user/${user.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+
+      if (restauranteRes.data) {
+        navigate(`/mi-restaurante/${restauranteRes.data.id}`);
+      } else {
+        navigate("/addrestaurantes");
+      }
+    } else if (user.tipo === "turista") {
+      navigate("/VistaMontaña");
+    } else if (user.tipo === "admin") {
+      navigate("/");
+    } else {
+      alert("El tipo de usuario no es válido.");
+    }
+  } catch (err) {
+    console.error("Error durante el inicio de sesión:", err);
+    alert("No se pudo iniciar sesión o verificar los datos del usuario.");
+  }
+};
+
 
 
 

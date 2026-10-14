@@ -17,19 +17,18 @@ export class MenuController {
     return this.menuService.create(createMenuDto);
   }
 
-  @UseGuards(JwtAuthGuard , RolesGuard) 
-  @Roles('restaurante','admin')
+  
   @Get()
   findAll() {
     return this.menuService.findAll();
   }
-  @UseGuards(JwtAuthGuard , RolesGuard) 
-  @Roles('restaurante','admin')
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.menuService.findOne(+id);
   }
-
+  @UseGuards(JwtAuthGuard , RolesGuard) 
+  @Roles('restaurante','admin')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMenuDto: UpdateMenuDto) {
     return this.menuService.updateMenu(+id, updateMenuDto);

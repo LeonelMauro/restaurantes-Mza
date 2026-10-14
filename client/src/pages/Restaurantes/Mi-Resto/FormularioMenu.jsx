@@ -17,8 +17,12 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import axios from 'axios';
+import { useAuth } from '../../../context/AuthContext';
 
 const FormularioMenu = () => {
+
+  const {user, token, loading} = useAuth()
+  const userId = user?.id;
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nombre: '', descripcion: '', precio: '',categoryMenuId: '' });
   const [menu, setMenu] = useState([]);
@@ -31,26 +35,36 @@ const FormularioMenu = () => {
   // buscador
   const [busqueda, setBusqueda] = useState('');
 
-
-
+  
+  
   useEffect(() => {
     const fetchRestauranteId = async () => {
-      const userId = localStorage.getItem('userId');
-      const token = localStorage.getItem('token');
-      if (!token || !userId) return;
+       console.log("Estado de autenticación:", { loading, user, token });
+      if(loading)return;
+      if (!token || !user) {
+        console.error("No hay token o ID de usuario");
+        setRestauranteId(null)
+        return};
       try {
         const res = await axios.get(`http://localhost:3000/restaurante/by-user/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setRestauranteId(res.data.id);
-        fetchMenu(res.data.id);
-        fetchCategorias(res.data.id);
+
+        const id = res.data.id;
+        if(!id){
+          console.error("El usuario notiene un restaurante asociado");
+          return;
+        }
+        setRestauranteId(id);
+        fetchMenu(id);
+        console.log("Menu cargado",menu)
+        fetchCategorias(id);
       } catch (err) {
         console.error('Error al obtener restaurante:', err);
       }
     };
     fetchRestauranteId();
-  }, []);
+  }, [loading,token, userId]);
 
   //categoria menu
     const fetchCategorias = async (restauranteId) => {
@@ -65,7 +79,6 @@ const FormularioMenu = () => {
       };
     const handleSubmitcategoryMenu= async (e) =>{
         e.preventDefault();
-        const token= localStorage.getItem('token');
         if(!token || !restauranteId){
           alert('Falta token o restaurante');
           return;
@@ -98,7 +111,8 @@ const FormularioMenu = () => {
 
   const fetchMenu = async (restauranteId) => {
     try {
-      const res = await axios.get('http://localhost:3000/menu/');
+      const res = await axios.get('http://localhost:3000/menu/')
+      ;
       const menuFiltradas = res.data.filter(b => b.restaurante.id === restauranteId);
       setMenu(menuFiltradas);
     } catch (err) {
@@ -155,7 +169,6 @@ const FormularioMenu = () => {
 };
 
   const handleDelete = async (id) => {
-    const token = localStorage.getItem('token');
     try {
       await axios.delete(`http://localhost:3000/menu/${id}`, {
         headers: { Authorization: `Bearer ${token}` },

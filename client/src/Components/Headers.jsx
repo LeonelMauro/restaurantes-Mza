@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import logo from '../assets/img/logo.png';
 import {
   AppBar,
@@ -20,33 +20,38 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SearchIcon from '@mui/icons-material/Search';
 import { InputAdornment, TextField } from '@mui/material';
+import { useAuth } from '../context/AuthContext';
 const Header = () => {
+  const {user, token, loading,logout} = useAuth();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [restauranteExistente, setRestauranteExistente] = useState(null);
-  const [loading, setLoading] = useState(true);
-
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
 
-  const isLoggedIn = localStorage.getItem('token');
-  const tipoUsuario = localStorage.getItem('tipo');
-  const userId = localStorage.getItem('userId');
+  const isLoggedIn = Boolean(user);
+  const tipoUsuario = user?.tipo;
+  const userId = user?.id;
 
   // Dentro del componente Header buscardor:
 const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchRestaurante = async () => {
-      if (isLoggedIn && tipoUsuario === 'restaurante' && userId) {
+      if (!user || user.tipo !== 'restauranre') {
+        setRestauranteExistente(null);
+        return;
+      }
+        {
         try {
-          const token = localStorage.getItem('token');
           const res = await axios.get(`http://localhost:3000/restaurante/by-user/${userId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
           setRestauranteExistente(res.data);
+          console.log('Restaurante recibido:',res.data)
         } catch (err) {
           console.error('Error al obtener restaurante:', err);
           setRestauranteExistente(null);
@@ -54,14 +59,14 @@ const [searchTerm, setSearchTerm] = useState('');
       }
       setLoading(false);
     };
-
-    fetchRestaurante();
-  }, [isLoggedIn, tipoUsuario, userId]);
+    if(!loading){
+      fetchRestaurante();
+    }
+  }, [user,loading]);
 
   const handleLogout = () => {
-    localStorage.clear();
+    logout();
     navigate('/');
-    window.location.reload();
   };
 
   const handleSearch = (e) => {
@@ -103,15 +108,15 @@ const [searchTerm, setSearchTerm] = useState('');
   let sections = [...sectionsBase];
 
   if (!loading) {
-    if (isLoggedIn && tipoUsuario === 'restaurante') {
+    if (user?.tipo === 'restaurante') {
       if (restauranteExistente) {
-        sections = [...sections, ...sectionsRestauranteConRegistro];
-      } else {
         sections = [...sections, ...sectionsRestauranteSinRegistro];
+      } else {
+        sections = [...sections, ...sectionsRestauranteConRegistro];
       }
-    } else if (isLoggedIn && tipoUsuario === 'turista') {
+    } else if (user?.tipo === 'turista') {
       sections = [...sections, ...sectionsTurista];
-    } else if (!isLoggedIn) {
+    } else if (!user) {
       sections = [...sections, ...sectionsNoLogin];
     }
   }
