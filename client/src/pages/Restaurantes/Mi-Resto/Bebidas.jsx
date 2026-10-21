@@ -16,8 +16,11 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import axios from 'axios';
+import { useAuth } from '../../../context/AuthContext';
 
 const BebidasDialog = () => {
+  const {user, token, loading} = useAuth()
+  const userId = user?.id;
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nombre: '', descripcion: '', precio: '',categoryBebidaId: '' });
   const [bebidas, setBebidas] = useState([]);
@@ -34,22 +37,27 @@ const BebidasDialog = () => {
 
   useEffect(() => {
     const fetchRestauranteId = async () => {
-      const userId = localStorage.getItem('userId');
-      const token = localStorage.getItem('token');
+      console.log("Estado de autenticación:", { loading, user, token });
+      if(loading) return;
       if (!token || !userId) return;
       try {
         const res = await axios.get(`http://localhost:3000/restaurante/by-user/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setRestauranteId(res.data.id);
-        fetchBebidas(res.data.id);
-        fetchCategorias(res.data.id);
+        const id = res.data.id
+        if(!id){
+          console.error("El usuario notiene un restaurante asociado");
+          return;
+        }
+        setRestauranteId(id);
+        fetchBebidas(id);
+        fetchCategorias(id);
       } catch (err) {
         console.error('Error al obtener restaurante:', err);
       }
     };
     fetchRestauranteId();
-  }, []);
+  }, [user, token, loading]);
 
   //categoria bebidas
     const fetchCategorias = async (restauranteId) => {

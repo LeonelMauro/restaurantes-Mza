@@ -27,7 +27,7 @@ export const AuthProvider = ({children}) =>{
     const storeUser = localStorage.getItem('user');
 
     if(storedToken && storeUser){
-      setToken(storedToken),
+      setToken(storedToken);
       setUser(JSON.parse(storeUser));
     }
     
@@ -42,11 +42,11 @@ export const AuthProvider = ({children}) =>{
 
     //Guardamos la sesión para que sobreviva
     //aunque el usuario recargue la páguina.
-    localStorage.getItem(
+    localStorage.setItem(
       "user",
       JSON.stringify(userData)
     );
-    localStorage.getItem(
+    localStorage.setItem(
       "token",
       accessToken,
     )

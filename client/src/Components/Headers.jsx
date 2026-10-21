@@ -38,8 +38,13 @@ const Header = () => {
 const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
+    console.log("Sesión en Header",{
+      user,
+      tokenExistente: Boolean(token),
+      loading
+    })
     const fetchRestaurante = async () => {
-      if (!user || user.tipo !== 'restauranre') {
+      if (!user || user.tipo !== 'restaurante' || !token || !userId) {
         setRestauranteExistente(null);
         return;
       }
@@ -57,12 +62,11 @@ const [searchTerm, setSearchTerm] = useState('');
           setRestauranteExistente(null);
         }
       }
-      setLoading(false);
     };
     if(!loading){
       fetchRestaurante();
     }
-  }, [user,loading]);
+  }, [user,token, userId,loading]);
 
   const handleLogout = () => {
     logout();
@@ -110,9 +114,9 @@ const [searchTerm, setSearchTerm] = useState('');
   if (!loading) {
     if (user?.tipo === 'restaurante') {
       if (restauranteExistente) {
-        sections = [...sections, ...sectionsRestauranteSinRegistro];
-      } else {
         sections = [...sections, ...sectionsRestauranteConRegistro];
+      } else {
+        sections = [...sections, ...sectionsRestauranteSinRegistro];
       }
     } else if (user?.tipo === 'turista') {
       sections = [...sections, ...sectionsTurista];

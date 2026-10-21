@@ -23,35 +23,52 @@ import FormPromocion from './pages/Restaurantes/Mi-Resto/FormPromocion';
 import Lugares from './pages/Departamentos/Lugares';
 import Eventos from './pages/Restaurantes/Mi-Resto/Eventos';
 import ListaEventos from './pages/Restaurantes/ListaEventos';
+import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
   return (
     <BrowserRouter>
       <Header />
       <Box sx={{ height: { xs: 56, sm: 64 } }} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/servicios" element={<Servicios />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegisterForm />} />
-        <Route path="/addrestaurantes" element={<AddRestaurantForm />} />
-        <Route path="/VistaMontaña" element={<VistaMontaña />} />
-        <Route path="/restaurante/:id" element={<RestauranteDetalle />} />
-        <Route path="/beneficios" element={<BeneficiosRegistro />} />
-        <Route path="/mis-reservas" element={<MisReservas />} />
-        <Route path="/mi-restaurante/:id" element={<MiRestaurante />} />
-        <Route path="/menu/create" element={<FormularioMenu />} />
-        <Route path="/bebidas" element={<BebidasManager />} />
-        <Route path="/form1" element={<DepartamentoDialog />} />
-        <Route path="/departamento/:id" element={<DepartamentoDetalle />} />
-        <Route path="/ReservasResto" element={<ReservasResto />} />
-        <Route path="/buscar" element={<Busqueda />} />
-        <Route path="/promos" element={<FormPromocion />} />
-        <Route path="/Lugares" element={<Lugares />} />
-        <Route path="/eventos/:id" element={<Eventos />} />
-        <Route path="/Listaeventos" element={<ListaEventos />} />
+     
+<Routes>
+  {/* Rutas públicas: no necesitan iniciar sesión */}
+  <Route path="/" element={<Home />} />
+  <Route path="/servicios" element={<Servicios />} />
+  <Route path="/login" element={<LoginForm />} />
+  <Route path="/register" element={<RegisterForm />} />
+  <Route path="/VistaMontaña" element={<VistaMontaña />} />
+  <Route path="/restaurante/:id" element={<RestauranteDetalle />} />
+  <Route path="/beneficios" element={<BeneficiosRegistro />} />
+  <Route path="/Lugares" element={<Lugares />} />
+  <Route path="/departamento/:id" element={<DepartamentoDetalle />} />
+  <Route path="/buscar" element={<Busqueda />} />
+  <Route path="/Listaeventos" element={<ListaEventos />} />
 
-      </Routes>
+  {/* Rutas exclusivas para turistas */}
+  <Route element={<ProtectedRoute allowedRoles={['turista']} />}>
+    <Route path="/mis-reservas" element={<MisReservas />} />
+  </Route>
+
+  {/* Rutas para restaurantes */}
+  <Route
+    element={
+      <ProtectedRoute allowedRoles={['restaurante']} />
+    }
+  >
+    <Route path="/addrestaurantes" element={<AddRestaurantForm />} />
+    <Route path="/mi-restaurante/:id" element={<MiRestaurante />} />
+    <Route path="/menu/create" element={<FormularioMenu />} />
+    <Route path="/bebidas" element={<BebidasManager />} />
+    <Route path="/ReservasResto" element={<ReservasResto />} />
+    <Route path="/promos" element={<FormPromocion />} />
+    <Route path="/eventos/:id" element={<Eventos />} />
+  </Route>
+
+  {/* Rutas que ya tenías */}
+  <Route path="/form1" element={<DepartamentoDialog />} />
+</Routes>
+
       <Footer/>
     </BrowserRouter>
   );
