@@ -44,7 +44,7 @@ const [searchTerm, setSearchTerm] = useState('');
       loading
     })
     const fetchRestaurante = async () => {
-      if (!user || user.tipo !== 'restaurante' || !token || !userId) {
+      if (!user || tipoUsuario !== 'restaurante' || !token || !userId) {
         setRestauranteExistente(null);
         return;
       }

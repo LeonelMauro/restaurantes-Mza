@@ -23,7 +23,7 @@ const RestauranteAdministracion = ({ onNavigate }) => {
       titulo: "Eventos",
       descripcion: "Administrar eventos",
       icono: <EventIcon />,
-      ruta: "/eventos",
+      ruta: "/eventos/:id",
     },
     {
       titulo: "Promociones",

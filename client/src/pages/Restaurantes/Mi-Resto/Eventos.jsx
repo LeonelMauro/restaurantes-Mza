@@ -14,6 +14,15 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton } from '@mui/material';
+import { useAuth } from '../../../context/AuthContext';
+import { restaurantesStyles } from '../../../styles/restaurantesStyles';
+import {
+  Add as AddIcon,
+  CalendarMonthOutlined as CalendarMonthOutlinedIcon,
+  AccessTimeOutlined as AccessTimeOutlinedIcon,
+  EditOutlined as EditOutlinedIcon,
+  DeleteOutline as DeleteOutlineIcon,
+} from "@mui/icons-material";
 
 
 const Eventos = () => {
@@ -24,17 +33,23 @@ const Eventos = () => {
     hora: '',
     imagenUrl: '',
   });
+  const { user,token ,loading} = useAuth()
   const [imagenes, setImagenes] = useState([]);
   const [eventos, setEventos] = useState([]);
   const [restauranteId, setRestauranteId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [open, setOpen] = useState(false);
+  const userId = user?.id;
 
   // Obtener el restaurante del usuario logueado
   useEffect(() => {
     const fetchRestauranteId = async () => {
-      const userId = localStorage.getItem('userId');
-      const token = localStorage.getItem('token');
+      console.log("Sesión en Header",{
+      user,
+      tokenExistente: Boolean(token),
+      loading
+    })
+      
       if (!token || !userId) return;
       try {
         const res = await axios.get(`http://localhost:3000/restaurante/by-user/${userId}`, {
@@ -48,7 +63,7 @@ const Eventos = () => {
       }
     };
     fetchRestauranteId();
-  }, []);
+  }, [user,token,loading]);
 
   const fetchEventos = async (restauranteId) => {
     try {
@@ -167,68 +182,254 @@ const handleRemoveImage = () => {
     setEditingId(null);
   };
 
-  return (
-    <Box sx={{ maxWidth: 1000, mx: 'auto', mt: 4 }}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                mb: 3,
-                 color: '#9b8b7fff'
-              }}
-            >
-              <Button
-                onClick={handleOpen}
-                sx={{ background: '#9b8b7fff', color: '#fff', mr: 2 }}
-              >
-                Agregar Evento
-              </Button>
-      
-              <Typography
-                variant="h2"
-                sx={{
-                  flexGrow: 1,
-                  textAlign: 'center',
-                  fontFamily: 'Kaushan Script',
-                  fontWeight: 'bold',
-                }}
-              >
-                Eventos
-              </Typography>
-        </Box>
-        
+  
+return (
+  <Box sx={{ maxWidth: 1100, mx: "auto", px: { xs: 2, md: 3 }, py: 4 }}>
+
+    {/* Encabezado */}
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: { xs: "flex-start", sm: "center" },
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+        gap: 2,
+        mb: 4,
+      }}
+    >
+      <Box>
+        <Typography variant="h4" sx={restaurantesStyles.sectionTitle}>
+          Eventos
+        </Typography>
+
+        <Typography color="text.secondary">
+          Administrá los eventos de tu restaurante.
+        </Typography>
+      </Box>
+
+      <Button
+        onClick={handleOpen}
+        variant="contained"
+        startIcon={<AddIcon />}
+        sx={{
+          bgcolor: "#3D3C3B",
+          color: "#fff",
+          borderRadius: 2,
+          px: 2.5,
+          py: 1.2,
+          textTransform: "none",
+          fontWeight: 600,
+          "&:hover": { bgcolor: "#625D57" },
+        }}
+      >
+        Crear evento
+      </Button>
+    </Box>
+
+    {/* Listado de eventos */}
+    {eventos.length === 0 ? (
+      <Box
+        sx={{
+          textAlign: "center",
+          py: 7,
+          px: 2,
+          border: "1px dashed #C8BBAA",
+          borderRadius: 3,
+          bgcolor: "#FAF8F5",
+        }}
+      >
+        <CalendarMonthOutlinedIcon
+          sx={{ fontSize: 55, color: "#9b8b7f", mb: 1 }}
+        />
+
+        <Typography variant="h6" fontWeight={600}>
+          Todavía no hay eventos
+        </Typography>
+
+        <Typography color="text.secondary" sx={{ mt: 1, mb: 3 }}>
+          Publicá tu primer evento para que tus clientes puedan conocerlo.
+        </Typography>
+
+        <Button
+          onClick={handleOpen}
+          variant="outlined"
+          sx={{
+            color: "#3D3C3B",
+            borderColor: "#3D3C3B",
+            textTransform: "none",
+          }}
+        >
+          Crear primer evento
+        </Button>
+      </Box>
+    ) : (
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, minmax(0, 1fr))",
+            lg: "repeat(3, minmax(0, 1fr))",
+          },
+          gap: 3,
+        }}
+      >
         {eventos.map((evento) => (
-          <Box key={evento.id} my={2} p={2} border="1px solid #ccc" borderRadius={2}>
-            <Typography variant="h5" sx={{textAlign: 'center', fontWeight: 'bold',fontFamily: 'Kaushan Script', }}>{evento.titulo}</Typography>
-            <Typography sx={{ textAlign: 'justify' }}>{evento.descripcion}</Typography>
-            <Typography>Fecha: {new Date(evento.fecha).toLocaleDateString()}</Typography>
-            <Typography>Hora: {new Date(evento.fecha).toLocaleTimeString('es-AR', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}</Typography>
-            {evento.imagenUrl && (
+          <Box
+            key={evento.id}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              bgcolor: "#fff",
+              border: "1px solid #E8E2DB",
+              borderRadius: 3,
+              overflow: "hidden",
+              boxShadow: "0 3px 12px rgba(0,0,0,0.05)",
+              transition: "transform 0.2s, box-shadow 0.2s",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.10)",
+              },
+            }}
+          >
+            {/* Imagen */}
+            {evento.imagenUrl ? (
               <Box
                 component="img"
                 src={`http://localhost:3000/${evento.imagenUrl}`}
                 alt={evento.titulo}
                 sx={{
-                  width: '100%',
-                  height: 200,
-                  objectFit: 'cover',
-                  mt: 1,
-                  borderRadius: 2,
+                  width: "100%",
+                  height: 190,
+                  objectFit: "cover",
                 }}
               />
+            ) : (
+              <Box
+                sx={{
+                  height: 190,
+                  bgcolor: "#F0E9E0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <CalendarMonthOutlinedIcon
+                  sx={{ fontSize: 55, color: "#9b8b7f" }}
+                />
+              </Box>
             )}
-            <Box mt={1} display="flex" gap={2}>
-              <Button variant="outlined" onClick={() => handleEdit(evento)}>Editar</Button>
-              <Button variant="outlined" color="error" onClick={() => handleDelete(evento.id)}>Eliminar</Button>
+
+            {/* Información */}
+            <Box
+              sx={{
+                p: 2.5,
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  color: "#3D3C3B",
+                  mb: 1,
+                  overflowWrap: "anywhere",
+                }}
+              >
+                {evento.titulo}
+              </Typography>
+
+              <Typography
+                color="text.secondary"
+                sx={{
+                  fontSize: "0.95rem",
+                  lineHeight: 1.6,
+                  mb: 2,
+                  whiteSpace: "pre-line",
+                  overflowWrap: "anywhere",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {evento.descripcion}
+              </Typography>
+
+              <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
+                <CalendarMonthOutlinedIcon
+                  sx={{ color: "#9b8b7f", fontSize: 21 }}
+                />
+                <Typography variant="body2">
+                  {new Date(evento.fecha).toLocaleDateString("es-AR", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+                <AccessTimeOutlinedIcon
+                  sx={{ color: "#9b8b7f", fontSize: 21 }}
+                />
+                <Typography variant="body2">
+                  {evento.hora
+                    ? evento.hora.slice(0, 5)
+                    : new Date(evento.fecha).toLocaleTimeString("es-AR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                  hs
+                </Typography>
+              </Box>
+
+              {/* Acciones al pie */}
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 1,
+                  mt: "auto",
+                  pt: 2,
+                  borderTop: "1px solid #EEE8E1",
+                }}
+              >
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<EditOutlinedIcon />}
+                  onClick={() => handleEdit(evento)}
+                  sx={{
+                    color: "#3D3C3B",
+                    borderColor: "#D6CEC4",
+                    textTransform: "none",
+                    "&:hover": {
+                      borderColor: "#3D3C3B",
+                      bgcolor: "#F8F5F1",
+                    },
+                  }}
+                >
+                  Editar
+                </Button>
+
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  color="error"
+                  startIcon={<DeleteOutlineIcon />}
+                  onClick={() => handleDelete(evento.id)}
+                  sx={{ textTransform: "none" }}
+                >
+                  Eliminar
+                </Button>
+              </Box>
             </Box>
           </Box>
         ))}
- 
+      </Box>
+    )}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{editingId ? 'Editar Evento' : 'Agregar Evento'}</DialogTitle>
         <DialogContent>
