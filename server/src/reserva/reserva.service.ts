@@ -1,6 +1,6 @@
 // src/reserva/reserva.service.ts
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Restaurante } from 'src/restaurante/entities/restaurante.entity';
@@ -87,16 +87,29 @@ export class ReservaService {
 
   // src/reserva/reserva.service.ts
 
-  async remove(id: number): Promise<string> {
-  const reserva = await this.reservaRepository.findOneBy({ id });
+  async remove(id: number, userId: number): Promise<string> {
+    const reserva = await this.reservaRepository.findOne({
+      where: { id },
+      relations: ['usuario', 'restaurante', 'restaurante.usuario'],
+    });
 
-  if (!reserva) {
-    throw new NotFoundException('Reserva no encontrada');
+    if (!reserva) {
+      throw new NotFoundException('Reserva no encontrada');
+    }
+
+    const esCliente = reserva.usuario.id === userId;
+    const esPropietario = reserva.restaurante.usuario.id === userId;
+
+    if (!esCliente && !esPropietario) {
+      throw new ForbiddenException(
+        'No tenés permiso para eliminar esta reserva',
+      );
+    }
+
+    await this.reservaRepository.remove(reserva);
+
+    return 'Reserva eliminada correctamente';
   }
-
-  await this.reservaRepository.remove(reserva);
-  return 'Reserva eliminada correctamente';
-}
 
   async findReservasByPropietario(userId: number) {
   const restaurante = await this.restauranteRepository.findOne({

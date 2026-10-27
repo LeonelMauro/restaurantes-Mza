@@ -11,6 +11,7 @@ import {
   ForbiddenException,
   NotFoundException,
   Patch,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateReservaDto } from './dto/create-reserva.dto';
@@ -87,8 +88,11 @@ async obtenerReservasDelUsuario(@Req() req: Request) {
   }
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id')id: string){
-    return this.reservaService.remove(+id)
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthRequest,
+  ) {
+    return this.reservaService.remove(id, req.user.sub);
   }
   @Patch(':id/asistio')
 @UseGuards(JwtAuthGuard)
@@ -124,7 +128,7 @@ async marcarComoNoAsistio(@Param('id') reservaId: number, @Req() req: any) {
 
   if (!reserva) throw new NotFoundException('Reserva no encontrada');
 
-  if (reserva.restaurante.usuario.id !== req.user.id) {
+  if (reserva.restaurante.usuario.id !== req.user.sub) {
     throw new ForbiddenException('No tenés permiso para actualizar esta reserva');
   }
 

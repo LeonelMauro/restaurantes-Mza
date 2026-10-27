@@ -1,119 +1,134 @@
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import {
+  Box,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import ReviewsIcon from "@mui/icons-material/Reviews";
+import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import LiquorIcon from "@mui/icons-material/Liquor";
 import EventIcon from "@mui/icons-material/Event";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import SettingsIcon from "@mui/icons-material/Settings";
 
-const RestauranteAdministracion = ({ onNavigate }) => {
+const RestauranteAdministracion = ({
+  onNavigate,
+  seccionActiva = "inicio",
+}) => {
   const opciones = [
     {
+      titulo: "Inicio",
+      icono: <DashboardIcon />,
+      seccion: "inicio",
+    },
+    {
+      titulo: "Reservas",
+      icono: <CalendarMonthIcon />,
+      ruta: "/ReservasResto",
+      seccion: "reservas",
+    },
+    {
+      titulo: "Reseñas",
+      icono: <ReviewsIcon />,
+      seccion: "resenas",
+    },
+    {
+      titulo: "Fotos",
+      icono: <PhotoLibraryIcon />,
+      seccion: "fotos",
+    },
+    {
       titulo: "Menú",
-      descripcion: "Administrar platos y categorías",
       icono: <RestaurantMenuIcon />,
       ruta: "/menu/create",
+      seccion: "menu",
     },
     {
       titulo: "Bebidas",
-      descripcion: "Administrar bebidas y categorías",
       icono: <LiquorIcon />,
       ruta: "/bebidas",
+      seccion: "bebidas",
     },
     {
       titulo: "Eventos",
-      descripcion: "Administrar eventos",
       icono: <EventIcon />,
-      ruta: "/eventos/:id",
+      ruta: `/eventos/:id`,
+      seccion: "eventos",
     },
     {
       titulo: "Promociones",
-      descripcion: "Administrar promociones",
       icono: <LocalOfferIcon />,
       ruta: "/promos",
+      seccion: "promociones",
+    },
+    {
+      titulo: "Mi restaurante",
+      icono: <SettingsIcon />,
+      seccion: "restaurante",
     },
   ];
 
   return (
-    <Box sx={{ maxWidth: "900px", mx: "auto" }}>
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: { md: 260 },
+        flexShrink: 0,
+        bgcolor: "#292D2A",
+        color: "#fff",
+        borderRadius: 3,
+        p: 2,
+        alignSelf: "flex-start",
+      }}
+    >
       <Typography
         sx={{
-          fontFamily: "Kaushan Script",
-          fontSize: "2rem",
-          color: "#3D3C3B",
-          mb: 2,
+          color: "#D8BD68",
+          fontWeight: "bold",
+          fontSize: "1.1rem",
+          px: 2,
+          py: 1,
         }}
       >
         Administración
       </Typography>
 
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            sm: "repeat(2, 1fr)",
-          },
-          gap: 2,
-        }}
-      >
+      <List>
         {opciones.map((opcion) => (
-          <Card
-            key={opcion.titulo}
-            onClick={() => onNavigate(opcion.ruta)}
+          <ListItemButton
+            key={opcion.seccion}
+            selected={seccionActiva === opcion.seccion}
+            onClick={() => onNavigate(opcion)}
             sx={{
-              cursor: "pointer",
-              borderRadius: 3,
-              backgroundColor: "#3D3C3B",
+              borderRadius: 2,
+              mb: 0.5,
               color: "#fff",
-              transition: "0.2s",
+              "& .MuiListItemIcon-root": {
+                color: "#D8BD68",
+                minWidth: 40,
+              },
+              "&.Mui-selected": {
+                bgcolor: "#454941",
+              },
+              "&.Mui-selected:hover": {
+                bgcolor: "#454941",
+              },
               "&:hover": {
-                transform: "translateY(-3px)",
-                boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
+                bgcolor: "#3B403A",
               },
             }}
           >
-            <CardContent
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-                p: 2.5,
-                "&:last-child": {
-                  pb: 2.5,
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: 50,
-                  height: 50,
-                  borderRadius: 2,
-                  backgroundColor: "#F5E6D3",
-                  color: "#3D3C3B",
-                  flexShrink: 0,
-                }}
-              >
-                {opcion.icono}
-              </Box>
-
-              <Box sx={{ flexGrow: 1 }}>
-                <Typography sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-                  {opcion.titulo}
-                </Typography>
-
-                <Typography variant="body2" sx={{ color: "#ddd", mt: 0.5 }}>
-                  {opcion.descripcion}
-                </Typography>
-              </Box>
-
-              <ArrowForwardIcon />
-            </CardContent>
-          </Card>
+            <ListItemIcon>{opcion.icono}</ListItemIcon>
+            <ListItemText primary={opcion.titulo} />
+          </ListItemButton>
         ))}
-      </Box>
+      </List>
     </Box>
   );
 };
